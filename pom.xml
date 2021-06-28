@@ -2,13 +2,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-studio-be</artifactId>
-        <version>0.2.49-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+
+    <groupId>io.apicurio</groupId>
     <artifactId>apicurio-studio-be-hub-codegen</artifactId>
+    <version>0.2.49-SNAPSHOT</version>
     <name>apicurio-studio-be-hub-codegen</name>
 
     <dependencies>
