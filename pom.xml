@@ -1,22 +1,86 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0">
+    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-codegen</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
+    <version>1.0.0-SNAPSHOT</version>
     <name>apicurio-codegen</name>
 
+    <url>https://www.apicur.io/</url>
+    <description>Open Source API Design Code Generator</description>
+
+    <organization>
+        <name>Red Hat</name>
+        <url>https://www.redhat.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/apicurio/apicurio-codegen/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:git@github.com:apicurio/apicurio-codegen.git
+        </connection>
+        <developerConnection>scm:git:git@github.com:apicurio/apicurio-codegen.git
+        </developerConnection>
+        <url>scm:git:git@github.com:apicurio/apicurio-codegen.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Eric Wittmann</name>
+            <id>EricWittmann</id>
+            <email>eric.wittmann@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Project Lead</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <name>Jakub Senko</name>
+            <id>JakubSenko</id>
+            <email>jsenko@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <name>Carles Arnal</name>
+            <id>CarlesArnal</id>
+            <email>carnalca@redhat.com</email>
+            <organization>Red Hat</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+        <timestamp>${maven.build.timestamp}</timestamp>
 
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
 
-        <version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>2.0.2.Final</version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>
+        <version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>2.0.2.Final
+        </version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>
         <version.junit>4.13.2</version.junit>
         <version.org.slf4j>1.7.32</version.org.slf4j>
         <version.apicurio-data-models>1.1.15</version.apicurio-data-models>
@@ -24,12 +88,18 @@
         <version.commons-lang3>3.12.0</version.commons-lang3>
         <version.commons-codec>1.15</version.commons-codec>
         <version.commons-io>2.11.0</version.commons-io>
-        <version.org.apache.commons.commons-pool2>2.11.1</version.org.apache.commons.commons-pool2>
+        <version.org.apache.commons.commons-pool2>2.11.1
+        </version.org.apache.commons.commons-pool2>
         <version.com.fasterxml.jackson>2.12.4</version.com.fasterxml.jackson>
         <version.org.json>20210307</version.org.json>
         <version.org.jsonschema2pojo>1.1.1</version.org.jsonschema2pojo>
         <version.com.squareup.javapoet>1.13.0</version.com.squareup.javapoet>
         <version.com.sun.codemodel>2.6</version.com.sun.codemodel>
+        
+        <!-- Plugin versions -->
+        <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+        <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
+        <version.maven-javadoc-plugin>3.3.0</version.maven-javadoc-plugin>
 
     </properties>
 
@@ -137,7 +207,8 @@
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec}</version>
+            <version>${version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec}
+            </version>
         </dependency>
 
         <!-- Provided Dependencies -->
@@ -172,10 +243,42 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <fork>true</fork>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${version.maven-source-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${version.maven-javadoc-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -189,4 +292,54 @@
             </resource>
         </resources>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${version.org.sonatype.plugins.nexus-staging-maven-plugin}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${version.maven-gpg-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent `gpg` from using pinentry programs -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
