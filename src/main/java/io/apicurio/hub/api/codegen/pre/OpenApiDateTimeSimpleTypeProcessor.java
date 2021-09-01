@@ -38,7 +38,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
         OasSchema schema = (OasSchema) node;
         // Switch from int64 format to utc-millisec so that jsonschema2pojo will generate a Long instead of an Integer
         if ("string".equals(schema.type) && "date-time".equals(schema.format)) {
-            schema.addExtraProperty("customDateTimePattern", "yyyy-MM-dd'T'HH:mm:ssZ");
+            schema.addExtraProperty("customDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss'Z'");
         }
     }
     
