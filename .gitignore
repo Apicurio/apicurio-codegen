@@ -1,0 +1,13 @@
+/bin/
+/target/
+.generated
+.ts
+.js
+.jsweet
+.project
+.settings
+.classpath
+website
+# Intellij project files
+/.idea/
+*.iml
