@@ -5,7 +5,7 @@
 
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-codegen</artifactId>
-    <version>1.0.0.Final</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>apicurio-codegen</name>
 
     <url>https://www.apicur.io/</url>
@@ -95,11 +95,12 @@
         <version.org.jsonschema2pojo>1.1.1</version.org.jsonschema2pojo>
         <version.com.squareup.javapoet>1.13.0</version.com.squareup.javapoet>
         <version.com.sun.codemodel>2.6</version.com.sun.codemodel>
-        
+
         <!-- Plugin versions -->
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
-        <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
+        <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
         <version.maven-javadoc-plugin>3.3.0</version.maven-javadoc-plugin>
+        <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
         <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.8</version.org.sonatype.plugins.nexus-staging-maven-plugin>
 
     </properties>
