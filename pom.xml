@@ -5,7 +5,7 @@
 
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-codegen</artifactId>
-    <version>1.0.0.Final</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>apicurio-codegen</name>
 
     <url>https://www.apicur.io/</url>
@@ -100,6 +100,7 @@
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
         <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
         <version.maven-javadoc-plugin>3.3.0</version.maven-javadoc-plugin>
+        <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.8</version.org.sonatype.plugins.nexus-staging-maven-plugin>
 
     </properties>
 
