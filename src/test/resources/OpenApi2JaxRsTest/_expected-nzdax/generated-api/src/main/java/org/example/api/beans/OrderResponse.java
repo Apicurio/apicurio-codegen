@@ -47,7 +47,7 @@ public class OrderResponse {
      * The datetime of this order
      * 
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @JsonProperty("datetime")
     @JsonPropertyDescription("The datetime of this order")
     private Date datetime;

@@ -48,7 +48,7 @@ public class OrderBookResponse {
      * The timestamp associated for this order book
      * 
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @JsonProperty("datetime")
     @JsonPropertyDescription("The timestamp associated for this order book")
     private Date datetime;
