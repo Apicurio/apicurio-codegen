@@ -99,7 +99,7 @@
         <!-- Plugin versions -->
         <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
         <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
-        <version.maven-javadoc-plugin>3.3.0</version.maven-javadoc-plugin>
+        <version.maven-javadoc-plugin>3.3.1</version.maven-javadoc-plugin>
         <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
         <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.8</version.org.sonatype.plugins.nexus-staging-maven-plugin>
 
