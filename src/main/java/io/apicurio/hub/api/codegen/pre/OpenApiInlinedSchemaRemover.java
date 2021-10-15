@@ -25,6 +25,7 @@ import io.apicurio.datamodels.core.models.common.IDefinition;
 import io.apicurio.datamodels.core.visitors.TraverserDirection;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Definitions;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Components;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -54,11 +55,11 @@ public class OpenApiInlinedSchemaRemover extends CombinedVisitorAdapter {
     }
 
     private boolean wasInlined(ExtensibleNode node) {
-        Extension inlinedExt = node.getExtension("x-codegen-inlined");
+        Extension inlinedExt = node.getExtension(CodegenExtensions.INLINED);
         if (inlinedExt == null) {
             return false;
         }
         return "true".equals(String.valueOf(inlinedExt.value));
     }
-    
+
 }

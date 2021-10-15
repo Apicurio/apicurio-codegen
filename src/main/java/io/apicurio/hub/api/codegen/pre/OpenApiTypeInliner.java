@@ -30,6 +30,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -66,7 +67,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
     public void visitItemsSchema(OasSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitPropertySchema(io.apicurio.datamodels.core.models.common.IPropertySchema)
      */
@@ -74,7 +75,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
     public void visitPropertySchema(IPropertySchema node) {
         visitSchema((Schema) node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
      */
@@ -82,7 +83,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
     public void visitSchemaDefinition(IDefinition node) {
         visitSchema((Schema) node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAdditionalPropertiesSchema(io.apicurio.datamodels.openapi.models.OasSchema)
      */
@@ -90,7 +91,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
     public void visitAdditionalPropertiesSchema(OasSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitOneOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema)
      */
@@ -98,7 +99,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
     public void visitOneOfSchema(Oas30OneOfSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAllOfSchema(io.apicurio.datamodels.openapi.models.OasSchema)
      */
@@ -143,7 +144,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
      */
     private void inlineSchema(OasSchema schema, OasSchema schemaDef) {
         schema.$ref = null;
-        
+
         // Copy everything from schemaDef into schema by serializing the former into a JSON
         // object and then deserialing that into the latter.
         Object serializedSchemaDef = Library.writeNode(schemaDef);
@@ -155,7 +156,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
      * @param referencedSchemaDefNode
      */
     private boolean isInlineSchema(ExtensibleNode referencedSchemaDefNode) {
-        Extension extension = referencedSchemaDefNode.getExtension("x-codegen-inline");
+        Extension extension = referencedSchemaDefNode.getExtension(CodegenExtensions.INLINE);
         if (extension == null) {
             return false;
         }
@@ -167,7 +168,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
      */
     private void markForRemoval(ExtensibleNode node) {
         Extension extension = node.createExtension();
-        extension.name = "x-codegen-inlined";
+        extension.name = CodegenExtensions.INLINED;
         extension.value = Boolean.TRUE;
         node.addExtension(extension.name, extension);
     }

@@ -2103,7 +2103,8 @@
                     },
                     "createdOn": {
                         "format": "date-time",
-                        "type": "string"
+                        "type": "string",
+                        "x-codegen-formatPattern": "yyyy-MM-dd'T'HH:mm:ss"
                     },
                     "type": {
                         "$ref": "#/components/schemas/ArtifactType",

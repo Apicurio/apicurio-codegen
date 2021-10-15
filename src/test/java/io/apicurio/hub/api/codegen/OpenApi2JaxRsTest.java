@@ -36,7 +36,7 @@ import io.apicurio.hub.api.codegen.OpenApi2JaxRs.JaxRsProjectSettings;
  * @author eric.wittmann@gmail.com
  */
 public class OpenApi2JaxRsTest {
-    
+
     private static enum UpdateOnly {
         yes, no
     }
@@ -150,6 +150,14 @@ public class OpenApi2JaxRsTest {
     }
 
     /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testSchemaExtends() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/schema-extends.json", UpdateOnly.yes, Reactive.no, "_expected-schema-extends/generated-api", true);
+    }
+
+    /**
      * Shared test method.
      * @param apiDef
      * @param updateOnly
@@ -171,7 +179,7 @@ public class OpenApi2JaxRsTest {
         generator.setUpdateOnly(updateOnly == UpdateOnly.yes);
         generator.setOpenApiDocument(getClass().getClassLoader().getResource(apiDef));
         ByteArrayOutputStream outputStream = generator.generate();
-        
+
         if (debug) {
             File tempFile = File.createTempFile("api", ".zip");
             FileUtils.writeByteArrayToFile(tempFile, outputStream.toByteArray());
@@ -188,7 +196,7 @@ public class OpenApi2JaxRsTest {
                         System.out.println(name);
                     }
                     Assert.assertNotNull(name);
-                    
+
                     URL expectedFile = getClass().getClassLoader().getResource(getClass().getSimpleName() + "/" + expectedFilesPath + "/" + name);
                     if (expectedFile == null && "PROJECT_GENERATION_FAILED.txt".equals(name)) {
                         String errorLog = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));

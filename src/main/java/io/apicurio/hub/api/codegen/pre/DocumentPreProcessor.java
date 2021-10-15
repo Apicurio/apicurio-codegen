@@ -27,7 +27,7 @@ import io.apicurio.datamodels.core.visitors.TraverserDirection;
  * @author eric.wittmann@gmail.com
  */
 public class DocumentPreProcessor {
-    
+
     private static IVisitor [] processors = {
             new OpenApiLongSimpleTypeProcessor(),
             new OpenApiDateTimeSimpleTypeProcessor(),
@@ -37,9 +37,10 @@ public class DocumentPreProcessor {
             new OpenApiParameterInliner(),
             new OpenApiInlinedParameterRemover(),
             new OpenApiResponseInliner(),
-            new OpenApiAllOfProcessor()
+            new OpenApiAllOfProcessor(),
+            new OpenApiBeanClassExtendsProcessor()
     };
-    
+
     /**
      * Process the model.
      * @param document

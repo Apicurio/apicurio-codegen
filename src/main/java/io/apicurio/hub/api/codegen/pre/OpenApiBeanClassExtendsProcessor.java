@@ -23,9 +23,10 @@ import io.apicurio.datamodels.openapi.models.OasSchema;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
+ * Pre processes the OpenAPI document to handle the x-codegen-extendsClass extension.
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiMapDataTypeProcessor extends CombinedVisitorAdapter {
+public class OpenApiBeanClassExtendsProcessor extends CombinedVisitorAdapter {
 
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
@@ -33,18 +34,12 @@ public class OpenApiMapDataTypeProcessor extends CombinedVisitorAdapter {
     @Override
     public void visitSchemaDefinition(IDefinition node) {
         OasSchema schema = (OasSchema) node;
-        if (isMapType(schema)) {
-            schema.additionalProperties = null;
-            schema.addExtraProperty("existingJavaType", "java.util.Map<String,String>");
+        Extension extension = schema.getExtension(CodegenExtensions.EXTENDS_CLASS);
+        if (extension != null && extension.value != null) {
+            String baseClass = extension.value.toString();
+            schema.removeExtension(CodegenExtensions.EXTENDS_CLASS);
+            schema.addExtraProperty("extendsJavaClass", baseClass);
         }
-    }
-
-    private boolean isMapType(OasSchema schema) {
-        Extension extension = schema.getExtension(CodegenExtensions.TYPE);
-        if (extension == null) {
-            return false;
-        }
-        return "StringMap".equals(extension.value);
     }
 
 }

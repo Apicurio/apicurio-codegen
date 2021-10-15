@@ -1,0 +1,27 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Schema Extends API",
+        "version": "1.0.0"
+    },
+    "paths": {
+    },
+    "components": {
+        "schemas": {
+            "MySchema": {
+                "description": "",
+                "type": "object",
+            	"properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+            	},
+            	"x-codegen-extendsClass": "org.example.api.beans.AbstractSchema",
+            	"x-codegen-annotations": ["lombok.AllArgsConstructor", "lombok.Builder"]
+            }
+        }
+    }
+}

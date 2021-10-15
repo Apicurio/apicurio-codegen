@@ -25,6 +25,7 @@ import io.apicurio.datamodels.core.models.common.IDefinition;
 import io.apicurio.datamodels.core.models.common.Parameter;
 import io.apicurio.datamodels.core.util.LocalReferenceResolver;
 import io.apicurio.datamodels.openapi.models.OasParameter;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -47,7 +48,7 @@ public class OpenApiParameterInliner extends CombinedVisitorAdapter {
             }
         }
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameterDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
      */
@@ -63,7 +64,7 @@ public class OpenApiParameterInliner extends CombinedVisitorAdapter {
      */
     private void inlineParameter(OasParameter param, Node paramDef) {
         param.$ref = null;
-        
+
         // Copy everything from schemaDef into schema by serializing the former into a JSON
         // object and then deserializing that into the latter.
         Object serializedParamDef = Library.writeNode(paramDef);
@@ -75,7 +76,7 @@ public class OpenApiParameterInliner extends CombinedVisitorAdapter {
      */
     private void markForRemoval(ExtensibleNode node) {
         Extension extension = node.createExtension();
-        extension.name = "x-codegen-inlined";
+        extension.name = CodegenExtensions.INLINED;
         extension.value = Boolean.TRUE;
         node.addExtension(extension.name, extension);
     }

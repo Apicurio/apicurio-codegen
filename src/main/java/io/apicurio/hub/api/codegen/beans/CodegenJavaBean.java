@@ -24,13 +24,14 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author eric.wittmann@gmail.com
  */
 public class CodegenJavaBean {
-    
+
     private String _package;
     private String name;
     private JsonNode $schema;
     private String signature;
     private List<String> annotations;
-    
+    private String extendsClass;
+
     /**
      * Constructor.
      */
@@ -105,6 +106,20 @@ public class CodegenJavaBean {
      */
     public void setAnnotations(List<String> annotations) {
         this.annotations = annotations;
+    }
+
+    /**
+     * @return the extendsClass
+     */
+    public String getExtendsClass() {
+        return extendsClass;
+    }
+
+    /**
+     * @param extendsClass the extendsClass to set
+     */
+    public void setExtendsClass(String extendsClass) {
+        this.extendsClass = extendsClass;
     }
 
 }

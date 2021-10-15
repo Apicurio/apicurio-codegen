@@ -259,7 +259,7 @@ public class OpenApi2JaxRs {
             if (bean != null && bean.getAnnotations() != null) {
                 annotations.addAll(bean.getAnnotations());
             }
-            
+
             ByteArrayOutputStream processedBeanData = postProcessor.process(className, annotations, beanData);
             if (beanData != processedBeanData) {
                 codeWriter.set(className, processedBeanData);
@@ -309,10 +309,10 @@ public class OpenApi2JaxRs {
      */
     protected CodegenInfo getInfoFromApiDoc() throws IOException {
         document = Library.readDocumentFromJSONString(openApiDoc);
-        
+
         // Pre-process the document
         document = preProcess(document);
-        
+
         // Figure out the breakdown of the interfaces.
         InterfacesVisitor iVisitor = new InterfacesVisitor();
         VisitorUtil.visitTree(document, iVisitor, TraverserDirection.down);
@@ -341,7 +341,7 @@ public class OpenApi2JaxRs {
     private String getContextRoot(Document document) {
         OasDocument oaiDoc = (OasDocument) document;
         if (oaiDoc.paths != null) {
-            Extension extension = oaiDoc.paths.getExtension("x-codegen-contextRoot");
+            Extension extension = oaiDoc.paths.getExtension(CodegenExtensions.CONTEXT_ROOT);
             if (extension != null && extension.value != null) {
                 return String.valueOf(extension.value);
             }
@@ -351,23 +351,23 @@ public class OpenApi2JaxRs {
 
     /**
      * Pre-process the document to modify it in the following ways:
-     * 
+     *
      * 1) Inline any re-usable simple-type schemas
      * 2) Check for the "x-codegen-contextRoot" property in the Paths object and prepend its value to all paths
-     * 
+     *
      * @param document
      */
     private Document preProcess(Document document) {
         DocumentPreProcessor preprocessor = new DocumentPreProcessor();
         preprocessor.process(document);
-        
+
         if (Boolean.FALSE) {
             System.out.println("-------------------------");
             System.out.println(Library.writeDocumentToJSONString(document));
             System.out.println("-------------------------");
             System.exit(1);
         }
-        
+
         return document;
     }
 
@@ -496,7 +496,7 @@ public class OpenApi2JaxRs {
             }
 
             // TODO:: error responses (4xx and 5xx)
-            // Should errors be modeled in some way?  JAX-RS has a few ways to handle them.  I'm inclined to 
+            // Should errors be modeled in some way?  JAX-RS has a few ways to handle them.  I'm inclined to
             // not generate anything in the interface for error responses.
 
             // Javadoc
@@ -665,7 +665,7 @@ public class OpenApi2JaxRs {
         String source = mapper.writeValueAsString(bean.get$schema());
         schemaMapper.generate(codeModel, bean.getName(), bean.getPackage(), source);
         codeModel.build(codeWriter);
-        
+
         String fqcn = bean.getPackage() + "." + bean.getName();
         codeWriter.indexBean(fqcn, bean);
     }

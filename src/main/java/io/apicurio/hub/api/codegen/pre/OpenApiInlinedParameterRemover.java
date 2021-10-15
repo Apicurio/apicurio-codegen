@@ -25,12 +25,13 @@ import io.apicurio.datamodels.core.models.common.IDefinition;
 import io.apicurio.datamodels.core.visitors.TraverserDirection;
 import io.apicurio.datamodels.openapi.v2.models.Oas20ParameterDefinitions;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Components;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
  * @author eric.wittmann@gmail.com
  */
 public class OpenApiInlinedParameterRemover extends CombinedVisitorAdapter {
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameterDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
      */
@@ -54,11 +55,11 @@ public class OpenApiInlinedParameterRemover extends CombinedVisitorAdapter {
     }
 
     private boolean wasInlined(ExtensibleNode node) {
-        Extension inlinedExt = node.getExtension("x-codegen-inlined");
+        Extension inlinedExt = node.getExtension(CodegenExtensions.INLINED);
         if (inlinedExt == null) {
             return false;
         }
         return "true".equals(String.valueOf(inlinedExt.value));
     }
-    
+
 }

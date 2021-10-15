@@ -17,6 +17,7 @@
 package io.apicurio.hub.api.codegen.pre;
 
 import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
+import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.core.models.common.IDefinition;
 import io.apicurio.datamodels.core.models.common.IPropertySchema;
 import io.apicurio.datamodels.core.models.common.Schema;
@@ -24,6 +25,7 @@ import io.apicurio.datamodels.openapi.models.OasSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -38,10 +40,15 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
         OasSchema schema = (OasSchema) node;
         // Switch from int64 format to utc-millisec so that jsonschema2pojo will generate a Long instead of an Integer
         if ("string".equals(schema.type) && "date-time".equals(schema.format)) {
-            schema.addExtraProperty("customDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss'Z'");
+            String formatPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+            Extension ext = schema.getExtension(CodegenExtensions.FORMAT_PATTERN);
+            if (ext != null && ext.value != null) {
+                formatPattern = ext.value.toString();
+            }
+            schema.addExtraProperty("customDateTimePattern", formatPattern);
         }
     }
-    
+
     /**
      * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitItemsSchema(io.apicurio.datamodels.openapi.models.OasSchema)
      */
@@ -49,7 +56,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
     public void visitItemsSchema(OasSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitPropertySchema(io.apicurio.datamodels.core.models.common.IPropertySchema)
      */
@@ -57,7 +64,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
     public void visitPropertySchema(IPropertySchema node) {
         visitSchema((Schema) node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
      */
@@ -65,7 +72,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
     public void visitSchemaDefinition(IDefinition node) {
         visitSchema((Schema) node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAdditionalPropertiesSchema(io.apicurio.datamodels.openapi.models.OasSchema)
      */
@@ -73,7 +80,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
     public void visitAdditionalPropertiesSchema(OasSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitOneOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema)
      */
@@ -81,7 +88,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
     public void visitOneOfSchema(Oas30OneOfSchema node) {
         visitSchema(node);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAllOfSchema(io.apicurio.datamodels.openapi.models.OasSchema)
      */

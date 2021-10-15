@@ -25,15 +25,15 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 public final class CodegenUtil {
-    
+
     public static final String schemaToPackageName(OasSchema schema, String defaultPackage) {
         String pname = defaultPackage;
-        
+
         if (schema != null) {
-            // Handle x-codegen-package (custom package name for a generated bean)
-            Extension extension = schema.getExtension("x-codegen-package");
+            Extension extension = schema.getExtension(CodegenExtensions.PACKAGE);
             if (extension != null && extension.value != null) {
                 String packageName = String.valueOf(extension.value);
                 if (!packageName.trim().isEmpty()) {
@@ -66,5 +66,5 @@ public final class CodegenUtil {
         }
         return pname + "." + StringUtils.capitalize(cname);
     }
-    
+
 }

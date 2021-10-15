@@ -49,6 +49,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30MediaType;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30RequestBody;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
+import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
@@ -75,7 +76,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private int _methodCounter = 1;
 
     private boolean _processPathItemParams = false;
-    
+
     /**
      * Constructor.
      * @param packageName
@@ -86,7 +87,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         this.codegenInfo.setVersion("1.0.0");
         this.codegenInfo.setInterfaces(new ArrayList<>());
         this.codegenInfo.setBeans(new ArrayList<>());
-        
+
         this.packageName = packageName;
         for (InterfaceInfo iface : interfaces) {
             for (String path : iface.paths) {
@@ -112,7 +113,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         Library.visitNode(node, signer);
         return signer.getSignature();
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitDocument(io.apicurio.datamodels.core.models.Document)
      */
@@ -142,7 +143,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         }
         this.codegenInfo.setVersion(node.version);
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OasPathItem)
      */
@@ -186,9 +187,9 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
                 method.setConsumes(new HashSet<>(consumes));
             }
         }
-        
+
         boolean async = false;
-        Extension asyncExt = node.getExtension("x-codegen-async");
+        Extension asyncExt = node.getExtension(CodegenExtensions.ASYNC);
         if (asyncExt != null && asyncExt.value != null) {
             async = Boolean.valueOf(asyncExt.value.toString());
         }
@@ -217,14 +218,14 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         if (!this._processPathItemParams && this.isPathItem(node.parent())) {
             return;
         }
-        
+
         OasParameter param = (OasParameter) node;
 
         CodegenJavaArgument cgArgument = new CodegenJavaArgument();
         cgArgument.setName(param.name);
         cgArgument.setIn(param.in);
         cgArgument.setRequired(true);
-        
+
         this._currentMethod.getArguments().add(cgArgument);
         this._currentArgument = cgArgument;
 
@@ -262,7 +263,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
                 if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
                 if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
                 if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OasSchema) mediaType.schema));
+                this._currentArgument.setTypeSignature(createSignature(mediaType.schema));
             }
         } else if (node.schema != null) {
             CodegenJavaReturn cgReturn = this.returnFromSchema((OasSchema) node.schema);
@@ -327,7 +328,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         List<Oas30MediaType> mediaTypes = node.getMediaTypes();
         if (mediaTypes != null && mediaTypes.size() > 0) {
             Oas30MediaType mediaType = mediaTypes.get(0);
-            Extension returnTypeExt = mediaType.getExtension("x-codegen-returnType");
+            Extension returnTypeExt = mediaType.getExtension(CodegenExtensions.RETURN_TYPE);
             if (returnTypeExt != null) {
                 String returnType = (String) returnTypeExt.value;
                 CodegenJavaReturn customReturn = new CodegenJavaReturn();
@@ -358,19 +359,19 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     public void visitSchemaDefinition(IDefinition node) {
         String name = node.getName();
         OasSchema schema = (OasSchema) node;
-        
+
         CodegenJavaBean bean = new CodegenJavaBean();
         bean.setName(name);
         bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.packageName + ".beans"));
-        bean.set$schema((JsonNode) Library.writeNode((Node) schema));
+        bean.set$schema((JsonNode) Library.writeNode(schema));
         bean.setSignature(createSignature(schema));
-        bean.setAnnotations(annotations(schema.getExtension("x-codegen-annotations")));
+        bean.setAnnotations(annotations(schema.getExtension(CodegenExtensions.ANNOTATIONS)));
 
         this.codegenInfo.getBeans().add(bean);
     }
 
     /**
-     * Extracts the additional annotations the bean should have added to it from the x-codegen-annotations 
+     * Extracts the additional annotations the bean should have added to it from the x-codegen-annotations
      * extension point.
      * @param extension
      */
