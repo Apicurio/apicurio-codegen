@@ -63,6 +63,12 @@
         }
     },
     "x-codegen": {
-    	"bean-annotations": [ "javax.enterprise.context.ApplicationScoped" ]
+    	"bean-annotations": [ 
+    		"javax.enterprise.context.ApplicationScoped",
+    		{
+    			"annotation": "lombok.ToString(callSuper=true, includeFieldNames=true)",
+    			"excludeEnums": true
+    		}
+    	 ]
     }
 }
