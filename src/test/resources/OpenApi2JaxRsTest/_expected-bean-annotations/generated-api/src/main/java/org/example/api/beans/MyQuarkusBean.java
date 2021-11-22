@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 @Generated("jsonschema2pojo")
 @javax.enterprise.context.ApplicationScoped
+@lombok.ToString(callSuper=true, includeFieldNames=true)
 @io.quarkus.runtime.annotations.RegisterForReflection
 public class MyQuarkusBean {
 

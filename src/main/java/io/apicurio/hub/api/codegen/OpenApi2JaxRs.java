@@ -75,6 +75,7 @@ import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.core.util.VisitorUtil;
 import io.apicurio.datamodels.core.visitors.TraverserDirection;
 import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
@@ -253,7 +254,7 @@ public class OpenApi2JaxRs {
         // Post-process generated java bean classes
         for (String className : codeWriter.keys()) {
             ByteArrayOutputStream beanData = codeWriter.getContent(className);
-            List<String> annotations = new ArrayList<>();
+            List<CodegenBeanAnnotationDirective> annotations = new ArrayList<>();
             annotations.addAll(info.getBeanAnnotations());
             CodegenJavaBean bean = codeWriter.getBean(className);
             if (bean != null && bean.getAnnotations() != null) {

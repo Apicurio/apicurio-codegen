@@ -29,7 +29,7 @@ public class CodegenJavaBean {
     private String name;
     private JsonNode $schema;
     private String signature;
-    private List<String> annotations;
+    private List<CodegenBeanAnnotationDirective> annotations;
     private String extendsClass;
 
     /**
@@ -97,14 +97,14 @@ public class CodegenJavaBean {
     /**
      * @return the annotations
      */
-    public List<String> getAnnotations() {
+    public List<CodegenBeanAnnotationDirective> getAnnotations() {
         return annotations;
     }
 
     /**
      * @param annotations the annotations to set
      */
-    public void setAnnotations(List<String> annotations) {
+    public void setAnnotations(List<CodegenBeanAnnotationDirective> annotations) {
         this.annotations = annotations;
     }
 

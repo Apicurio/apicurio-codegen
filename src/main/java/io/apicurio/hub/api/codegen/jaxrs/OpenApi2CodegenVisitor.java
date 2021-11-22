@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -50,6 +51,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30RequestBody;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
@@ -127,8 +129,10 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private void processCodegenConfig(Extension extension) {
         if (extension != null && extension.value instanceof Map) {
             Map<String, Object> codegen = (Map<String, Object>) extension.value;
-            List<String> annotations = (List<String>) codegen.get("bean-annotations");
-            this.codegenInfo.setBeanAnnotations(annotations);
+            List<?> annotations = (List<?>) codegen.get("bean-annotations");
+            if (annotations != null) {
+                this.codegenInfo.setBeanAnnotations(annotations(annotations));
+            }
         }
     }
 
@@ -375,13 +379,40 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
      * extension point.
      * @param extension
      */
-    @SuppressWarnings("unchecked")
-    private List<String> annotations(Extension extension) {
+    private List<CodegenBeanAnnotationDirective> annotations(Extension extension) {
         if (extension != null && extension.value instanceof List) {
-            return (List<String>) extension.value;
+            List<?> annotationExtensions = (List<?>) extension.value;
+            return annotations(annotationExtensions);
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<CodegenBeanAnnotationDirective> annotations(List<?> annotationExtensions) {
+        return annotationExtensions.stream().map(annotationExtension -> {
+            if (annotationExtension instanceof String) {
+                CodegenBeanAnnotationDirective directive = new CodegenBeanAnnotationDirective();
+                directive.setAnnotation((String) annotationExtension);
+                return directive;
+            } else if (annotationExtension instanceof Map) {
+                Map<String, Object> aeMap = (Map<String, Object>) annotationExtension;
+                String annotation = (String) aeMap.get("annotation");
+                Boolean excludeEnums = (Boolean) aeMap.get("excludeEnums");
+                if (annotation == null) {
+                    return null;
+                }
+
+                CodegenBeanAnnotationDirective directive = new CodegenBeanAnnotationDirective();
+                directive.setAnnotation(annotation);
+                if (excludeEnums != null) {
+                    directive.setExcludeEnums(excludeEnums);
+                }
+                return directive;
+            } else {
+                return null;
+            }
+        }).filter(item -> item != null).collect(Collectors.toUnmodifiableList());
     }
 
     private CodegenJavaInterface getOrCreateInterface(String path) {
