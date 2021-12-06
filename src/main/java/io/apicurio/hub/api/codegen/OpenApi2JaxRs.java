@@ -335,7 +335,10 @@ public class OpenApi2JaxRs {
                 });
             });
         });
-        info.setContextRoot(getContextRoot(document));
+        String contextRoot = getContextRoot(document);
+        if (contextRoot != null) {
+            info.setContextRoot(contextRoot);
+        }
         return info;
     }
 
@@ -347,7 +350,7 @@ public class OpenApi2JaxRs {
                 return String.valueOf(extension.value);
             }
         }
-        return "";
+        return null;
     }
 
     /**

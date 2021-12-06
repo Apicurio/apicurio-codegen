@@ -1,0 +1,135 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MAS API Studio [v1]",
+        "version": "1.0.0",
+        "description": "Managed application services API Studio."
+    },
+    "paths": {
+        "/teams": {
+            "summary": "Manage the collection of teams",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Team"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "A list of teams."
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                },
+                "operationId": "listTeams",
+                "summary": "List teams"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApiInfo": {
+                "title": "Root Type for ApiInfo",
+                "description": "Meta information about an API.",
+                "required": [
+                    "created-by",
+                    "created-on",
+                    "latest-version",
+                    "name",
+                    "namespace",
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "latest-version": {
+                        "type": "string"
+                    },
+                    "created-on": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "created-by": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "namespace": "urn:example:logistics",
+                    "name": "fraud-detection-api",
+                    "title": "Fraud Detection API",
+                    "description": "A simple API to detect fraud.",
+                    "latest-version": "1.0.7",
+                    "created-on": "2021-01-17T17:55:22Z",
+                    "created-by": "bwayne@gotham.net"
+                }
+            },
+            "Team": {
+                "title": "Root Type for Team",
+                "description": "",
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "name": "tiger-team",
+                    "description": "Team dedicated to killing it."
+                }
+            }
+        },
+        "responses": {
+            "NotFound": {
+                "description": ""
+            },
+            "ServerError": {
+                "description": ""
+            }
+        }
+    },
+    "x-codegen": {
+        "contextRoot": "/apis/studio/v1",
+        "bean-annotations": [
+            "io.quarkus.runtime.annotations.RegisterForReflection",
+            {
+                "annotation": "lombok.Builder",
+                "excludeEnums": true
+            },
+            {
+                "annotation": "lombok.AllArgsConstructor",
+                "excludeEnums": true
+            },
+            {
+                "annotation": "lombok.EqualsAndHashCode",
+                "excludeEnums": true
+            },
+            {
+                "annotation": "lombok.ToString",
+                "excludeEnums": true
+            }
+        ]
+    }
+}

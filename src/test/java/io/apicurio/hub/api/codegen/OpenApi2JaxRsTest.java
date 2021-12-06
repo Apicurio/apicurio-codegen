@@ -154,7 +154,15 @@ public class OpenApi2JaxRsTest {
      */
     @Test
     public void testSchemaExtends() throws IOException {
-        doFullTest("OpenApi2JaxRsTest/schema-extends.json", UpdateOnly.yes, Reactive.no, "_expected-schema-extends/generated-api", true);
+        doFullTest("OpenApi2JaxRsTest/schema-extends.json", UpdateOnly.yes, Reactive.no, "_expected-schema-extends/generated-api", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testMasStudio() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/mas-studio.json", UpdateOnly.no, Reactive.no, "_expected-mas-studio/generated-api", false);
     }
 
     /**

@@ -29,7 +29,7 @@ public class CodegenInfo {
     private String version = "1.0.0";
     private List<CodegenJavaInterface> interfaces = new ArrayList<>();
     private List<CodegenJavaBean> beans = new ArrayList<>();
-    private String contextRoot;
+    private String contextRoot = "";
     private List<CodegenBeanAnnotationDirective> beanAnnotations = new ArrayList<>();
 
     /**

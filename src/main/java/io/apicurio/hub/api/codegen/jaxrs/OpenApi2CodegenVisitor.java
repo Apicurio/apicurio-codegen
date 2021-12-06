@@ -129,9 +129,17 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private void processCodegenConfig(Extension extension) {
         if (extension != null && extension.value instanceof Map) {
             Map<String, Object> codegen = (Map<String, Object>) extension.value;
+            
+            // Process 'bean-annotations'
             List<?> annotations = (List<?>) codegen.get("bean-annotations");
             if (annotations != null) {
                 this.codegenInfo.setBeanAnnotations(annotations(annotations));
+            }
+            
+            // Process 'contextRoot'
+            String cr = (String) codegen.get("contextRoot");
+            if (cr != null) {
+                this.codegenInfo.setContextRoot(cr);
             }
         }
     }
