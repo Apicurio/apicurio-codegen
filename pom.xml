@@ -91,7 +91,7 @@
         <version.org.apache.commons.commons-pool2>2.11.1
         </version.org.apache.commons.commons-pool2>
         <version.com.fasterxml.jackson>2.12.5</version.com.fasterxml.jackson>
-        <version.org.json>20210307</version.org.json>
+        <version.org.json>20211205</version.org.json>
         <version.org.jsonschema2pojo>1.1.1</version.org.jsonschema2pojo>
         <version.com.squareup.javapoet>1.13.0</version.com.squareup.javapoet>
         <version.com.sun.codemodel>2.6</version.com.sun.codemodel>
