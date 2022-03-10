@@ -100,7 +100,7 @@
         <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
         <version.maven-javadoc-plugin>3.3.2</version.maven-javadoc-plugin>
         <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
-        <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.11</version.org.sonatype.plugins.nexus-staging-maven-plugin>
+        <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.12</version.org.sonatype.plugins.nexus-staging-maven-plugin>
 
     </properties>
 
