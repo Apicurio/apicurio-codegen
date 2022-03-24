@@ -130,9 +130,7 @@
                     "description": "The content to search for.",
                     "content": {
                         "*/*": {
-		                    "schema": {
-		                        "$ref": "#/components/schemas/FileContent"
-		                    }
+		                    "schema": {}
 		                }
                     },
                     "required": true
