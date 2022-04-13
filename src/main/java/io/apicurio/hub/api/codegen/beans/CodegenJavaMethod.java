@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author eric.wittmann@gmail.com
  */
-public class CodegenJavaMethod {
+public class CodegenJavaMethod implements Cloneable {
 
     private String name;
     private String description;
@@ -168,4 +168,16 @@ public class CodegenJavaMethod {
         this.async = async;
     }
     
+    @Override
+    public CodegenJavaMethod clone() {
+        try {
+            CodegenJavaMethod clone = (CodegenJavaMethod) super.clone();
+            clone.produces = new HashSet<>(produces);
+            clone.consumes = new HashSet<>(consumes);
+            clone.arguments = new ArrayList<>(arguments);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

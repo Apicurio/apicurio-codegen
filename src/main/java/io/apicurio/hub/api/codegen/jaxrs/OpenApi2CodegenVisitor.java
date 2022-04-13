@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,7 +73,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private CodegenInfo codegenInfo = new CodegenInfo();
 
     private CodegenJavaInterface _currentInterface;
-    private CodegenJavaMethod _currentMethod;
+    private List<CodegenJavaMethod> _currentMethods;
     private CodegenJavaArgument _currentArgument;
 
     private int _methodCounter = 1;
@@ -207,7 +208,8 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         }
         method.setAsync(async);
 
-        this._currentMethod = method;
+        this._currentMethods = new ArrayList<>();
+        this._currentMethods.add(method);
         this._currentInterface.getMethods().add(method);
 
         // Be sure to process path and query parameters found on the parent!
@@ -238,12 +240,13 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         cgArgument.setIn(param.in);
         cgArgument.setRequired(true);
 
-        this._currentMethod.getArguments().add(cgArgument);
         this._currentArgument = cgArgument;
 
         if (param.required != null) {
             cgArgument.setRequired(param.required);
         }
+
+        this._currentMethods.forEach(method -> method.getArguments().add(cgArgument));
 
         if (param.ownerDocument().getDocumentType() == DocumentType.openapi2) {
             this.visit20Parameter((Oas20Parameter) param);
@@ -294,25 +297,53 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     @Override
     public void visitRequestBody(Oas30RequestBody node) {
         List<Oas30MediaType> mediaTypes = node.getMediaTypes();
+
+        Map<CodegenJavaReturn, Set<String>> allReturnTypes = new HashMap<>();
         if (mediaTypes != null && mediaTypes.size() > 0) {
-            Oas30MediaType mediaType = mediaTypes.get(0);
-            CodegenJavaArgument cgArgument = new CodegenJavaArgument();
-            cgArgument.setName("data");
-            cgArgument.setIn("body");
-            cgArgument.setRequired(true);
-            CodegenJavaReturn cgReturn = this.returnFromSchema(mediaType.schema);
-            if (cgReturn != null) {
-                if (cgReturn.getCollection() != null) { cgArgument.setCollection(cgReturn.getCollection()); }
-                if (cgReturn.getType() != null) { cgArgument.setType(cgReturn.getType()); }
-                if (cgReturn.getFormat() != null) { cgArgument.setFormat(cgReturn.getFormat()); }
-            }
-            this._currentArgument = cgArgument;
-            this._currentMethod.getArguments().add(cgArgument);
+            mediaTypes.forEach(mediaType -> {
+                CodegenJavaReturn cgReturn = this.returnFromSchema(mediaType.schema);
+                if (cgReturn == null) {
+                    cgReturn = new CodegenJavaReturn();
+                }
+                allReturnTypes.merge(cgReturn, Collections.singleton(mediaType.getName()), (set1, set2) -> {
+                    Set<String> merged = new HashSet<>();
+                    merged.addAll(set1);
+                    merged.addAll(set2);
+                    return merged;
+                });
+            });
         }
-        // Push all of the media types onto the "consumes" array for the method.
-        for (Oas30MediaType mt : mediaTypes) {
-            this._currentMethod.getConsumes().add(mt.getName());
+
+        // If the set of return types is > 1 then we need to generate a java method for each one.  This means
+        // duplicating the current cgMethod.
+
+        if (!allReturnTypes.isEmpty()) {
+            CodegenJavaMethod methodTemplate = this._currentMethods.get(0);
+            List<CodegenJavaMethod> methods = allReturnTypes.entrySet().stream().map(entry -> {
+                CodegenJavaReturn returnType = entry.getKey();
+                Set<String> types = entry.getValue();
+                
+                CodegenJavaMethod clonedMethod = methodTemplate.clone();
+                clonedMethod.getConsumes().addAll(types);
+
+                CodegenJavaArgument cgArgument = new CodegenJavaArgument();
+                cgArgument.setName("data");
+                cgArgument.setIn("body");
+                cgArgument.setRequired(true);
+
+                if (returnType.getCollection() != null) { cgArgument.setCollection(returnType.getCollection()); }
+                if (returnType.getType() != null) { cgArgument.setType(returnType.getType()); }
+                if (returnType.getFormat() != null) { cgArgument.setFormat(returnType.getFormat()); }
+                
+                clonedMethod.getArguments().add(cgArgument);
+                
+                return clonedMethod;
+            }).collect(Collectors.toList());
+            this._currentInterface.getMethods().remove(methodTemplate);
+            this._currentInterface.getMethods().addAll(methods);
+            this._currentMethods = methods;
         }
+        
     }
 
     /**
@@ -322,7 +353,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     public void visitResponse(OasResponse node) {
         // Note: if there are multiple 2xx responses, only the first one will
         // become the method return value.
-        if (node.getStatusCode() != null && node.getStatusCode().indexOf("2") == 0 && this._currentMethod.getReturn() == null) {
+        if (node.getStatusCode() != null && node.getStatusCode().indexOf("2") == 0 && this._currentMethods.get(0).getReturn() == null) {
             if (node.ownerDocument().getDocumentType() == DocumentType.openapi2) {
                 this.visit20Response((Oas20Response) node);
             }
@@ -333,34 +364,40 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     }
     private void visit20Response(Oas20Response node) {
         if (node.getStatusCode() != null && node.getStatusCode().indexOf("2") == 0) {
-            this._currentMethod.setReturn(this.returnFromSchema(node.schema));
+            this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(this.returnFromSchema(node.schema)));
         }
     }
     private void visit30Response(Oas30Response node) {
         List<Oas30MediaType> mediaTypes = node.getMediaTypes();
+        // TODO if there are multiple response media types, handle it somehow - probably by returning a JAX-RS Response object
         if (mediaTypes != null && mediaTypes.size() > 0) {
             Oas30MediaType mediaType = mediaTypes.get(0);
             Extension returnTypeExt = mediaType.getExtension(CodegenExtensions.RETURN_TYPE);
+            CodegenJavaReturn cgReturn = null;
             if (returnTypeExt != null) {
                 String returnType = (String) returnTypeExt.value;
                 CodegenJavaReturn customReturn = new CodegenJavaReturn();
                 customReturn.setType(returnType);
-                this._currentMethod.setReturn(customReturn);
+                cgReturn = customReturn;
             } else {
-                this._currentMethod.setReturn(this.returnFromSchema(mediaType.schema));
+                cgReturn = this.returnFromSchema(mediaType.schema);
             }
+
             // If no return was created, it was because we couldn't figure it out from the
             // schema (likely no schema declared) so we should create something to
             // indicate that we DO want a return value, but we don't know what it is.
-            if (this._currentMethod.getReturn() == null) {
+            if (cgReturn == null) {
                 CodegenJavaReturn unknownReturn = new CodegenJavaReturn();
                 unknownReturn.setType("javax.ws.rs.core.Response");
-                this._currentMethod.setReturn(unknownReturn);
+                cgReturn = unknownReturn;
             }
+            
+            final CodegenJavaReturn _return = cgReturn;
+            this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(_return));
         }
         // Push all of the media types onto the "produces" array for the method.
         for (Oas30MediaType mt : mediaTypes) {
-            this._currentMethod.getProduces().add(mt.getName());
+            this._currentMethods.forEach(_currentMethod -> _currentMethod.getProduces().add(mt.getName()));
         }
     }
 

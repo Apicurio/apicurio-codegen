@@ -72,4 +72,42 @@ public class CodegenJavaReturn {
     public void setFormat(String format) {
         this.format = format;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((collection == null) ? 0 : collection.hashCode());
+        result = prime * result + ((format == null) ? 0 : format.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CodegenJavaReturn other = (CodegenJavaReturn) obj;
+        if (collection == null) {
+            if (other.collection != null)
+                return false;
+        } else if (!collection.equals(other.collection))
+            return false;
+        if (format == null) {
+            if (other.format != null)
+                return false;
+        } else if (!format.equals(other.format))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        return true;
+    }
+    
 }
