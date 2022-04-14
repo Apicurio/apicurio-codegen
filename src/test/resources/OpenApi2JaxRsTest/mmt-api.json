@@ -9,6 +9,26 @@
             "summary": "Path used to manage the list of widgets.",
             "description": "The REST endpoint/path used to list and create zero or more `Widget` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.",
             "get": {
+		        "parameters": [
+		            {
+		                "name": "description",
+		                "description": "Filter by description.",
+		                "schema": {
+		                    "type": "string"
+		                },
+		                "in": "query"
+		            },
+		            {
+		                "name": "contentId",
+		                "description": "Filter by contentId.",
+		                "schema": {
+		                    "format": "int64",
+		                    "type": "integer"
+		                },
+		                "in": "query"
+		            }
+		        
+		        ],
                 "responses": {
                     "200": {
                         "content": {

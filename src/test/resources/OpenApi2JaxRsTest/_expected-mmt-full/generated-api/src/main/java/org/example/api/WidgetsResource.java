@@ -10,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import org.example.api.beans.Widget;
 import org.example.api.beans.Widgetv1;
 import org.example.api.beans.Widgetv2;
@@ -24,7 +25,8 @@ public interface WidgetsResource {
    */
   @GET
   @Produces("application/json")
-  List<Widget> getWidgets();
+  List<Widget> getWidgets(@QueryParam("description") String description,
+      @QueryParam("contentId") Long contentId);
 
   /**
    * Creates a new instance of a `Widget`.

@@ -26,7 +26,7 @@ public interface IdsResource {
   @Path("/contentIds/{contentId}/")
   @GET
   @Produces({"application/json", "application/x-protobuf", "application/x-protobuffer"})
-  Response getContentById(@PathParam("contentId") int contentId);
+  Response getContentById(@PathParam("contentId") long contentId);
 
   /**
    * Gets the content for an artifact version in the registry using its globally unique
@@ -41,7 +41,7 @@ public interface IdsResource {
   @Path("/globalIds/{globalId}")
   @GET
   @Produces({"application/json", "application/x-protobuf", "application/x-protobuffer"})
-  Response getContentByGlobalId(@PathParam("globalId") int globalId);
+  Response getContentByGlobalId(@PathParam("globalId") long globalId);
 
   /**
    * Gets the content for an artifact version in the registry using the unique content
@@ -57,6 +57,6 @@ public interface IdsResource {
   @Path("/contentHashes/{contentHash}/")
   @GET
   @Produces("*/*")
-  Response getContentByHash(@PathParam("contentHash") int contentHash,
+  Response getContentByHash(@PathParam("contentHash") long contentHash,
       @QueryParam("canonical") Boolean canonical);
 }

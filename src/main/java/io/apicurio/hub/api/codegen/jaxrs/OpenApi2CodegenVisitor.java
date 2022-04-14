@@ -238,7 +238,6 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         CodegenJavaArgument cgArgument = new CodegenJavaArgument();
         cgArgument.setName(param.name);
         cgArgument.setIn(param.in);
-        cgArgument.setRequired(true);
 
         this._currentArgument = cgArgument;
 

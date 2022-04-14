@@ -551,7 +551,7 @@ public class OpenApi2JaxRs {
                 // TODO handle byte
             }
         } else if (type.equals("integer")) {
-            if (config.isUseLongIntegers()) {
+            if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
                 coreType = required && !isList && format != null ? TypeName.LONG : ClassName.get(Long.class);
 
             } else {

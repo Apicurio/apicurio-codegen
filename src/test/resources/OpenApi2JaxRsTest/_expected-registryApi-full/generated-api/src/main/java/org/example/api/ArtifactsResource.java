@@ -221,7 +221,7 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/versions")
   @GET
   @Produces("application/json")
-  List<Integer> listArtifactVersions(@PathParam("artifactId") String artifactId);
+  List<Long> listArtifactVersions(@PathParam("artifactId") String artifactId);
 
   /**
    * Creates a new version of the artifact by uploading new content.  The configured rules for
