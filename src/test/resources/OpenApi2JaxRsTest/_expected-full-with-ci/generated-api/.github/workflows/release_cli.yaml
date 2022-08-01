@@ -86,7 +86,7 @@ jobs:
         uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: ${{ matrix.lang }}
-          openapi-file: openapi.json
+          openapi-file: src/main/resources/META-INF/openapi.json
       - name: Compress folder
         run: zip -r ${{ matrix.lang }}-client.zip ${{ matrix.lang }}-client
       - name: Upload zip
