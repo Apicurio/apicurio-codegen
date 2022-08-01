@@ -96,6 +96,14 @@ public class OpenApi2JaxRsTest {
      * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
      */
     @Test
+    public void testGenerateWithCLIGenCI() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.no, true, "_expected-full-with-ci/generated-api", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
     public void testGenerateFull_Issue885Api() throws IOException {
         // Note: I can't seem to get this working in the maven build, but it works in Eclipse.
         doFullTest("OpenApi2JaxRsTest/issue-885-api.json", UpdateOnly.no, Reactive.no, "_expected-issue885Api-full/generated-api", false);
@@ -183,9 +191,23 @@ public class OpenApi2JaxRsTest {
      * @throws IOException
      */
     private void doFullTest(String apiDef, UpdateOnly updateOnly, Reactive reactive, String expectedFilesPath, boolean debug) throws IOException {
+        doFullTest(apiDef, updateOnly, reactive, false, expectedFilesPath, debug);
+    }
+
+    /**
+     * Shared test method.
+     * @param apiDef
+     * @param updateOnly
+     * @param reactive
+     * @param expectedFilesPath
+     * @param debug
+     * @throws IOException
+     */
+    private void doFullTest(String apiDef, UpdateOnly updateOnly, Reactive reactive, boolean generateCLiGenCI, String expectedFilesPath, boolean debug) throws IOException {
         JaxRsProjectSettings settings = new JaxRsProjectSettings();
         settings.codeOnly = false;
         settings.reactive = reactive == Reactive.yes;
+        settings.cliGenCI = generateCLiGenCI;
         settings.artifactId = "generated-api";
         settings.groupId = "org.example.api";
         settings.javaPackage = "org.example.api";
