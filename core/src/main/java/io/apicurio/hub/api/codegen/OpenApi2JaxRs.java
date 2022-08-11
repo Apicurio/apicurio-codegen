@@ -229,6 +229,13 @@ public class OpenApi2JaxRs {
             }
         }
 
+        if (this.settings.cliGenCI) {
+            log.append("Generating .github/workflows/release_cli.yaml\r\n");
+            zipOutput.putNextEntry(new ZipEntry(".github/workflows/release_cli.yaml"));
+            zipOutput.write(IOUtils.toString(getResource("release_cli.yaml"), Charset.forName("UTF-8")).getBytes(utf8));
+            zipOutput.closeEntry();
+        }
+
         log.append("Generating src/main/resources/META-INF/openapi.json\r\n");
         zipOutput.putNextEntry(new ZipEntry("src/main/resources/META-INF/openapi.json"));
         zipOutput.write(this.openApiDoc.getBytes(utf8));
@@ -784,6 +791,7 @@ public class OpenApi2JaxRs {
     public static class JaxRsProjectSettings {
         public boolean codeOnly;
         public boolean reactive;
+        public boolean cliGenCI;
         public String groupId;
         public String artifactId;
         public String javaPackage;
@@ -804,6 +812,7 @@ public class OpenApi2JaxRs {
         public JaxRsProjectSettings(String groupId, String artifactId, String javaPackage) {
             this.codeOnly = false;
             this.reactive = false;
+            this.cliGenCI = false;
             this.groupId = groupId;
             this.artifactId = artifactId;
             this.javaPackage = javaPackage;
@@ -821,6 +830,7 @@ public class OpenApi2JaxRs {
         public JaxRsProjectSettings(boolean codeOnly, boolean reactive, String groupId, String artifactId, String javaPackage) {
             this.codeOnly = false;
             this.reactive = false;
+            this.cliGenCI = false;
             this.groupId = groupId;
             this.artifactId = artifactId;
             this.javaPackage = javaPackage;
