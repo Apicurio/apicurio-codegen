@@ -307,14 +307,6 @@ public class GenerateJavaSources implements Runnable {
     }
 
     public static void main(String[] args) {
-        System.out.println("DA QUI!");
-        args = new String[]
-                {"--spec=/Users/aperuffo/workspace/apicurio-registry/common/src/main/resources/META-INF/openapi.json",
-                        "--output=/tmp/test.zip",
-                        "--generator=JAX_RS",
-                        "--code-only=false",
-                        "--update-only=false"};
-
         int exitCode = new CommandLine(new GenerateJavaSources()).execute(args);
         System.exit(exitCode);
     }
