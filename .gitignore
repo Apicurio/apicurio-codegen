@@ -1,5 +1,7 @@
 /bin/
 /target/
+/core/target/
+/cli/target/
 .generated
 .ts
 .js
