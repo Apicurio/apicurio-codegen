@@ -15,14 +15,19 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     if: github.repository_owner == 'Apicurio'
     steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch}}
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
+          cache: maven
 
 
       - name: Check Java Version
@@ -51,30 +56,14 @@ jobs:
           cat /home/runner/.m2/settings.xml
 
 
-      - name: Set up Gren
-        run: npm install github-release-notes -g
-
-
-      - name: Cache Dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository                               
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-
-      - name: Apicurio Codgen Code Checkout
+      - name: Configure Git
         run: |
           git init
           git config --global user.name "apicurio-ci"
           git config --global user.email "apicurio.ci@gmail.com"
-          git remote add origin "https://apicurio-ci:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git"
-          git fetch
-          git checkout ${{ github.event.inputs.branch}}
           git branch --set-upstream-to=origin/${{ github.event.inputs.branch}}
           git pull
-          echo "#### Listing files after clone ####"
+          echo "#### Listing files ####"
           find .
 
       
@@ -103,14 +92,6 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          
-
-      - name: Create GitHub Release
-        run: ./.github/scripts/create-github-release.sh ${{ github.event.inputs.release-version}} ${{ github.event.inputs.branch}} $GITHUB_REPOSITORY ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Generate Release Notes
-        run: gren release --token=${{ secrets.GITHUB_TOKEN }} --override
 
 
       - name: Maven Deploy
@@ -121,17 +102,127 @@ jobs:
           (echo "===== Maven Deploy Attempt 2 Failed - Sleeping for 30 minutes ====" && sleep 30m && echo "===== Maven Deploy Attempt: 3 ====" && mvn deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
           (echo "==== Maven Deploy Step Failed ====" && exit 1)
 
+  build-native-binary:
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        gu-binary: [gu, gu.cmd]
+        exclude:
+          - os: ubuntu-latest
+            gu-binary: gu.cmd
+          - os: macos-latest
+            gu-binary: gu.cmd
+          - os: windows-latest
+            gu-binary: gu
+    continue-on-error: true
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch}}
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: '22.2.0'
+          java-version: '11'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install native-image component
+        run: |
+          ${{ matrix.gu-binary }} install native-image
+
+      - name: 'Set up Visual C Build Tools Workload for Visual Studio 2019 Build Tools'
+        if: runner.os == 'Windows'
+        run: |
+          choco upgrade -y visualstudio2019-workload-vctools
+      - name: 'Build Native Image'
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+
+      - name: Compile to native binaries
+        run: mvn package -Pnative
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: apicurio-codegen-${{ matrix.os }}
+          path: ./cli/target/apicurio-codegen-cli-*-runner*
+          if-no-files-found: error
+
+  release-native-binaries:
+    needs: build-native-binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+      - name: Prepare files to release
+        run: |
+          mv ./apicurio-codegen-macos-latest/apicurio-codegen-cli-*-runner apicurio-codegen-macos
+          mv ./apicurio-codegen-ubuntu-latest/apicurio-codegen-cli-*-runner apicurio-codegen-linux
+          mv ./apicurio-codegen-windows-latest/apicurio-codegen-cli-*-runner.exe apicurio-codegen-win.exe
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.release-version}}
+          files: |
+            apicurio-codegen-macos
+            apicurio-codegen-linux
+            apicurio-codegen-win.exe
+      - uses: lakto/gren-action@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          options: '--override'
+
+  set-next-snapshot:
+    needs: release-native-binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch}}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: maven
+
+      - name: Check Java Version
+        run: java -version
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: '3.6.3'
+
+      - name: Check Maven Version
+        run: mvn --version
 
       - name: Update Snapshot version ${{ github.event.inputs.snapshot-version}}
         run: mvn versions:set -DnewVersion=${{ github.event.inputs.snapshot-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
 
+      - name: Configure Git
+        run: |
+          git init
+          git config --global user.name "apicurio-ci"
+          git config --global user.email "apicurio.ci@gmail.com"
+          git branch --set-upstream-to=origin/${{ github.event.inputs.branch}}
+          git pull
+          echo "#### Listing files ####"
+          find .
 
       - name: Commit Snapshot Version Change
         run: |
           git add .
           git commit -m"Automated version update: ${{ github.event.inputs.snapshot-version}}"
           git push
-
 
       - name: Google Chat Notification
         if: ${{ failure() }}
