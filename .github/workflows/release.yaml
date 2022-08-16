@@ -84,7 +84,7 @@ jobs:
         run: |
           git add .
           git commit -m "Automated version update: ${{ github.event.inputs.release-version}}"
-          git push
+          git push -f
 
 
       - name: Import GPG Key
@@ -222,7 +222,7 @@ jobs:
         run: |
           git add .
           git commit -m"Automated version update: ${{ github.event.inputs.snapshot-version}}"
-          git push
+          git push -f
 
       - name: Google Chat Notification
         if: ${{ failure() }}
