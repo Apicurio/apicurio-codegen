@@ -16,6 +16,7 @@
 
 package io.apicurio.codegen.cli;
 
+import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
 import io.apicurio.hub.api.codegen.OpenApi2Quarkus;
 import io.apicurio.hub.api.codegen.OpenApi2Thorntail;
@@ -29,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 
 @Command(name = "apicurio-codegen", mixinStandardHelpOptions = true, helpCommand = true)
 @RegisterForReflection(targets = {
@@ -274,7 +274,7 @@ public class GenerateJavaSources implements Runnable {
     @Override
     public void run() {
 
-        OpenApi2JaxRs.JaxRsProjectSettings settings = new OpenApi2JaxRs.JaxRsProjectSettings();
+        JaxRsProjectSettings settings = new JaxRsProjectSettings();
         settings.codeOnly = codeOnly;
         settings.reactive = reactive;
         settings.artifactId = artifactId;

@@ -3,9 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.apicurio</groupId>
     <artifactId>apicurio-codegen-cli</artifactId>
-    <version>1.0.12-SNAPSHOT</version>
     <name>apicurio-codegen-cli</name>
 
     <parent>
@@ -126,6 +124,7 @@
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-jar-plugin</artifactId>
+              <version>3.2.2</version>
               <configuration>
                   <archive>
                       <manifest>
@@ -149,6 +148,7 @@
           <build>
             <plugins>
               <plugin>
+              	<groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <executions>

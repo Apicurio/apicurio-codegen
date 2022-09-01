@@ -1,0 +1,186 @@
+/*
+ * Copyright 2022 Red Hat Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.apicurio.hub.api.codegen;
+
+/**
+ * Represents some basic meta information about the project being generated.
+ *
+ * @author eric.wittmann@gmail.com
+ */
+public class JaxRsProjectSettings {
+    
+    public boolean mavenFileStructure = true;
+    public boolean includeSpec = true;
+    public boolean codeOnly = false;
+    public boolean reactive = false;
+    public boolean cliGenCI = false;
+    public String groupId = "org.example";
+    public String artifactId = "example-api";
+    public String javaPackage = "org.example.api";
+
+    /**
+     * Constructor.
+     */
+    public JaxRsProjectSettings() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param groupId
+     * @param artifactId
+     * @param javaPackage
+     */
+    public JaxRsProjectSettings(String groupId, String artifactId, String javaPackage) {
+        this.codeOnly = false;
+        this.reactive = false;
+        this.cliGenCI = false;
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.javaPackage = javaPackage;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param codeOnly
+     * @param reactive
+     * @param groupId
+     * @param artifactId
+     * @param javaPackage
+     */
+    public JaxRsProjectSettings(boolean codeOnly, boolean reactive, String groupId, String artifactId, String javaPackage) {
+        this.codeOnly = false;
+        this.reactive = false;
+        this.cliGenCI = false;
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.javaPackage = javaPackage;
+    }
+
+    /**
+     * @return the codeOnly
+     */
+    public boolean isCodeOnly() {
+        return codeOnly;
+    }
+
+    /**
+     * @param codeOnly the codeOnly to set
+     */
+    public void setCodeOnly(boolean codeOnly) {
+        this.codeOnly = codeOnly;
+    }
+
+    /**
+     * @return the reactive
+     */
+    public boolean isReactive() {
+        return reactive;
+    }
+
+    /**
+     * @param reactive the reactive to set
+     */
+    public void setReactive(boolean reactive) {
+        this.reactive = reactive;
+    }
+
+    /**
+     * @return the cliGenCI
+     */
+    public boolean isCliGenCI() {
+        return cliGenCI;
+    }
+
+    /**
+     * @param cliGenCI the cliGenCI to set
+     */
+    public void setCliGenCI(boolean cliGenCI) {
+        this.cliGenCI = cliGenCI;
+    }
+
+    /**
+     * @return the groupId
+     */
+    public String getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * @param groupId the groupId to set
+     */
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    /**
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    /**
+     * @param artifactId the artifactId to set
+     */
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    /**
+     * @return the javaPackage
+     */
+    public String getJavaPackage() {
+        return javaPackage;
+    }
+
+    /**
+     * @param javaPackage the javaPackage to set
+     */
+    public void setJavaPackage(String javaPackage) {
+        this.javaPackage = javaPackage;
+    }
+
+    /**
+     * @return the mavenFileStructure
+     */
+    public boolean isMavenFileStructure() {
+        return mavenFileStructure;
+    }
+
+    /**
+     * @param mavenFileStructure the mavenFileStructure to set
+     */
+    public void setMavenFileStructure(boolean mavenFileStructure) {
+        this.mavenFileStructure = mavenFileStructure;
+    }
+
+    /**
+     * @return the includeSpec
+     */
+    public boolean isIncludeSpec() {
+        return includeSpec;
+    }
+
+    /**
+     * @param includeSpec the includeSpec to set
+     */
+    public void setIncludeSpec(boolean includeSpec) {
+        this.includeSpec = includeSpec;
+    }
+}
