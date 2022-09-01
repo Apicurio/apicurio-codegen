@@ -30,8 +30,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.apicurio.hub.api.codegen.OpenApi2JaxRs.JaxRsProjectSettings;
-
 /**
  * @author eric.wittmann@gmail.com
  */

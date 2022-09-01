@@ -236,10 +236,16 @@ public class OpenApi2JaxRs {
             zipOutput.closeEntry();
         }
 
-        log.append("Generating src/main/resources/META-INF/openapi.json\r\n");
-        zipOutput.putNextEntry(new ZipEntry("src/main/resources/META-INF/openapi.json"));
-        zipOutput.write(this.openApiDoc.getBytes(utf8));
-        zipOutput.closeEntry();
+        if (settings.isIncludeSpec()) {
+            String specPath = "META-INF/openapi.json";
+            if (settings.isMavenFileStructure()) {
+                specPath = "src/main/resources/" + specPath;
+            }
+            log.append("Generating " + specPath + "\r\n");
+            zipOutput.putNextEntry(new ZipEntry(specPath));
+            zipOutput.write(this.openApiDoc.getBytes(utf8));
+            zipOutput.closeEntry();
+        }
 
         if (!this.updateOnly) {
             String appFileName = javaPackageToZipPath(this.settings.javaPackage) + "JaxRsApplication.java";
@@ -308,7 +314,7 @@ public class OpenApi2JaxRs {
     }
 
     private String javaClassToZipPath(String javaClass) {
-        return "src/main/java/" + javaClass.replace('.', '/') + ".java";
+        return (settings.isMavenFileStructure() ? "src/main/java/" : "") + javaClass.replace('.', '/') + ".java";
     }
 
     /**
@@ -697,8 +703,8 @@ public class OpenApi2JaxRs {
         return CodegenUtil.schemaRefToFQCN(document, path, this.settings.javaPackage + ".beans");
     }
 
-    private static String javaPackageToZipPath(String javaPackage) {
-        return "src/main/java/" + javaPackageToPath(javaPackage);
+    protected String javaPackageToZipPath(String javaPackage) {
+        return (settings.isMavenFileStructure() ? "src/main/java/" : "") + javaPackageToPath(javaPackage);
     }
 
     private static String javaPackageToPath(String javaPackage) {
@@ -780,60 +786,6 @@ public class OpenApi2JaxRs {
         @Override
         public Rule<JClassContainer, JType> getEnumRule() {
             return new JaxRsEnumRule(this);
-        }
-    }
-
-    /**
-     * Represents some basic meta information about the project being generated.
-     *
-     * @author eric.wittmann@gmail.com
-     */
-    public static class JaxRsProjectSettings {
-        public boolean codeOnly;
-        public boolean reactive;
-        public boolean cliGenCI;
-        public String groupId;
-        public String artifactId;
-        public String javaPackage;
-
-        /**
-         * Constructor.
-         */
-        public JaxRsProjectSettings() {
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param groupId
-         * @param artifactId
-         * @param javaPackage
-         */
-        public JaxRsProjectSettings(String groupId, String artifactId, String javaPackage) {
-            this.codeOnly = false;
-            this.reactive = false;
-            this.cliGenCI = false;
-            this.groupId = groupId;
-            this.artifactId = artifactId;
-            this.javaPackage = javaPackage;
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param codeOnly
-         * @param reactive
-         * @param groupId
-         * @param artifactId
-         * @param javaPackage
-         */
-        public JaxRsProjectSettings(boolean codeOnly, boolean reactive, String groupId, String artifactId, String javaPackage) {
-            this.codeOnly = false;
-            this.reactive = false;
-            this.cliGenCI = false;
-            this.groupId = groupId;
-            this.artifactId = artifactId;
-            this.javaPackage = javaPackage;
         }
     }
 
