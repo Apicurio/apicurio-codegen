@@ -110,6 +110,7 @@
         <module>core</module>
         <module>cli</module>
         <module>maven-plugin</module>
+        <module>maven-plugin-tests</module>
     </modules>
 
     <repositories>
