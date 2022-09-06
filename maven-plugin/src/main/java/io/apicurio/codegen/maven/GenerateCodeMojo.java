@@ -16,6 +16,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
@@ -28,6 +29,12 @@ import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
 @Mojo(name = "generate")
 public class GenerateCodeMojo extends AbstractMojo {
 
+    /**
+     * The current Maven project.
+     */
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
+    
     @Parameter(required = true)
     JaxRsProjectSettings projectSettings;
 
@@ -56,6 +63,10 @@ public class GenerateCodeMojo extends AbstractMojo {
             outputDir.mkdirs();
         }
 
+        // Add the output directory as a compile source.
+        getLog().info("Generating code into: " + outputDir.getAbsolutePath());
+        this.project.addCompileSourceRoot(outputDir.getAbsolutePath());
+
         // Generate code - output a ZIP file.
         File zipFile = new File(outputDir, "generated-code.zip");
         try (FileOutputStream fos = new FileOutputStream(zipFile)) {
@@ -66,7 +77,7 @@ public class GenerateCodeMojo extends AbstractMojo {
             getLog().info("Generating code...");
             generator.generate(fos);
         } catch (Exception e) {
-            e.printStackTrace();
+        	getLog().error(e);
             throw new MojoExecutionException(e);
         }
 
@@ -75,13 +86,14 @@ public class GenerateCodeMojo extends AbstractMojo {
         try {
             unzip(zipFile, outputDir);
         } catch (IOException e) {
-            e.printStackTrace();
+        	getLog().error(e);
             throw new MojoExecutionException(e);
+        } finally {
+            // Delete the temporary ZIP file
+            zipFile.delete();
         }
         
-        // Delete the temporary ZIP file
-        zipFile.delete();
-
+        getLog().info("Code successfully generated.");
     }
 
     private void unzip(File fromZipFile, File toOutputDir) throws ZipException, IOException {
