@@ -18,7 +18,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
 
 /**
@@ -36,7 +35,7 @@ public class GenerateCodeMojo extends AbstractMojo {
     protected MavenProject project;
     
     @Parameter(required = true)
-    JaxRsProjectSettings projectSettings;
+    ProjectSettings projectSettings;
 
     @Parameter(required = true)
     File inputSpec;

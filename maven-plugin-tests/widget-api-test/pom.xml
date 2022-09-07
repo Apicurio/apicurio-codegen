@@ -80,17 +80,9 @@
                         </goals>
                         <configuration>
                             <projectSettings>
-                                <mavenFileStructure>false</mavenFileStructure>
-                                <includeSpec>false</includeSpec>
-                                <codeOnly>true</codeOnly>
-                                <reactive>false</reactive>
-                                <cliGenCI>false</cliGenCI>
-                                <groupId>io.apicurio.codegen.tests</groupId>
-                                <artifactId>widget-api-test</artifactId>
-                                <javaPackage>io.apicurio.codegen.tests.basic.api</javaPackage>
+                                <javaPackage>io.apicurio.codegen.tests.widget.api</javaPackage>
                             </projectSettings>
                             <inputSpec>openapi.json</inputSpec>
-                            <outputDir>${project.build.directory}/generated-sources/jaxrs/</outputDir>
                         </configuration>
                     </execution>
                 </executions>
