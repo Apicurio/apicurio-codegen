@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import io.apicurio.codegen.tests.basic.api.beans.Widget;
+import io.apicurio.codegen.tests.widget.api.beans.Widget;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 

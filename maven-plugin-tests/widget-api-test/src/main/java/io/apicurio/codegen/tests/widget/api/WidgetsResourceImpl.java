@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.apicurio.codegen.tests.basic.api;
+package io.apicurio.codegen.tests.widget.api;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.apicurio.codegen.tests.basic.api.beans.Widget;
+import io.apicurio.codegen.tests.widget.api.beans.Widget;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -29,7 +29,7 @@ public class WidgetsResourceImpl implements WidgetsResource {
     private static List<Widget> widgets = new ArrayList<>();
 
     /**
-     * @see io.apicurio.codegen.tests.basic.api.WidgetsResource#getWidgets()
+     * @see io.apicurio.codegen.tests.widget.api.WidgetsResource#getWidgets()
      */
     @Override
     public List<Widget> getWidgets() {
@@ -38,7 +38,7 @@ public class WidgetsResourceImpl implements WidgetsResource {
     }
 
     /**
-     * @see io.apicurio.codegen.tests.basic.api.WidgetsResource#createWidget(io.apicurio.codegen.tests.basic.api.beans.Widget)
+     * @see io.apicurio.codegen.tests.widget.api.WidgetsResource#createWidget(io.apicurio.codegen.tests.widget.api.beans.Widget)
      */
     @Override
     public void createWidget(Widget data) {
@@ -47,7 +47,7 @@ public class WidgetsResourceImpl implements WidgetsResource {
     }
 
     /**
-     * @see io.apicurio.codegen.tests.basic.api.WidgetsResource#getWidget(java.lang.String)
+     * @see io.apicurio.codegen.tests.widget.api.WidgetsResource#getWidget(java.lang.String)
      */
     @Override
     public Widget getWidget(String widgetId) {
@@ -55,14 +55,14 @@ public class WidgetsResourceImpl implements WidgetsResource {
     }
 
     /**
-     * @see io.apicurio.codegen.tests.basic.api.WidgetsResource#updateWidget(java.lang.String, io.apicurio.codegen.tests.basic.api.beans.Widget)
+     * @see io.apicurio.codegen.tests.widget.api.WidgetsResource#updateWidget(java.lang.String, io.apicurio.codegen.tests.widget.api.beans.Widget)
      */
     @Override
     public void updateWidget(String widgetId, Widget data) {
     }
 
     /**
-     * @see io.apicurio.codegen.tests.basic.api.WidgetsResource#deleteWidget(java.lang.String)
+     * @see io.apicurio.codegen.tests.widget.api.WidgetsResource#deleteWidget(java.lang.String)
      */
     @Override
     public void deleteWidget(String widgetId) {
