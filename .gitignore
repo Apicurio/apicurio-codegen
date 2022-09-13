@@ -2,6 +2,7 @@
 /target/
 /core/target/
 /cli/target/
+/maven-plugin-tests/target/
 .generated
 .ts
 .js
