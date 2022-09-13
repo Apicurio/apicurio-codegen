@@ -13,9 +13,50 @@
     <artifactId>apicurio-codegen-maven-plugin-tests</artifactId>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>basic-codegen-test</module>
-        <module>widget-api-test</module>
-    </modules>
+    <build>
+        <plugins>
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                <cloneClean>true</cloneClean>
+                <settingsFile>src/it/settings.xml</settingsFile>
+                <postBuildHookScript>verify</postBuildHookScript>
+                <addTestClassPath>true</addTestClassPath>
+                <skipInvocation>${skipTests}</skipInvocation>
+                <streamLogs>true</streamLogs>
+                <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                <scriptVariables>
+                    <version>${project.version}</version>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <groupId>${project.groupId}</groupId>
+                </scriptVariables>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>integration-tests</id>
+                    <goals>
+                        <goal>install</goal>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

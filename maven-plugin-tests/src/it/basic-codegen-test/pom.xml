@@ -3,43 +3,44 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-codegen-maven-plugin-tests</artifactId>
-        <version>1.0.12-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
     <artifactId>basic-codegen-test</artifactId>
+    <groupId>io.apicurio</groupId>
+    <version>0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+  
+    <properties>
+      <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
+      <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${version.com.fasterxml.jackson}</version>
+            <version>@version.com.fasterxml.jackson@</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${version.com.fasterxml.jackson}</version>
+            <version>@version.com.fasterxml.jackson@</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${version.com.fasterxml.jackson}</version>
+            <version>@version.com.fasterxml.jackson@</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec}</version>
+            <version>@version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec@</version>
             <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
+            <version>@version.junit@</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -49,7 +50,7 @@
             <plugin>
                 <groupId>io.apicurio</groupId>
                 <artifactId>apicurio-codegen-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>@project.version@</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
