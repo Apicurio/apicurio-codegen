@@ -2,30 +2,31 @@ package io.apicurio.openapi.server.generator.deployment.codegen;
 
 import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
-import io.apicurio.openapi.server.generator.deployment.CodegenConfig;
 import io.quarkus.bootstrap.prebuild.CodeGenException;
 import io.quarkus.deployment.CodeGenContext;
 import io.quarkus.deployment.CodeGenProvider;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.eclipse.microprofile.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-public class ApicurioOpenApiServerGeneratorCodeGen implements CodeGenProvider {
+import static io.apicurio.openapi.server.generator.deployment.CodegenConfig.getBasePackagePropertyName;
+import static io.apicurio.openapi.server.generator.deployment.CodegenConfig.getSpecPropertyName;
 
-    private static final Logger log = LoggerFactory.getLogger(ApicurioOpenApiServerGeneratorCodeGen.class);
-    private static final String DEFAULT_PACKAGE = "org.openapi.quarkus";
+public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(ApicurioOpenApiServerCodegen.class);
+
+    private static final String DEFAULT_PACKAGE = "io.apicurio.api";
 
     @Override
     public String providerId() {
@@ -45,14 +46,18 @@ public class ApicurioOpenApiServerGeneratorCodeGen implements CodeGenProvider {
     @Override
     public boolean trigger(CodeGenContext context) throws CodeGenException {
         final Path outDir = context.outDir();
-        final Path openApiDir = context.inputDir();
-
+        generate(context.config(), outDir.toFile());
         return true;
     }
 
-    public void generate(final Config config, final File openApiFilePath, final File outDir) throws CodeGenException {
-        log.info("Generating JAX-RS interfaces and beans from: " + openApiFilePath);
-        if (openApiFilePath == null || !openApiFilePath.isFile()) {
+    public void generate(Config config, final File outDir) throws CodeGenException {
+        final URL openApiResource = getClass().getResource(config.getValue(getSpecPropertyName(), String.class));
+        Objects.requireNonNull(openApiResource);
+        File openApiSpec = new File(openApiResource.toString());
+        final String basePackage = getBasePackage(config);
+
+        log.info("Generating JAX-RS interfaces and beans from: " + openApiSpec);
+        if (openApiSpec.isFile()) {
             throw new CodeGenException("Input spec not found.");
         }
 
@@ -66,15 +71,20 @@ public class ApicurioOpenApiServerGeneratorCodeGen implements CodeGenProvider {
         }
 
         JaxRsProjectSettings projectSettings = new JaxRsProjectSettings();
+        projectSettings.setJavaPackage(basePackage);
         projectSettings.setReactive(false);
+        projectSettings.setCodeOnly(true);
+        projectSettings.setCliGenCI(false);
+        projectSettings.setMavenFileStructure(false);
+        projectSettings.setIncludeSpec(false);
+        projectSettings.setCliGenCI(false);
 
         // Generate code - output a ZIP file.
         File zipFile = new File(outDir, "generated-code.zip");
         try (FileOutputStream fos = new FileOutputStream(zipFile)) {
             OpenApi2JaxRs generator = new OpenApi2JaxRs();
             generator.setSettings(projectSettings);
-            generator.setUpdateOnly(true);
-            generator.setOpenApiDocument(openApiFilePath.toURI().toURL());
+            generator.setOpenApiDocument(openApiResource);
             log.info("Generating code...");
             generator.generate(fos);
         } catch (Exception e) {
@@ -114,5 +124,11 @@ public class ApicurioOpenApiServerGeneratorCodeGen implements CodeGenProvider {
                 }
             }
         }
+    }
+
+    private String getBasePackage(final Config config) {
+        return config
+                .getOptionalValue(getBasePackagePropertyName(), String.class)
+                .orElse(DEFAULT_PACKAGE);
     }
 }

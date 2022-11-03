@@ -10,15 +10,14 @@ import java.nio.file.Path;
 public class CodegenConfig {
 
     static final String CODEGEN_TIME_CONFIG_PREFIX = "apicurio.codegen.openapi";
-    private static final String BASE_PACKAGE_PROP_FORMAT = "%s.base-package";
-    static final String BUILD_TIME_SPEC_PREFIX_FORMAT = CODEGEN_TIME_CONFIG_PREFIX + ".spec.%s";
+    private static final String CODEGEN_BASE_PACKAGE = CODEGEN_TIME_CONFIG_PREFIX + ".base-package";
+    private static final String CODEGEN_SPEC = CODEGEN_TIME_CONFIG_PREFIX + ".spec";
 
-
-    public static String getBasePackagePropertyName(final Path openApiFilePath) {
-        return String.format(BASE_PACKAGE_PROP_FORMAT, getBuildTimeSpecPropertyPrefix(openApiFilePath));
+    public static String getBasePackagePropertyName() {
+        return CODEGEN_BASE_PACKAGE;
     }
 
-    public static String getBuildTimeSpecPropertyPrefix(final Path openApiFilePath) {
-        return String.format(BUILD_TIME_SPEC_PREFIX_FORMAT, openApiFilePath);
+    public static String getSpecPropertyName() {
+        return CODEGEN_SPEC;
     }
 }

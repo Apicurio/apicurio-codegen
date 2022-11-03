@@ -12,12 +12,19 @@
 
     <artifactId>apicurio-codegen-quarkus-extension-integration-tests</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jackson</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.apicurio</groupId>
             <artifactId>apicurio-codegen-quarkus-extension</artifactId>
@@ -28,17 +35,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.version}</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>build</goal>
                             <goal>generate-code-tests</goal>
+                            <goal>generate-code</goal>
                         </goals>
                     </execution>
                 </executions>
