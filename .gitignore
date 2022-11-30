@@ -3,6 +3,10 @@
 /core/target/
 /cli/target/
 /maven-plugin-tests/target/
+/quarkus-extension/deployment/target
+/quarkus-extension/runtime/target
+/quarkus-extension/integration-tests/target
+/quarkus-extension/target
 .generated
 .ts
 .js
