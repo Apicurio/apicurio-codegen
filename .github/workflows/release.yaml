@@ -29,32 +29,26 @@ jobs:
           java-version: '11'
           cache: maven
 
-
       - name: Check Java Version
         run: java -version
-
 
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: '3.6.3'
 
-
       - name: Check Maven Version
         run: mvn --version
-
 
       - name: Log Metadata
         run: |
           echo "Releasing Apicurio Codegen version ${{ github.event.inputs.release-version }} from branch ${{ github.event.inputs.branch }}"
           echo "Next Snapshot version will be ${{ github.event.inputs.snapshot-version }}"
 
-
       - name: Set up settings.xml
         run: |
           echo "<settings><servers><server><id>${{ secrets.OSSRH_ID }}</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_TOKEN }}</password></server></servers><profiles><profile><id>${{ secrets.OSSRH_ID }}</id><activation><activeByDefault>true</activeByDefault></activation><properties><gpg.executable>gpg</gpg.executable><gpg.passphrase>${{ secrets.GPG_PASSPHRASE}}</gpg.passphrase></properties></profile></profiles></settings>" > /home/runner/.m2/settings.xml
           cat /home/runner/.m2/settings.xml
-
 
       - name: Configure Git
         run: |
@@ -65,34 +59,22 @@ jobs:
           git pull
           echo "#### Listing files ####"
           find .
-
       
       # To avoid permission denied issues 
       - name: Give full Permissions
         run: chmod -R 777 $(pwd)
-
         
       - name: Update Release Version ${{ github.event.inputs.release-version }}
-        run: mvn versions:set -DnewVersion=${{ github.event.inputs.release-version }} -DgenerateBackupPoms=false -DprocessAllModules=true
-
+        run: git tag ${{ github.event.inputs.release-version }}
 
       - name: Verify Build
         run: mvn clean install
-
-
-      - name: Commit Release Version Change
-        run: |
-          git add .
-          git commit -m "Automated version update: ${{ github.event.inputs.release-version}}"
-          git push
-
 
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v1
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
 
       - name: Maven Deploy
         run: |
@@ -178,56 +160,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           options: '--override'
-
-  set-next-snapshot:
-    needs: release-native-binaries
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.branch}}
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: maven
-
-      - name: Check Java Version
-        run: java -version
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: '3.6.3'
-
-      - name: Check Maven Version
-        run: mvn --version
-
-      - name: Update Snapshot version ${{ github.event.inputs.snapshot-version}}
-        run: mvn versions:set -DnewVersion=${{ github.event.inputs.snapshot-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
-
-      - name: Configure Git
-        run: |
-          git init
-          git config --global user.name "apicurio-ci"
-          git config --global user.email "apicurio.ci@gmail.com"
-          git branch --set-upstream-to=origin/${{ github.event.inputs.branch}}
-          git pull
-          echo "#### Listing files ####"
-          find .
-
-      - name: Commit Snapshot Version Change
-        run: |
-          git add .
-          git commit -m"Automated version update: ${{ github.event.inputs.snapshot-version}}"
-          git push
-
-      - name: Google Chat Notification
-        if: ${{ failure() }}
-        uses: Co-qn/google-chat-notification@releases/v1
-        with:
-          name: ${{ github.workflow }}
-          url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
-          status: ${{ job.status }}
