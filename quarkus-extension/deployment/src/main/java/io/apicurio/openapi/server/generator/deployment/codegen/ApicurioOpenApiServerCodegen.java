@@ -49,12 +49,13 @@ public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
                             .map(Path::toString)
                             .filter(s -> s.endsWith(this.inputExtension()))
                             .map(Path::of).forEach(openApiResource -> {
+                                if (openApiResource.toFile().getName().equals(context.config().getOptionalValue(CodegenConfig.getSpecPropertyName(), String.class).get())) {
                                 try {
                                     apicurioCodegenWrapper.generate(openApiResource);
                                 } catch (CodeGenException e) {
                                     e.printStackTrace();
                                 }
-                            });
+                            }});
 
             } catch (IOException e) {
                 throw new CodeGenException("Failed to generate java files from OpenApi file in " + openApiDir.toAbsolutePath(), e);
