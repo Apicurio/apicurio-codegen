@@ -61,7 +61,7 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/Widget"
                                 },
-                                "x-codegen-returnType": "javax.ws.rs.core.Response"
+                                "x-codegen-returnType": "jakarta.ws.rs.core.Response"
                             }
                         },
                         "description": "Successful response - returns a single `Widget`."

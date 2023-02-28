@@ -1,7 +1,7 @@
 package org.example.api;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
 import org.example.api.beans.Client;
 
 /**

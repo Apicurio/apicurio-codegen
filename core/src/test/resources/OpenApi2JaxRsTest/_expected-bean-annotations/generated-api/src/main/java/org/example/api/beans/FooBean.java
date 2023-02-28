@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "comment"
 })
 @Generated("jsonschema2pojo")
-@javax.enterprise.context.ApplicationScoped
+@jakarta.enterprise.context.ApplicationScoped
 @lombok.ToString(callSuper=true, includeFieldNames=true)
 public class FooBean {
 

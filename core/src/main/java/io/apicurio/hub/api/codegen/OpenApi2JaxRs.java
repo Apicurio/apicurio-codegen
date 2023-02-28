@@ -35,12 +35,14 @@ import java.util.zip.ZipOutputStream;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+
+import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -121,10 +123,10 @@ public class OpenApi2JaxRs {
     };
     protected static JavaBeanPostProcessor postProcessor = new JavaBeanPostProcessor();
 
-    private String openApiDoc;
+    protected String openApiDoc;
     protected transient Document document;
     protected JaxRsProjectSettings settings;
-    private boolean updateOnly;
+    protected boolean updateOnly;
 
     /**
      * Constructor.
@@ -332,7 +334,7 @@ public class OpenApi2JaxRs {
         VisitorUtil.visitTree(document, iVisitor, TraverserDirection.down);
 
         // Then generate the CodegenInfo object.
-        OpenApi2CodegenVisitor cgVisitor = new OpenApi2CodegenVisitor(this.settings.javaPackage, iVisitor.getInterfaces());
+        OpenApi2CodegenVisitor cgVisitor = new OpenApi2CodegenVisitor(this.settings.javaPackage, iVisitor.getInterfaces(), CodegenTarget.JAX_RS);
         VisitorUtil.visitTree(document, cgVisitor, TraverserDirection.down);
 
         // Now resolve any inline schemas/types
@@ -355,7 +357,7 @@ public class OpenApi2JaxRs {
         return info;
     }
 
-    private String getContextRoot(Document document) {
+    protected String getContextRoot(Document document) {
         OasDocument oaiDoc = (OasDocument) document;
         if (oaiDoc.paths != null) {
             Extension extension = oaiDoc.paths.getExtension(CodegenExtensions.CONTEXT_ROOT);
@@ -374,7 +376,7 @@ public class OpenApi2JaxRs {
      *
      * @param document
      */
-    private Document preProcess(Document document) {
+    protected Document preProcess(Document document) {
         DocumentPreProcessor preprocessor = new DocumentPreProcessor();
         preprocessor.process(document);
 
@@ -394,7 +396,7 @@ public class OpenApi2JaxRs {
      * @param info
      * @param typeSignature
      */
-    private static CodegenJavaBean findMatchingBean(CodegenInfo info, String typeSignature) {
+    protected static CodegenJavaBean findMatchingBean(CodegenInfo info, String typeSignature) {
         if (typeSignature == null) {
             return null;
         }
@@ -426,9 +428,9 @@ public class OpenApi2JaxRs {
     protected String generateJaxRsApplication() throws IOException {
         TypeSpec jaxRsApp = TypeSpec.classBuilder(ClassName.get(this.settings.javaPackage, "JaxRsApplication"))
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(ClassName.get("javax.ws.rs.core", "Application"))
-                .addAnnotation(ClassName.get("javax.enterprise.context", "ApplicationScoped"))
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.ws.rs", "ApplicationPath"))
+                .superclass(ClassName.get("jakarta.ws.rs.core", "Application"))
+                .addAnnotation(ClassName.get("jakarta.enterprise.context", "ApplicationScoped"))
+                .addAnnotation(AnnotationSpec.builder(ClassName.get("jakarta.ws.rs", "ApplicationPath"))
                         .addMember("value", "$S", "/")
                         .build())
                 .addJavadoc("The JAX-RS application.\n")
@@ -460,7 +462,7 @@ public class OpenApi2JaxRs {
                 methodBuilder.addAnnotation(AnnotationSpec.builder(Path.class).addMember("value", "$S", cgMethod.getPath()).build());
             }
             // The @GET, @PUT, @POST, etc annotation
-            methodBuilder.addAnnotation(AnnotationSpec.builder(ClassName.get("javax.ws.rs", cgMethod.getMethod().toUpperCase())).build());
+            methodBuilder.addAnnotation(AnnotationSpec.builder(ClassName.get("jakarta.ws.rs", cgMethod.getMethod().toUpperCase())).build());
             // The @Produces annotation
             if (cgMethod.getProduces() != null && !cgMethod.getProduces().isEmpty()) {
                 methodBuilder.addAnnotation(AnnotationSpec.builder(Produces.class)
@@ -475,7 +477,7 @@ public class OpenApi2JaxRs {
             if (cgMethod.getReturn() != null) {
                 TypeName returnType = generateTypeName(cgMethod.getReturn().getCollection(),
                         cgMethod.getReturn().getType(), cgMethod.getReturn().getFormat(), true,
-                        ClassName.get("javax.ws.rs.core", "Response"));
+                        ClassName.get("jakarta.ws.rs.core", "Response"));
                 if (getSettings().reactive || cgMethod.isAsync()) {
                     returnType = generateReactiveTypeName(returnType);
                 }
@@ -541,7 +543,7 @@ public class OpenApi2JaxRs {
      * @param required
      * @param defaultType
      */
-    private TypeName generateTypeName(String collection, String type, String format, Boolean required, TypeName defaultType) {
+    protected TypeName generateTypeName(String collection, String type, String format, Boolean required, TypeName defaultType) {
         if (type == null) {
             return defaultType;
         }
@@ -611,7 +613,7 @@ public class OpenApi2JaxRs {
      * @param required
      * @param defaultType
      */
-    private TypeName generateReactiveTypeName(TypeName coreType) {
+    protected TypeName generateReactiveTypeName(TypeName coreType) {
         return ParameterizedTypeName.get(ClassName.get(CompletionStage.class), coreType);
     }
 
@@ -620,7 +622,7 @@ public class OpenApi2JaxRs {
      *
      * @param values
      */
-    private static String toStringArrayLiteral(Set<String> values) {
+    protected static String toStringArrayLiteral(Set<String> values) {
         StringBuilder builder = new StringBuilder();
 
         if (values.size() == 1) {
@@ -711,7 +713,7 @@ public class OpenApi2JaxRs {
         return javaPackage.replaceAll("[^A-Za-z0-9.]", "").replace('.', '/') + "/";
     }
 
-    private static String paramNameToJavaArgName(String paramName) {
+    protected static String paramNameToJavaArgName(String paramName) {
         if (paramName == null) {
             return null;
         }

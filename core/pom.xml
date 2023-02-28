@@ -121,6 +121,12 @@
             </version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${version.jakarta.ws.rs-jakarta.ws.rs-api}</version>
+        </dependency>
+
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>

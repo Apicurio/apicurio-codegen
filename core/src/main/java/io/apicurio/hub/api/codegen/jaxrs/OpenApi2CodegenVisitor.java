@@ -75,6 +75,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private CodegenJavaInterface _currentInterface;
     private List<CodegenJavaMethod> _currentMethods;
     private CodegenJavaArgument _currentArgument;
+    private CodegenTarget codegenTarget;
 
     private int _methodCounter = 1;
 
@@ -85,11 +86,12 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
      * @param packageName
      * @param interfaces
      */
-    public OpenApi2CodegenVisitor(String packageName, List<InterfaceInfo> interfaces) {
+    public OpenApi2CodegenVisitor(String packageName, List<InterfaceInfo> interfaces, CodegenTarget target) {
         this.codegenInfo.setName("Thorntail API");
         this.codegenInfo.setVersion("1.0.0");
         this.codegenInfo.setInterfaces(new ArrayList<>());
         this.codegenInfo.setBeans(new ArrayList<>());
+        this.codegenTarget = target;
 
         this.packageName = packageName;
         for (InterfaceInfo iface : interfaces) {
@@ -387,7 +389,12 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
             // indicate that we DO want a return value, but we don't know what it is.
             if (cgReturn == null) {
                 CodegenJavaReturn unknownReturn = new CodegenJavaReturn();
-                unknownReturn.setType("javax.ws.rs.core.Response");
+                if (codegenTarget.equals(CodegenTarget.THORNTAIL)) {
+                    unknownReturn.setType("javax.ws.rs.core.Response");
+                } else {
+                    unknownReturn.setType("jakarta.ws.rs.core.Response");
+                }
+
                 cgReturn = unknownReturn;
             }
             
