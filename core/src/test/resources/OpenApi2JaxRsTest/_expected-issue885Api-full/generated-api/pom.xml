@@ -16,7 +16,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>1.0.2.Final</version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec>
+        <version.jakarta.ws.rs-jakarta.ws.rs-api>3.1.0</version.jakarta.ws.rs-jakarta.ws.rs-api>
         <version.com.fasterxml.jackson>2.9.8</version.com.fasterxml.jackson>
     </properties>
 
@@ -29,14 +29,14 @@
         </dependency>
         <!-- Specification Dependencies -->
         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec}</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${version.jakarta.ws.rs-jakarta.ws.rs-api}</version>
         </dependency>
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
         </dependency>
     </dependencies>
 </project>

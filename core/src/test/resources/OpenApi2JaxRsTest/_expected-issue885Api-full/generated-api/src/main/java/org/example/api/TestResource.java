@@ -1,7 +1,7 @@
 package org.example.api;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * A JAX-RS interface.  An implementation of this interface must be provided.
