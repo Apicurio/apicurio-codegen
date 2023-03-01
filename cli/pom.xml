@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
         <failsafe.useModulePath>false</failsafe.useModulePath>
         <maven.compiler.release>11</maven.compiler.release>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
