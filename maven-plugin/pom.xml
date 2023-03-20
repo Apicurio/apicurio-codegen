@@ -12,7 +12,7 @@
 
     <artifactId>apicurio-codegen-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>apicurio-codegen-cli</name>
+    <name>apicurio-codegen-maven-plugin</name>
     
     <properties>
     	<maven.version>3.9.0</maven.version>
