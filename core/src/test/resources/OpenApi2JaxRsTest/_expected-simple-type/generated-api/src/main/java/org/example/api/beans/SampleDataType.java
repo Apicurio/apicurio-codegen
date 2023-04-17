@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "mydate",
     "mymap",
     "id",
-    "mybytearray"
+    "mybytearray",
+    "mysimpleap",
+    "mystructuredap"
 })
 @Generated("jsonschema2pojo")
 public class SampleDataType {
@@ -46,6 +48,10 @@ public class SampleDataType {
     private String id;
     @JsonProperty("mybytearray")
     private byte[] mybytearray;
+    @JsonProperty("mysimpleap")
+    private MySimpleAdditionalProperties mysimpleap;
+    @JsonProperty("mystructuredap")
+    private MyStructuredAdditionalProperties mystructuredap;
 
     @JsonProperty("name")
     public String getName() {
@@ -121,6 +127,26 @@ public class SampleDataType {
     @JsonProperty("mybytearray")
     public void setMybytearray(byte[] mybytearray) {
         this.mybytearray = mybytearray;
+    }
+
+    @JsonProperty("mysimpleap")
+    public MySimpleAdditionalProperties getMysimpleap() {
+        return mysimpleap;
+    }
+
+    @JsonProperty("mysimpleap")
+    public void setMysimpleap(MySimpleAdditionalProperties mysimpleap) {
+        this.mysimpleap = mysimpleap;
+    }
+
+    @JsonProperty("mystructuredap")
+    public MyStructuredAdditionalProperties getMystructuredap() {
+        return mystructuredap;
+    }
+
+    @JsonProperty("mystructuredap")
+    public void setMystructuredap(MyStructuredAdditionalProperties mystructuredap) {
+        this.mystructuredap = mystructuredap;
     }
 
 }

@@ -62,6 +62,16 @@
             	},
             	"x-codegen-annotations": ["io.quarkus.runtime.annotations.RegisterForReflection"]
             },
+            "MySimpleAdditionalProperties": {
+                "type": "object",
+                "additionalProperties": true
+            },
+            "MyStructuredAdditionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                    "type" : "string"
+                }
+            },
             "SampleDataType": {
                 "description": "",
                 "type": "object",
@@ -90,6 +100,12 @@
                     "mybytearray": {
                         "type": "string",
                         "format": "byte"
+                    },
+                    "mysimpleap": {
+                        "$ref": "#/components/schemas/MySimpleAdditionalProperties"
+                    },
+                    "mystructuredap": {
+                        "$ref": "#/components/schemas/MyStructuredAdditionalProperties"
                     }
                 }
             }
