@@ -16,9 +16,9 @@
 
 package io.apicurio.hub.api.codegen;
 
-import org.junit.Test;
-
 import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -39,6 +39,14 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
     @Test
     public void testGitHubApisFull() throws IOException {
         doFullTest("OpenApi2QuarkusTest/github-apis-deref.json", false, "_expected-github/generated-api", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2Quarkus#generate()}.
+     */
+    @Test
+    public void testStrimziKafkaBridge() throws IOException {
+        doFullTest("OpenApi2QuarkusTest/strimzi-kafka-bridge.json", false, "_expected-strimzi-kafka-bridge/generated-api", false);
     }
 
     /**
