@@ -128,7 +128,7 @@ public class OpenApi2JaxRsTest {
      */
     @Test
     public void testGenerateFull_SimpleType() throws IOException {
-        doFullTest("OpenApi2JaxRsTest/simple-type.json", UpdateOnly.no, Reactive.no, "_expected-simple-type/generated-api", true);
+        doFullTest("OpenApi2JaxRsTest/simple-type.json", UpdateOnly.no, Reactive.no, "_expected-simple-type/generated-api", false);
     }
 
     /**
