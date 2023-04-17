@@ -126,6 +126,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
 
     /**
      * Returns true if the given schema is a simple type (e.g. string, integer, etc).
+     * or is a primitive type that should be inlined
      * @param schemaDef
      */
     private boolean isSimpleType(OasSchema schemaDef) {
@@ -133,7 +134,7 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
             return schemaDef.enum_ == null;
         } else {
             return "integer".equals(schemaDef.type) || "number".equals(schemaDef.type) ||
-                    "boolean".equals(schemaDef.type);
+                    "boolean".equals(schemaDef.type) || "array".equals(schemaDef.type);
         }
     }
 
