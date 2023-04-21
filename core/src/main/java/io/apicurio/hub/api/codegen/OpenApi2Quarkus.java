@@ -28,7 +28,7 @@ import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 
 /**
  * Class used to generate a Quarkus JAX-RS project from an OpenAPI document.
- * 
+ *
  * @author eric.wittmann@gmail.com
  */
 public class OpenApi2Quarkus extends OpenApi2JaxRs {
@@ -39,7 +39,7 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
     public OpenApi2Quarkus() {
         super();
     }
-    
+
     /**
      * @see io.apicurio.hub.api.codegen.OpenApi2JaxRs#generateAll(io.apicurio.hub.api.codegen.beans.CodegenInfo, java.lang.StringBuilder, java.util.zip.ZipOutputStream)
      */
@@ -67,12 +67,12 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
             zipOutput.closeEntry();
         }
     }
-    
+
     /**
      * @see io.apicurio.hub.api.codegen.OpenApi2JaxRs#generateJaxRsApplication()
      */
     @Override
-    protected String generateJaxRsApplication() throws IOException {
+    protected String generateJaxRsApplication() {
         // Don't need one of these for Quarkus.
         return null;
     }

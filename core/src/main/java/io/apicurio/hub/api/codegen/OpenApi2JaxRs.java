@@ -16,37 +16,39 @@
 
 package io.apicurio.hub.api.codegen;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletionStage;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Modifier;
-
-import com.squareup.javapoet.ArrayTypeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.codemodel.JClassContainer;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JType;
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.core.models.Document;
+import io.apicurio.datamodels.core.models.Extension;
+import io.apicurio.datamodels.core.util.VisitorUtil;
+import io.apicurio.datamodels.core.visitors.TraverserDirection;
+import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
+import io.apicurio.hub.api.codegen.beans.CodegenInfo;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
 import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-
+import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
+import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
+import io.apicurio.hub.api.codegen.post.JavaBeanPostProcessor;
+import io.apicurio.hub.api.codegen.pre.DocumentPreProcessor;
+import io.apicurio.hub.api.codegen.util.CodegenUtil;
+import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.Import;
+import org.jboss.forge.roaster.model.source.Importer;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.util.Types;
 import org.jsonschema2pojo.Annotator;
 import org.jsonschema2pojo.DefaultGenerationConfig;
 import org.jsonschema2pojo.GenerationConfig;
@@ -58,38 +60,31 @@ import org.jsonschema2pojo.SchemaStore;
 import org.jsonschema2pojo.rules.Rule;
 import org.jsonschema2pojo.rules.RuleFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
-import com.sun.codemodel.JClassContainer;
-import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JType;
+import javax.lang.model.SourceVersion;
 
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.core.models.Document;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.util.VisitorUtil;
-import io.apicurio.datamodels.core.visitors.TraverserDirection;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
-import io.apicurio.hub.api.codegen.beans.CodegenInfo;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaMethod;
-import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
-import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
-import io.apicurio.hub.api.codegen.post.JavaBeanPostProcessor;
-import io.apicurio.hub.api.codegen.pre.DocumentPreProcessor;
-import io.apicurio.hub.api.codegen.util.CodegenUtil;
-import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -424,114 +419,184 @@ public class OpenApi2JaxRs {
     }
 
     /**
+     * Generates the JaxRsApplication Java class.
+     */
+    protected String generateJaxRsApplication(String topLevelPackage) {
+        JavaClassSource jaxRsApp = Roaster.create(JavaClassSource.class)
+                .setPackage(this.settings.javaPackage)
+                .setPublic()
+                .setName("JaxRsApplication")
+                .setSuperType(String.format("%s.ws.rs.core.Application", topLevelPackage))
+                .getJavaDoc()
+                    .setFullText("The JAX-RS application.")
+                    .getOrigin()
+                .addAnnotation(String.format("%s.enterprise.context.ApplicationScoped", topLevelPackage))
+                    .getOrigin()
+                .addAnnotation(String.format("%s.ws.rs.ApplicationPath", topLevelPackage))
+                    .setStringValue("/")
+                    .getOrigin();
+
+        sortImports(jaxRsApp);
+
+        return jaxRsApp.toString() + "\n";
+    }
+
+    /**
      * Generates the JaxRsApplication java class.
      */
-    protected String generateJaxRsApplication() throws IOException {
-        TypeSpec jaxRsApp = TypeSpec.classBuilder(ClassName.get(this.settings.javaPackage, "JaxRsApplication"))
-                .addModifiers(Modifier.PUBLIC)
-                .superclass(ClassName.get("jakarta.ws.rs.core", "Application"))
-                .addAnnotation(ClassName.get("jakarta.enterprise.context", "ApplicationScoped"))
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("jakarta.ws.rs", "ApplicationPath"))
-                        .addMember("value", "$S", "/")
-                        .build())
-                .addJavadoc("The JAX-RS application.\n")
-                .build();
-        JavaFile javaFile = JavaFile.builder(this.settings.javaPackage, jaxRsApp).skipJavaLangImports(true).build();
-        return javaFile.toString();
+    protected String generateJaxRsApplication() {
+        return generateJaxRsApplication("jakarta");
+    }
+
+    void sortImports(Importer<?> javaSource) {
+        javaSource.getImports()
+            .stream()
+            .sorted(Comparator.comparing(Import::getQualifiedName))
+            .forEach(i -> {
+                javaSource.removeImport(i);
+                javaSource.addImport(i);
+            });
     }
 
     /**
      * Generates a Jax-rs interface from the given codegen information.
      * @param info
-     * @param _interface
+     * @param interfaceInfo
      */
-    protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface _interface) {
-        // Create the JAX-RS interface spec itself.
-        Builder interfaceBuilder = TypeSpec
-                .interfaceBuilder(ClassName.get(_interface.getPackage(), _interface.getName()));
-        String jaxRsPath = info.getContextRoot() + _interface.getPath();
-        interfaceBuilder.addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(Path.class).addMember("value", "$S", jaxRsPath).build())
-                .addJavadoc("A JAX-RS interface.  An implementation of this interface must be provided.\n");
+    protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface interfaceInfo, String topLevelPackage) {
+        String jaxRsPath = info.getContextRoot() + interfaceInfo.getPath();
+        final Parser markdownParser = Parser.builder().build();
+        final HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
 
-        // Add specs for all the methods.
-        for (CodegenJavaMethod cgMethod : _interface.getMethods()) {
-            com.squareup.javapoet.MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(cgMethod.getName());
-            methodBuilder.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-            // The @Path annotation.
-            if (cgMethod.getPath() != null) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Path.class).addMember("value", "$S", cgMethod.getPath()).build());
-            }
-            // The @GET, @PUT, @POST, etc annotation
-            methodBuilder.addAnnotation(AnnotationSpec.builder(ClassName.get("jakarta.ws.rs", cgMethod.getMethod().toUpperCase())).build());
-            // The @Produces annotation
-            if (cgMethod.getProduces() != null && !cgMethod.getProduces().isEmpty()) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Produces.class)
-                        .addMember("value", "$L", toStringArrayLiteral(cgMethod.getProduces())).build());
-            }
-            // The @Consumes annotation
-            if (cgMethod.getConsumes() != null && !cgMethod.getConsumes().isEmpty()) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Consumes.class)
-                        .addMember("value", "$L", toStringArrayLiteral(cgMethod.getConsumes())).build());
-            }
-            // The method return type.
-            if (cgMethod.getReturn() != null) {
-                TypeName returnType = generateTypeName(cgMethod.getReturn().getCollection(),
-                        cgMethod.getReturn().getType(), cgMethod.getReturn().getFormat(), true,
-                        ClassName.get("jakarta.ws.rs.core", "Response"));
-                if (getSettings().reactive || cgMethod.isAsync()) {
-                    returnType = generateReactiveTypeName(returnType);
-                }
-                methodBuilder.returns(returnType);
-            }
+        JavaInterfaceSource resourceInterface = Roaster.create(JavaInterfaceSource.class)
+                .setPackage(interfaceInfo.getPackage())
+                .setPublic()
+                .setName(interfaceInfo.getName())
+                .getJavaDoc()
+                    .setFullText("A JAX-RS interface. An implementation of this interface must be provided.")
+                    .getOrigin()
+                .addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage))
+                    .setStringValue(jaxRsPath)
+                    .getOrigin();
 
-            // The method arguments.
-            if (cgMethod.getArguments() != null && !cgMethod.getArguments().isEmpty()) {
-                for (CodegenJavaArgument cgArgument : cgMethod.getArguments()) {
-                    TypeName defaultParamType = ClassName.OBJECT;
-                    if (cgArgument.getIn().equals("body")) {
-                        defaultParamType = ClassName.get("java.io", "InputStream");
+        interfaceInfo.getMethods().forEach(methodInfo -> {
+            MethodSource<JavaInterfaceSource> operationMethod = resourceInterface.addMethod()
+                    .setName(methodInfo.getName());
+
+            Optional.ofNullable(methodInfo.getDescription()).ifPresent(description -> {
+                operationMethod.getJavaDoc()
+                    .setFullText(htmlRenderer.render(markdownParser.parse(description)));
+            });
+
+            Optional.ofNullable(methodInfo.getPath()).ifPresent(path ->
+                operationMethod.addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage)).setStringValue(path));
+
+            operationMethod.addAnnotation(String.format("%s.ws.rs.%s", topLevelPackage, methodInfo.getMethod().toUpperCase()));
+
+            Optional.ofNullable(methodInfo.getProduces())
+                .filter(Predicate.not(Collection::isEmpty))
+                .map(OpenApi2JaxRs::toStringArrayLiteral)
+                .ifPresent(produces ->
+                    operationMethod.addAnnotation(String.format("%s.ws.rs.Produces", topLevelPackage)).setLiteralValue(produces));
+
+            Optional.ofNullable(methodInfo.getConsumes())
+                .filter(Predicate.not(Collection::isEmpty))
+                .map(OpenApi2JaxRs::toStringArrayLiteral)
+                .ifPresent(consumes ->
+                    operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
+
+            Optional.ofNullable(methodInfo.getReturn())
+                .map(rt -> generateTypeName(
+                        rt.getCollection(),
+                        rt.getType(),
+                        rt.getFormat(),
+                        true,
+                        String.format("%s.ws.rs.core.Response", topLevelPackage)))
+                .map(rt -> getSettings().reactive || methodInfo.isAsync() ? generateReactiveTypeName(rt) : rt)
+                .map(Object::toString)
+                .ifPresentOrElse(
+                        operationMethod::setReturnType,
+                        operationMethod::setReturnTypeVoid);
+
+            Optional.ofNullable(methodInfo.getArguments())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .forEach(arg -> {
+                    String methodArgName = paramNameToJavaArgName(arg.getName());
+                    String defaultParamType = Object.class.getName();
+
+                    if (arg.getIn().equals("body")) {
+                        // Swagger 2.0?
+                        defaultParamType = InputStream.class.getName();
                     }
-                    TypeName paramType = generateTypeName(cgArgument.getCollection(), cgArgument.getType(),
-                            cgArgument.getFormat(), cgArgument.getRequired(), defaultParamType);
-                    if (cgArgument.getTypeSignature() != null) {
+
+                    Type<?> paramType = generateTypeName(arg.getCollection(), arg.getType(),
+                            arg.getFormat(), arg.getRequired(), defaultParamType);
+
+                    if (arg.getTypeSignature() != null) {
                         // TODO try to find a re-usable data type that matches the type signature
                     }
-                    com.squareup.javapoet.ParameterSpec.Builder paramBuilder = ParameterSpec.builder(paramType,
-                            paramNameToJavaArgName(cgArgument.getName()));
-                    if (cgArgument.getIn().equals("path")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(PathParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
+
+                    resourceInterface.addImport(paramType);
+                    var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
+                    var param = operationMethod.addParameter(paramTypeName, methodArgName);
+
+                    switch (arg.getIn()) {
+                    case "path":
+                        param.addAnnotation(String.format("%s.ws.rs.PathParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                        break;
+                    case "query":
+                        param.addAnnotation(String.format("%s.ws.rs.QueryParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                        break;
+                    case "header":
+                        param.addAnnotation(String.format("%s.ws.rs.HeaderParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                        break;
+                    case "cookie":
+                        param.addAnnotation(String.format("%s.ws.rs.CookieParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                        break;
+                    default:
+                        break;
                     }
-                    if (cgArgument.getIn().equals("query")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(QueryParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
-                    }
-                    if (cgArgument.getIn().equals("header")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(HeaderParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
-                    }
-                    methodBuilder.addParameter(paramBuilder.build());
-                }
-            }
+                });
+        });
 
-            // TODO:: error responses (4xx and 5xx)
-            // Should errors be modeled in some way?  JAX-RS has a few ways to handle them.  I'm inclined to
-            // not generate anything in the interface for error responses.
+        sortImports(resourceInterface);
 
-            // Javadoc
-            if (cgMethod.getDescription() != null) {
-                methodBuilder.addJavadoc(cgMethod.getDescription());
-                methodBuilder.addJavadoc("\n");
-            }
+        return Roaster.format(getFormatterProperties(), resourceInterface.toUnformattedString());
+    }
 
-            interfaceBuilder.addMethod(methodBuilder.build());
-        }
+    protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface interfaceInfo) {
+        return generateJavaInterface(info, interfaceInfo, "jakarta");
+    }
 
-        TypeSpec jaxRsInterface = interfaceBuilder.build();
+    public static Properties getFormatterProperties() {
+        Properties formattingProperties = new Properties();
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.indentation.size", "2");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.tabulation.char", "space");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.tabulation.size", "2");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing", "insert");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_after_last_class_body_declaration", "0");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration", "0");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve", "0");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_after_package", "1");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_after_imports", "1");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.comment.format_javadoc_comments", "true");
+        formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_before_method", "1");
+        return formattingProperties;
+    }
 
-        JavaFile javaFile = JavaFile.builder(_interface.getPackage(), jaxRsInterface).skipJavaLangImports(true).build();
-        return javaFile.toString();
+    static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
+
+    static Type<?> parseType(String value) {
+        return TYPE_CACHE.computeIfAbsent(value, k -> {
+            String stub = "public class Stub { public void method( " + value + " arg0 ) {} }";
+            JavaClassSource temp = (JavaClassSource) Roaster.parse(stub);
+            return temp.getMethods().get(0).getParameters().get(0).getType();
+        });
     }
 
     /**
@@ -544,55 +609,56 @@ public class OpenApi2JaxRs {
      * @param required
      * @param defaultType
      */
-    protected TypeName generateTypeName(String collection, String type, String format, Boolean required, TypeName defaultType) {
+    protected Type<?> generateTypeName(String collection, String type, String format, Boolean required, String defaultType) {
         if (type == null) {
-            return defaultType;
+            return parseType(defaultType);
         }
         if (required == null) {
             required = Boolean.FALSE;
         }
 
         boolean isList = "list".equals(collection);
+        Type<?> coreType = null;
 
-        TypeName coreType = null;
         if (type.equals("string")) {
-            coreType = ClassName.get(String.class);
+            coreType = parseType(String.class.getName());
+
             if (format != null) {
                 if (format.equals("date") || format.equals("date-time")) {
-                    coreType = ClassName.get(Date.class);
+                    coreType = parseType(Date.class.getName());
                 }
                 if (format.equals("binary") && collection == null) {
-                    coreType = defaultType;
+                    coreType = parseType(defaultType);
                 }
                 if (format.equals("byte")) {
-                    coreType = ArrayTypeName.BYTE;
+                    coreType = parseType("byte[]");
                 }
             }
         } else if (type.equals("integer")) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
-                coreType = required && !isList && format != null ? TypeName.LONG : ClassName.get(Long.class);
-
+                coreType = (required && !isList && format != null) ? parseType("long") : parseType(Long.class.getName());
             } else {
-                coreType = required && !isList && format != null ? TypeName.INT : ClassName.get(Integer.class);
+                coreType = (required && !isList && format != null) ? parseType("int") : parseType(Integer.class.getName());
             }
-
         } else if (type.equals("number")) {
-            coreType = ClassName.get(Number.class);
+            coreType = parseType(Number.class.getName());
             if (format != null) {
                 if (format.equals("float")) {
-                    coreType = required && !isList ? TypeName.FLOAT : ClassName.get(Float.class);
+                    coreType = (required && !isList) ? parseType("float") : parseType(Float.class.getName());
                 } else if (format.equals("double")) {
-                    coreType = required && !isList ? TypeName.DOUBLE : ClassName.get(Double.class);
+                    coreType = (required && !isList) ? parseType("double") : parseType(Double.class.getName());
                 }
             }
         } else if (type.equals("boolean")) {
-            coreType = ClassName.get(Boolean.class);
-        } else {
+            coreType = parseType(Boolean.class.getName());
+        } else if (Types.isQualified(type)) {
             try {
-                coreType = ClassName.bestGuess(type);
+                coreType = parseType(type);
             } catch (Exception e) {
-                return defaultType;
+                return parseType(defaultType);
             }
+        } else {
+            return parseType(defaultType);
         }
 
         if (collection == null) {
@@ -600,24 +666,20 @@ public class OpenApi2JaxRs {
         }
 
         if ("list".equals(collection)) {
-            return ParameterizedTypeName.get(ClassName.get(List.class), coreType);
+            return parseType(String.format("java.util.List<%s>", coreType.toString()));
         }
 
-        return defaultType;
+        return parseType(defaultType);
     }
 
     /**
      * Generates the reactive java type name for a collection (optional) and type.  Examples include list/string,
      * null/org.example.Bean, list/org.example.OtherBean, etc.
      *
-     * @param collection
-     * @param type
-     * @param format
-     * @param required
-     * @param defaultType
+     * @param coreType
      */
-    protected TypeName generateReactiveTypeName(TypeName coreType) {
-        return ParameterizedTypeName.get(ClassName.get(CompletionStage.class), coreType);
+    protected Type<?> generateReactiveTypeName(Type<?> coreType) {
+        return parseType(String.format("java.util.concurrent.CompletionStage<%s>", coreType.toString()));
     }
 
     /**
