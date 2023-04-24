@@ -16,27 +16,14 @@
 
 package io.apicurio.hub.api.codegen;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.jboss.forge.roaster.Roaster;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Properties;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApi2JaxRsTest {
+public class OpenApi2JaxRsTest extends OpenApi2TestBase {
 
     private static enum UpdateOnly {
         yes, no
@@ -217,53 +204,8 @@ public class OpenApi2JaxRsTest {
         generator.setSettings(settings);
         generator.setUpdateOnly(updateOnly == UpdateOnly.yes);
         generator.setOpenApiDocument(getClass().getClassLoader().getResource(apiDef));
-        ByteArrayOutputStream outputStream = generator.generate();
 
-        if (debug) {
-            File tempFile = File.createTempFile("api", ".zip");
-            FileUtils.writeByteArrayToFile(tempFile, outputStream.toByteArray());
-            System.out.println("Generated ZIP (debug) can be found here: " + tempFile.getAbsolutePath());
-        }
-
-        // Validate the result
-        try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()))) {
-            ZipEntry zipEntry = zipInputStream.getNextEntry();
-            while (zipEntry != null) {
-                if (!zipEntry.isDirectory()) {
-                    String name = zipEntry.getName();
-                    if (debug) {
-                        System.out.println(name);
-                    }
-                    Assert.assertNotNull(name);
-
-                    URL expectedFile = getClass().getClassLoader().getResource(getClass().getSimpleName() + "/" + expectedFilesPath + "/" + name);
-                    if (expectedFile == null && "PROJECT_GENERATION_FAILED.txt".equals(name)) {
-                        String errorLog = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));
-                        System.out.println("----- UNEXPECTED ERROR LOG -----");
-                        System.out.println(errorLog);
-                        System.out.println("----- UNEXPECTED ERROR LOG -----");
-                    }
-                    Assert.assertNotNull("Could not find expected file for entry: " + name, expectedFile);
-                    String expected = normalize(OpenApi2JaxRs.getFormatterProperties(), IOUtils.toString(expectedFile, Charset.forName("UTF-8")));
-                    String actual = normalize(OpenApi2JaxRs.getFormatterProperties(), IOUtils.toString(zipInputStream, Charset.forName("UTF-8")));
-
-                    if (debug) {
-                        System.out.println("-----");
-                        System.out.println(actual);
-                        System.out.println("-----");
-                    }
-                    Assert.assertEquals("Expected vs. actual failed for entry: " + name, expected, actual);
-                }
-                zipEntry = zipInputStream.getNextEntry();
-            }
-        }
-    }
-
-    private static String normalize(Properties formatting, String value) {
-        return Roaster.format(formatting, value)
-            .lines()
-            .map(String::stripTrailing)
-            .collect(Collectors.joining("\n"));
+        super.doFullTest(generator, expectedFilesPath, debug);
     }
 
 }
