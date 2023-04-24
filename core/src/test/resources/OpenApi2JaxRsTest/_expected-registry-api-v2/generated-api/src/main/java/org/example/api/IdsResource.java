@@ -8,20 +8,26 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/v2/ids")
 public interface IdsResource {
   /**
-   * Gets the content for an artifact version in the registry using the unique content
-   * identifier for that content.  This content ID may be shared by multiple artifact
-   * versions in the case where the artifact versions are identical.
-   *
+   * <p>
+   * Gets the content for an artifact version in the registry using the unique
+   * content identifier for that content. This content ID may be shared by
+   * multiple artifact versions in the case where the artifact versions are
+   * identical.
+   * </p>
+   * <p>
    * This operation may fail for one of the following reasons:
-   *
-   * * No content with this `contentId` exists (HTTP error `404`)
-   * * A server error occurred (HTTP error `500`)
-   *
+   * </p>
+   * <ul>
+   * <li>No content with this <code>contentId</code> exists (HTTP error
+   * <code>404</code>)</li>
+   * <li>A server error occurred (HTTP error <code>500</code>)</li>
+   * </ul>
+   * 
    */
   @Path("/contentIds/{contentId}/")
   @GET
@@ -29,14 +35,19 @@ public interface IdsResource {
   Response getContentById(@PathParam("contentId") long contentId);
 
   /**
-   * Gets the content for an artifact version in the registry using its globally unique
-   * identifier.
-   *
+   * <p>
+   * Gets the content for an artifact version in the registry using its globally
+   * unique identifier.
+   * </p>
+   * <p>
    * This operation may fail for one of the following reasons:
-   *
-   * * No artifact version with this `globalId` exists (HTTP error `404`)
-   * * A server error occurred (HTTP error `500`)
-   *
+   * </p>
+   * <ul>
+   * <li>No artifact version with this <code>globalId</code> exists (HTTP error
+   * <code>404</code>)</li>
+   * <li>A server error occurred (HTTP error <code>500</code>)</li>
+   * </ul>
+   * 
    */
   @Path("/globalIds/{globalId}")
   @GET
@@ -44,19 +55,24 @@ public interface IdsResource {
   Response getContentByGlobalId(@PathParam("globalId") long globalId);
 
   /**
-   * Gets the content for an artifact version in the registry using the unique content
-   * identifier for that content.  This content ID may be shared by multiple artifact
-   * versions in the case where the artifact versions are identical.
-   *
+   * <p>
+   * Gets the content for an artifact version in the registry using the unique
+   * content identifier for that content. This content ID may be shared by
+   * multiple artifact versions in the case where the artifact versions are
+   * identical.
+   * </p>
+   * <p>
    * This operation may fail for one of the following reasons:
-   *
-   * * No content with this `contentId` exists (HTTP error `404`)
-   * * A server error occurred (HTTP error `500`)
-   *
+   * </p>
+   * <ul>
+   * <li>No content with this <code>contentId</code> exists (HTTP error
+   * <code>404</code>)</li>
+   * <li>A server error occurred (HTTP error <code>500</code>)</li>
+   * </ul>
+   * 
    */
   @Path("/contentHashes/{contentHash}/")
   @GET
   @Produces("*/*")
-  Response getContentByHash(@PathParam("contentHash") long contentHash,
-      @QueryParam("canonical") Boolean canonical);
+  Response getContentByHash(@PathParam("contentHash") long contentHash, @QueryParam("canonical") Boolean canonical);
 }

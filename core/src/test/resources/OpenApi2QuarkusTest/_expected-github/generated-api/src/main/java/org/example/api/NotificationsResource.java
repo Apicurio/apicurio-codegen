@@ -13,12 +13,12 @@ import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/notifications")
 public interface NotificationsResource {
   /**
-   *
+   * 
    */
   @Path("/threads/{thread_id}")
   @GET
@@ -26,56 +26,97 @@ public interface NotificationsResource {
   Response activity_get_thread(@PathParam("thread_id") Integer threadId);
 
   /**
-   *
+   * 
    */
   @Path("/threads/{thread_id}")
   @PATCH
   void activity_mark_thread_as_read(@PathParam("thread_id") Integer threadId);
 
   /**
-   * This checks to see if the current user is subscribed to a thread. You can also [get a repository subscription](https://developer.github.com/v3/activity/watching/#get-a-repository-subscription).
-   *
-   * Note that subscriptions are only generated if a user is participating in a conversation--for example, they've replied to the thread, were **@mentioned**, or manually subscribe to a thread.
+   * <p>
+   * This checks to see if the current user is subscribed to a thread. You can
+   * also <a href=
+   * "https://developer.github.com/v3/activity/watching/#get-a-repository-subscription">get
+   * a repository subscription</a>.
+   * </p>
+   * <p>
+   * Note that subscriptions are only generated if a user is participating in a
+   * conversation--for example, they've replied to the thread, were
+   * <strong>@mentioned</strong>, or manually subscribe to a thread.
+   * </p>
+   * 
    */
   @Path("/threads/{thread_id}/subscription")
   @GET
   @Produces("application/json")
-  Response activity_get_thread_subscription_for_authenticated_user(
-      @PathParam("thread_id") Integer threadId);
+  Response activity_get_thread_subscription_for_authenticated_user(@PathParam("thread_id") Integer threadId);
 
   /**
-   * If you are watching a repository, you receive notifications for all threads by default. Use this endpoint to ignore future notifications for threads until you comment on the thread or get an **@mention**.
-   *
-   * You can also use this endpoint to subscribe to threads that you are currently not receiving notifications for or to subscribed to threads that you have previously ignored.
-   *
-   * Unsubscribing from a conversation in a repository that you are not watching is functionally equivalent to the [Delete a thread subscription](https://developer.github.com/v3/activity/notifications/#delete-a-thread-subscription) endpoint.
+   * <p>
+   * If you are watching a repository, you receive notifications for all threads
+   * by default. Use this endpoint to ignore future notifications for threads
+   * until you comment on the thread or get an <strong>@mention</strong>.
+   * </p>
+   * <p>
+   * You can also use this endpoint to subscribe to threads that you are currently
+   * not receiving notifications for or to subscribed to threads that you have
+   * previously ignored.
+   * </p>
+   * <p>
+   * Unsubscribing from a conversation in a repository that you are not watching
+   * is functionally equivalent to the <a href=
+   * "https://developer.github.com/v3/activity/notifications/#delete-a-thread-subscription">Delete
+   * a thread subscription</a> endpoint.
+   * </p>
+   * 
    */
   @Path("/threads/{thread_id}/subscription")
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId,
-      InputStream data);
+  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, InputStream data);
 
   /**
-   * Mutes all future notifications for a conversation until you comment on the thread or get an **@mention**. If you are watching the repository of the thread, you will still receive notifications. To ignore future notifications for a repository you are watching, use the [Set a thread subscription](https://developer.github.com/v3/activity/notifications/#set-a-thread-subscription) endpoint and set `ignore` to `true`.
+   * <p>
+   * Mutes all future notifications for a conversation until you comment on the
+   * thread or get an <strong>@mention</strong>. If you are watching the
+   * repository of the thread, you will still receive notifications. To ignore
+   * future notifications for a repository you are watching, use the <a href=
+   * "https://developer.github.com/v3/activity/notifications/#set-a-thread-subscription">Set
+   * a thread subscription</a> endpoint and set <code>ignore</code> to
+   * <code>true</code>.
+   * </p>
+   * 
    */
   @Path("/threads/{thread_id}/subscription")
   @DELETE
   void activity_delete_thread_subscription(@PathParam("thread_id") Integer threadId);
 
   /**
+   * <p>
    * List all notifications for the current user, sorted by most recently updated.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")
   Response activity_list_notifications_for_authenticated_user(@QueryParam("all") Boolean all,
       @QueryParam("participating") Boolean participating, @QueryParam("since") String since,
-      @QueryParam("before") String before, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("before") String before, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
-   * Marks all notifications as "read" removes it from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List notifications for the authenticated user](https://developer.github.com/v3/activity/notifications/#list-notifications-for-the-authenticated-user) endpoint and pass the query parameter `all=false`.
+   * <p>
+   * Marks all notifications as &quot;read&quot; removes it from the
+   * <a href="https://github.com/notifications">default view on GitHub</a>. If the
+   * number of notifications is too large to complete in one request, you will
+   * receive a <code>202 Accepted</code> status and GitHub will run an
+   * asynchronous process to mark notifications as &quot;read.&quot; To check
+   * whether any &quot;unread&quot; notifications remain, you can use the <a href=
+   * "https://developer.github.com/v3/activity/notifications/#list-notifications-for-the-authenticated-user">List
+   * notifications for the authenticated user</a> endpoint and pass the query
+   * parameter <code>all=false</code>.
+   * </p>
+   * 
    */
   @PUT
   @Produces("application/json")

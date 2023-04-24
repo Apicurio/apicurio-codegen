@@ -7,7 +7,7 @@ import java.util.List;
 import org.example.api.beans.Team;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/apis/studio/v1/teams")
 public interface TeamsResource {
