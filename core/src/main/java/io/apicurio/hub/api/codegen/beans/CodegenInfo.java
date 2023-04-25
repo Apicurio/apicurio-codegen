@@ -24,8 +24,8 @@ import java.util.List;
  */
 public class CodegenInfo {
 
-    private String name = "Generated Thorntail API";
-    private String description = "A generated Thorntail project with JAX-RS and Microprofile OpenAPI features enabled.";
+    private String name = "Generated API";
+    private String description = "A generated project with JAX-RS and Microprofile OpenAPI features enabled.";
     private String version = "1.0.0";
     private List<CodegenJavaInterface> interfaces = new ArrayList<>();
     private List<CodegenJavaBean> beans = new ArrayList<>();

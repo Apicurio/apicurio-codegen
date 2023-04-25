@@ -16,38 +16,33 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.Node;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.util.LocalReferenceResolver;
-import io.apicurio.datamodels.openapi.models.OasResponse;
+import io.apicurio.datamodels.models.Node;
+import io.apicurio.datamodels.models.openapi.OpenApiResponse;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Response;
+import io.apicurio.datamodels.refs.LocalReferenceResolver;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiResponseInliner extends CombinedVisitorAdapter {
+public class OpenApiResponseInliner extends TraversingOpenApi30VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitResponse(io.apicurio.datamodels.openapi.models.OasResponse)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitResponse(io.apicurio.datamodels.models.openapi.OpenApiResponse)
      */
     @Override
-    public void visitResponse(OasResponse node) {
+    public void visitResponse(OpenApiResponse node) {
+        OpenApi30Response response = (OpenApi30Response) node;
         LocalReferenceResolver resolver = new LocalReferenceResolver();
-        if (node.$ref != null) {
-            Node referencedResponseDefNode = resolver.resolveRef(node.$ref, node);
+        if (response.get$ref() != null) {
+            Node referencedResponseDefNode = resolver.resolveRef(response.get$ref(), response);
             if (referencedResponseDefNode != null) {
-                inlineResponse(node, referencedResponseDefNode);
+                inlineResponse(response, referencedResponseDefNode);
             }
         }
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitResponseDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
-    @Override
-    public void visitResponseDefinition(IDefinition node) {
-        visitResponse((OasResponse) node);
     }
 
     /**
@@ -55,12 +50,12 @@ public class OpenApiResponseInliner extends CombinedVisitorAdapter {
      * @param response
      * @param responseDef
      */
-    private void inlineResponse(OasResponse response, Node responseDef) {
-        response.$ref = null;
-        
+    private void inlineResponse(OpenApi30Response response, Node responseDef) {
+        response.set$ref(null);
+
         // Copy everything from schemaDef into schema by serializing the former into a JSON
         // object and then deserializing that into the latter.
-        Object serializedParamDef = Library.writeNode(responseDef);
+        ObjectNode serializedParamDef = Library.writeNode(responseDef);
         Library.readNode(serializedParamDef, response);
     }
 

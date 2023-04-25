@@ -16,29 +16,33 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.openapi.models.OasSchema;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import io.apicurio.datamodels.models.Schema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * Pre processes the OpenAPI document to handle the x-codegen-extendsClass extension.
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiBeanClassExtendsProcessor extends CombinedVisitorAdapter {
+public class OpenApiBeanClassExtendsProcessor extends TraversingOpenApi30VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
      */
     @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        OasSchema schema = (OasSchema) node;
-        Extension extension = schema.getExtension(CodegenExtensions.EXTENDS_CLASS);
-        if (extension != null && extension.value != null) {
-            String baseClass = extension.value.toString();
-            schema.removeExtension(CodegenExtensions.EXTENDS_CLASS);
-            schema.addExtraProperty("extendsJavaClass", baseClass);
+    public void visitSchema(Schema node) {
+        if (NodeUtil.isDefinition(node)) {
+            OpenApi30Schema schema = (OpenApi30Schema) node;
+            JsonNode extension = CodegenUtil.getExtension(schema, CodegenExtensions.EXTENDS_CLASS);
+            if (extension != null && !extension.isNull() && extension.isTextual()) {
+                schema.removeExtension(CodegenExtensions.EXTENDS_CLASS);
+                schema.addExtraProperty("extendsJavaClass", extension);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import org.example.api.beans.Client;
@@ -16,5 +17,6 @@ public interface ClientsResource {
    * 
    */
   @PUT
-  void registerAClient(Client body);
+  @Consumes("application/json")
+  void registerAClient(Client data);
 }

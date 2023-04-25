@@ -17,9 +17,9 @@
 package io.apicurio.hub.api.codegen.pre;
 
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.core.models.Document;
-import io.apicurio.datamodels.core.visitors.IVisitor;
-import io.apicurio.datamodels.core.visitors.TraverserDirection;
+import io.apicurio.datamodels.TraverserDirection;
+import io.apicurio.datamodels.models.Document;
+import io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30Visitor;
 
 /**
  * Used to preprocess an OpenAPI document in a variety of ways with the intent of making the
@@ -28,7 +28,7 @@ import io.apicurio.datamodels.core.visitors.TraverserDirection;
  */
 public class DocumentPreProcessor {
 
-    private static IVisitor [] processors = {
+    private static OpenApi30Visitor [] processors = {
             new OpenApiLongSimpleTypeProcessor(),
             new OpenApiDateTimeSimpleTypeProcessor(),
             new OpenApiByteSimpleTypeProcessor(),
@@ -47,8 +47,12 @@ public class DocumentPreProcessor {
      * @param document
      */
     public void process(Document document) {
-        for (IVisitor proc : processors) {
-            Library.visitTree(document, proc, TraverserDirection.down);
+        for (OpenApi30Visitor proc : processors) {
+            try {
+                Library.visitTree(document, proc, TraverserDirection.down);
+            } catch (Exception e) {
+                System.exit(1);
+            }
         }
     }
 
