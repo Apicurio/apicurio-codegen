@@ -47,6 +47,10 @@ public class JavaBeanPostProcessor {
             content = content.replaceAll("java.lang.String", "String");
             modified = true;
         }
+        if (content.contains("APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION")) {
+            content = content.replaceAll("APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION", "byte[]");
+            modified = true;
+        }
 
         boolean isEnum = content.contains("public enum");
 

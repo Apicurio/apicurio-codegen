@@ -112,7 +112,7 @@ public class OpenApi2JaxRsTest {
      */
     @Test
     public void testGenerateFull_MultipleMediaTypes() throws IOException {
-        doFullTest("OpenApi2JaxRsTest/mmt-api.json", UpdateOnly.no, Reactive.no, "_expected-mmt-full/generated-api", true);
+        doFullTest("OpenApi2JaxRsTest/mmt-api.json", UpdateOnly.no, Reactive.no, "_expected-mmt-full/generated-api", false);
     }
 
     /**

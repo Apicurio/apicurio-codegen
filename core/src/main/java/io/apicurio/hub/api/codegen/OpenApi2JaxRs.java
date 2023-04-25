@@ -36,6 +36,7 @@ import java.util.zip.ZipOutputStream;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 
+import com.squareup.javapoet.ArrayTypeName;
 import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.HeaderParam;
@@ -563,7 +564,9 @@ public class OpenApi2JaxRs {
                 if (format.equals("binary") && collection == null) {
                     coreType = defaultType;
                 }
-                // TODO handle byte
+                if (format.equals("byte")) {
+                    coreType = ArrayTypeName.BYTE;
+                }
             }
         } else if (type.equals("integer")) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
