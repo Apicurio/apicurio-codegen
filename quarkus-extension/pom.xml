@@ -13,7 +13,6 @@
 
     <artifactId>apicurio-codegen-quarkus-extension-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.15-SNAPSHOT</version>
 
     <modules>
         <module>deployment</module>

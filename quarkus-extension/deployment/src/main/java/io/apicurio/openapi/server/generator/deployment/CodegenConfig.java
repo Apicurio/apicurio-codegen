@@ -2,9 +2,6 @@ package io.apicurio.openapi.server.generator.deployment;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
-import io.smallrye.config.common.utils.StringUtil;
-
-import java.nio.file.Path;
 
 @ConfigRoot(name = CodegenConfig.CODEGEN_TIME_CONFIG_PREFIX, phase = ConfigPhase.BUILD_TIME)
 public class CodegenConfig {
