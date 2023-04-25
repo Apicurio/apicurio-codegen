@@ -36,7 +36,7 @@ public class KafkaHeader {
      */
     @JsonProperty("value")
     @JsonPropertyDescription("The header value in binary format, base64-encoded")
-    private String value;
+    private byte[] value;
 
     /**
      * 
@@ -64,7 +64,7 @@ public class KafkaHeader {
      * 
      */
     @JsonProperty("value")
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
@@ -74,7 +74,7 @@ public class KafkaHeader {
      * 
      */
     @JsonProperty("value")
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 

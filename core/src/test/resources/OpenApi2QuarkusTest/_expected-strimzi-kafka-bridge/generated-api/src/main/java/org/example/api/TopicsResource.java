@@ -16,38 +16,50 @@ import org.example.api.beans.ProducerRecordToPartitionList;
 import org.example.api.beans.TopicMetadata;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/topics")
 public interface TopicsResource {
   /**
+   * <p>
    * Retrieves a list of all topics.
+   * </p>
+   *
    */
   @GET
   @Produces("application/vnd.kafka.v2+json")
   List<String> listTopics();
 
   /**
+   * <p>
    * Retrieves the metadata about a given topic.
+   * </p>
+   *
    */
   @Path("/{topicname}")
   @GET
   @Produces("application/vnd.kafka.v2+json")
-  TopicMetadata getTopic(@PathParam("topicname") String topicname,
-      @QueryParam("async") Boolean async);
+  TopicMetadata getTopic(@PathParam("topicname") String topicname, @QueryParam("async") Boolean async);
 
   /**
-   * Sends one or more records to a given topic, optionally specifying a partition, key, or both.
+   * <p>
+   * Sends one or more records to a given topic, optionally specifying a
+   * partition, key, or both.
+   * </p>
+   *
    */
   @Path("/{topicname}")
   @POST
   @Produces("application/vnd.kafka.v2+json")
   @Consumes({"application/vnd.kafka.binary.v2+json", "application/vnd.kafka.json.v2+json"})
-  OffsetRecordSentList send(@PathParam("topicname") String topicname,
-      @QueryParam("async") Boolean async, ProducerRecordList data);
+  OffsetRecordSentList send(@PathParam("topicname") String topicname, @QueryParam("async") Boolean async,
+      ProducerRecordList data);
 
   /**
+   * <p>
    * Retrieves a list of partitions for the topic.
+   * </p>
+   *
    */
   @Path("/{topicname}/partitions")
   @GET
@@ -55,7 +67,10 @@ public interface TopicsResource {
   List<PartitionMetadata> listPartitions(@PathParam("topicname") String topicname);
 
   /**
+   * <p>
    * Retrieves partition metadata for the topic partition.
+   * </p>
+   *
    */
   @Path("/{topicname}/partitions/{partitionid}")
   @GET
@@ -64,7 +79,11 @@ public interface TopicsResource {
       @PathParam("partitionid") Integer partitionid, @QueryParam("async") Boolean async);
 
   /**
-   * Sends one or more records to a given topic partition, optionally specifying a key.
+   * <p>
+   * Sends one or more records to a given topic partition, optionally specifying a
+   * key.
+   * </p>
+   *
    */
   @Path("/{topicname}/partitions/{partitionid}")
   @POST
@@ -75,11 +94,13 @@ public interface TopicsResource {
       ProducerRecordToPartitionList data);
 
   /**
+   * <p>
    * Retrieves a summary of the offsets for the topic partition.
+   * </p>
+   *
    */
   @Path("/{topicname}/partitions/{partitionid}/offsets")
   @GET
   @Produces("application/vnd.kafka.v2+json")
-  OffsetsSummary getOffsets(@PathParam("topicname") String topicname,
-      @PathParam("partitionid") Integer partitionid);
+  OffsetsSummary getOffsets(@PathParam("topicname") String topicname, @PathParam("partitionid") Integer partitionid);
 }
