@@ -52,6 +52,9 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
                 if (isSimpleType(referencedSchema)) {
                     inlineSchema((Oas30Schema) node, referencedSchema);
                     markForRemoval(referencedSchema);
+                } else if (isArrayType(referencedSchema)) {
+                    inlineSchema((Oas30Schema) node, referencedSchema);
+                    markForRemoval(referencedSchema);
                 } else if (isInlineSchema((ExtensibleNode) referencedSchemaDefNode)) {
                     inlineSchema(schema, (OasSchema) referencedSchemaDefNode);
                     markForRemoval((ExtensibleNode) referencedSchemaDefNode);
@@ -136,6 +139,14 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
             return "integer".equals(schemaDef.type) || "number".equals(schemaDef.type) ||
                     "boolean".equals(schemaDef.type) || "array".equals(schemaDef.type);
         }
+    }
+
+    /**
+     * Returns true if the given schema is an array type.
+     * @param schemaDef
+     */
+    private boolean isArrayType(OasSchema schemaDef) {
+        return "array".equals(schemaDef.type);
     }
 
     /**
