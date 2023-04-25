@@ -7,12 +7,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/codes_of_conduct")
 public interface CodesResource {
   /**
-   *
+   * 
    */
   @Path("/{key}")
   @GET
@@ -20,7 +20,7 @@ public interface CodesResource {
   Response codes_of_conduct_get_conduct_code(@PathParam("key") String key);
 
   /**
-   *
+   * 
    */
   @GET
   @Produces("application/json")

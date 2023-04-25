@@ -16,24 +16,14 @@
 
 package io.apicurio.hub.api.codegen;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApi2ThorntailTest {
+public class OpenApi2ThorntailTest extends OpenApi2TestBase {
 
     /**
      * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2Thorntail#generate()}.
@@ -66,7 +56,7 @@ public class OpenApi2ThorntailTest {
     public void testGenerateFull_RdaApi() throws IOException {
         doFullTest("OpenApi2ThorntailTest/rda-api.json", false, "_expected-rda", false);
     }
-    
+
     /**
      * Shared test method.
      * @param apiDef
@@ -79,52 +69,6 @@ public class OpenApi2ThorntailTest {
         OpenApi2Thorntail generator = new OpenApi2Thorntail();
         generator.setUpdateOnly(updateOnly);
         generator.setOpenApiDocument(getClass().getClassLoader().getResource(apiDef));
-        ByteArrayOutputStream outputStream = generator.generate();
-        
-        if (debug) {
-            File tempFile = File.createTempFile("api", "zip");
-            FileUtils.writeByteArrayToFile(File.createTempFile("api", "zip"), outputStream.toByteArray());
-            System.out.println("Generated ZIP (debug) can be found here: " + tempFile.getAbsolutePath());
-        }
-
-        // Validate the result
-        try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()))) {
-            ZipEntry zipEntry = zipInputStream.getNextEntry();
-            while (zipEntry != null) {
-                if (!zipEntry.isDirectory()) {
-                    String name = zipEntry.getName();
-                    if (debug) {
-                        System.out.println(name);
-                    }
-                    Assert.assertNotNull(name);
-                    
-                    URL expectedFile = getClass().getClassLoader().getResource(getClass().getSimpleName() + "/" + expectedFilesPath + "/" + name);
-                    if (expectedFile == null && "PROJECT_GENERATION_FAILED.txt".equals(name)) {
-                        String errorLog = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));
-                        System.out.println("----- UNEXPECTED ERROR LOG -----");
-                        System.out.println(errorLog);
-                        System.out.println("----- UNEXPECTED ERROR LOG -----");
-                    }
-                    Assert.assertNotNull("Could not find expected file for entry: " + name, expectedFile);
-                    String expected = IOUtils.toString(expectedFile, Charset.forName("UTF-8"));
-
-                    String actual = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));
-                    if (debug) {
-                        System.out.println("-----");
-                        System.out.println(actual);
-                        System.out.println("-----");
-                    }
-                    Assert.assertEquals("Expected vs. actual failed for entry: " + name, normalizeString(expected), normalizeString(actual));
-                }
-                zipEntry = zipInputStream.getNextEntry();
-            }
-        }
+        super.doFullTest(generator, expectedFilesPath, debug);
     }
-
-    private static String normalizeString(String value) {
-        value = value.replaceAll("\\r\\n", "\n");
-        value = value.replaceAll("\\r", "\n");
-        return value;
-    }
-
 }

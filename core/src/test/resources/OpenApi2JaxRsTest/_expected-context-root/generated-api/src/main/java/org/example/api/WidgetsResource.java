@@ -6,7 +6,7 @@ import jakarta.ws.rs.Produces;
 import java.util.List;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/api/v3/widgets")
 public interface WidgetsResource {

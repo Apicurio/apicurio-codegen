@@ -14,26 +14,35 @@ import org.example.api.beans.Beer;
 import org.example.api.beans.Brewery;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/breweries")
 public interface BreweriesResource {
   /**
+   * <p>
    * Returns a list of all the breweries.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")
   CompletionStage<List<Brewery>> listAllBreweries();
 
   /**
+   * <p>
    * Adds a single brewery to the data set.
+   * </p>
+   * 
    */
   @POST
   @Consumes("application/json")
   void addBrewery(Brewery data);
 
   /**
+   * <p>
    * Returns full information about a single brewery.
+   * </p>
+   * 
    */
   @Path("/{breweryId}")
   @GET
@@ -41,7 +50,10 @@ public interface BreweriesResource {
   CompletionStage<Brewery> getBrewery(@PathParam("breweryId") int breweryId);
 
   /**
+   * <p>
    * Updates information about a single brewery.
+   * </p>
+   * 
    */
   @Path("/{breweryId}")
   @PUT
@@ -49,14 +61,20 @@ public interface BreweriesResource {
   void updateBrewery(@PathParam("breweryId") int breweryId, Brewery data);
 
   /**
+   * <p>
    * Removes a single brewery from the data set.
+   * </p>
+   * 
    */
   @Path("/{breweryId}")
   @DELETE
   void deleteBrewery(@PathParam("breweryId") int breweryId);
 
   /**
+   * <p>
    * Returns all of the beers made by the brewery.
+   * </p>
+   * 
    */
   @Path("/{breweryId}/beers")
   @GET
@@ -64,7 +82,10 @@ public interface BreweriesResource {
   CompletionStage<List<Beer>> listBreweryBeers(@PathParam("breweryId") int breweryId);
 
   /**
+   * <p>
    * Adds a single beer to the data set for this brewery.
+   * </p>
+   * 
    */
   @Path("/{breweryId}/beers")
   @POST

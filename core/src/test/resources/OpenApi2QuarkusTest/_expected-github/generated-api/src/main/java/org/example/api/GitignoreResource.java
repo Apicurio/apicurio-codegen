@@ -8,13 +8,17 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/gitignore")
 public interface GitignoreResource {
   /**
-   * The API also allows fetching the source of a single template.
-   * Use the raw [media type](https://developer.github.com/v3/media/) to get the raw contents.
+   * <p>
+   * The API also allows fetching the source of a single template. Use the raw
+   * <a href="https://developer.github.com/v3/media/">media type</a> to get the
+   * raw contents.
+   * </p>
+   * 
    */
   @Path("/templates/{name}")
   @GET
@@ -22,7 +26,12 @@ public interface GitignoreResource {
   Response gitignore_get_template(@PathParam("name") String name);
 
   /**
-   * List all templates available to pass as an option when [creating a repository](https://developer.github.com/v3/repos/#create-a-repository-for-the-authenticated-user).
+   * <p>
+   * List all templates available to pass as an option when <a href=
+   * "https://developer.github.com/v3/repos/#create-a-repository-for-the-authenticated-user">creating
+   * a repository</a>.
+   * </p>
+   * 
    */
   @Path("/templates")
   @GET

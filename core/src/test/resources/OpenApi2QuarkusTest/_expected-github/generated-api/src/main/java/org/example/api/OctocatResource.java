@@ -6,12 +6,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/octocat")
 public interface OctocatResource {
   /**
+   * <p>
    * Get the octocat as ASCII art
+   * </p>
+   * 
    */
   @GET
   @Produces("application/octocat-stream")

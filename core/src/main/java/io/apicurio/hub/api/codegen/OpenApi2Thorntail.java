@@ -16,46 +16,27 @@
 
 package io.apicurio.hub.api.codegen;
 
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.core.util.VisitorUtil;
+import io.apicurio.datamodels.core.visitors.TraverserDirection;
+import io.apicurio.hub.api.codegen.beans.CodegenInfo;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
+import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
+import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
+import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.core.util.VisitorUtil;
-import io.apicurio.datamodels.core.visitors.TraverserDirection;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaMethod;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-
-import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
-import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
-import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
-import org.apache.commons.io.IOUtils;
-
-import io.apicurio.hub.api.codegen.beans.CodegenInfo;
-import org.apache.commons.lang.StringUtils;
-
-import javax.lang.model.element.Modifier;
-
 
 /**
  * Class used to generate a Thorntail JAX-RS project from an OpenAPI document.
- * 
+ *
  * @author eric.wittmann@gmail.com
  */
 public class OpenApi2Thorntail extends OpenApi2JaxRs {
@@ -66,7 +47,7 @@ public class OpenApi2Thorntail extends OpenApi2JaxRs {
     public OpenApi2Thorntail() {
         super();
     }
-    
+
     /**
      * @see io.apicurio.hub.api.codegen.OpenApi2JaxRs#generateAll(io.apicurio.hub.api.codegen.beans.CodegenInfo, java.lang.StringBuilder, java.util.zip.ZipOutputStream)
      */
@@ -96,113 +77,18 @@ public class OpenApi2Thorntail extends OpenApi2JaxRs {
      * Generates the JaxRsApplication java class.
      */
     @Override
-    protected String generateJaxRsApplication() throws IOException {
-        TypeSpec jaxRsApp = TypeSpec.classBuilder(ClassName.get(this.settings.javaPackage, "JaxRsApplication"))
-                .addModifiers(Modifier.PUBLIC)
-                .superclass(ClassName.get("javax.ws.rs.core", "Application"))
-                .addAnnotation(ClassName.get("javax.enterprise.context", "ApplicationScoped"))
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.ws.rs", "ApplicationPath"))
-                        .addMember("value", "$S", "/")
-                        .build())
-                .addJavadoc("The JAX-RS application.\n")
-                .build();
-        JavaFile javaFile = JavaFile.builder(this.settings.javaPackage, jaxRsApp).skipJavaLangImports(true).build();
-        return javaFile.toString();
+    protected String generateJaxRsApplication() {
+        return generateJaxRsApplication("javax");
     }
 
     /**
      * Generates a Jax-rs interface from the given codegen information.
      * @param info
-     * @param _interface
+     * @param interfaceInfo
      */
     @Override
-    protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface _interface) {
-        // Create the JAX-RS interface spec itself.
-        TypeSpec.Builder interfaceBuilder = TypeSpec
-                .interfaceBuilder(ClassName.get(_interface.getPackage(), _interface.getName()));
-        String jaxRsPath = info.getContextRoot() + _interface.getPath();
-        interfaceBuilder.addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(Path.class).addMember("value", "$S", jaxRsPath).build())
-                .addJavadoc("A JAX-RS interface.  An implementation of this interface must be provided.\n");
-
-        // Add specs for all the methods.
-        for (CodegenJavaMethod cgMethod : _interface.getMethods()) {
-            com.squareup.javapoet.MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(cgMethod.getName());
-            methodBuilder.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-            // The @Path annotation.
-            if (cgMethod.getPath() != null) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Path.class).addMember("value", "$S", cgMethod.getPath()).build());
-            }
-            // The @GET, @PUT, @POST, etc annotation
-            methodBuilder.addAnnotation(AnnotationSpec.builder(ClassName.get("javax.ws.rs", cgMethod.getMethod().toUpperCase())).build());
-            // The @Produces annotation
-            if (cgMethod.getProduces() != null && !cgMethod.getProduces().isEmpty()) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Produces.class)
-                        .addMember("value", "$L", toStringArrayLiteral(cgMethod.getProduces())).build());
-            }
-            // The @Consumes annotation
-            if (cgMethod.getConsumes() != null && !cgMethod.getConsumes().isEmpty()) {
-                methodBuilder.addAnnotation(AnnotationSpec.builder(Consumes.class)
-                        .addMember("value", "$L", toStringArrayLiteral(cgMethod.getConsumes())).build());
-            }
-            // The method return type.
-            if (cgMethod.getReturn() != null) {
-                TypeName returnType = generateTypeName(cgMethod.getReturn().getCollection(),
-                        cgMethod.getReturn().getType(), cgMethod.getReturn().getFormat(), true,
-                        ClassName.get("javax.ws.rs.core", "Response"));
-                if (getSettings().reactive || cgMethod.isAsync()) {
-                    returnType = generateReactiveTypeName(returnType);
-                }
-                methodBuilder.returns(returnType);
-            }
-
-            // The method arguments.
-            if (cgMethod.getArguments() != null && !cgMethod.getArguments().isEmpty()) {
-                for (CodegenJavaArgument cgArgument : cgMethod.getArguments()) {
-                    TypeName defaultParamType = ClassName.OBJECT;
-                    if (cgArgument.getIn().equals("body")) {
-                        defaultParamType = ClassName.get("java.io", "InputStream");
-                    }
-                    TypeName paramType = generateTypeName(cgArgument.getCollection(), cgArgument.getType(),
-                            cgArgument.getFormat(), cgArgument.getRequired(), defaultParamType);
-                    if (cgArgument.getTypeSignature() != null) {
-                        // TODO try to find a re-usable data type that matches the type signature
-                    }
-                    com.squareup.javapoet.ParameterSpec.Builder paramBuilder = ParameterSpec.builder(paramType,
-                            paramNameToJavaArgName(cgArgument.getName()));
-                    if (cgArgument.getIn().equals("path")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(PathParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
-                    }
-                    if (cgArgument.getIn().equals("query")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(QueryParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
-                    }
-                    if (cgArgument.getIn().equals("header")) {
-                        paramBuilder.addAnnotation(AnnotationSpec.builder(HeaderParam.class)
-                                .addMember("value", "$S", cgArgument.getName()).build());
-                    }
-                    methodBuilder.addParameter(paramBuilder.build());
-                }
-            }
-
-            // TODO:: error responses (4xx and 5xx)
-            // Should errors be modeled in some way?  JAX-RS has a few ways to handle them.  I'm inclined to
-            // not generate anything in the interface for error responses.
-
-            // Javadoc
-            if (cgMethod.getDescription() != null) {
-                methodBuilder.addJavadoc(cgMethod.getDescription());
-                methodBuilder.addJavadoc("\n");
-            }
-
-            interfaceBuilder.addMethod(methodBuilder.build());
-        }
-
-        TypeSpec jaxRsInterface = interfaceBuilder.build();
-
-        JavaFile javaFile = JavaFile.builder(_interface.getPackage(), jaxRsInterface).skipJavaLangImports(true).build();
-        return javaFile.toString();
+    protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface interfaceInfo) {
+        return generateJavaInterface(info, interfaceInfo, "javax");
     }
 
     @Override

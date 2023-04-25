@@ -6,14 +6,23 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/rate_limit")
 public interface RateResource {
   /**
-   * **Note:** Accessing this endpoint does not count against your REST API rate limit.
-   *
-   * **Note:** The `rate` object is deprecated. If you're writing new API client code or updating existing code, you should use the `core` object instead of the `rate` object. The `core` object contains the same information that is present in the `rate` object.
+   * <p>
+   * <strong>Note:</strong> Accessing this endpoint does not count against your
+   * REST API rate limit.
+   * </p>
+   * <p>
+   * <strong>Note:</strong> The <code>rate</code> object is deprecated. If you're
+   * writing new API client code or updating existing code, you should use the
+   * <code>core</code> object instead of the <code>rate</code> object. The
+   * <code>core</code> object contains the same information that is present in the
+   * <code>rate</code> object.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")

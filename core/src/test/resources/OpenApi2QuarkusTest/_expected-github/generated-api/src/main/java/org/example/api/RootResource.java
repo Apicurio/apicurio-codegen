@@ -6,12 +6,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/")
 public interface RootResource {
   /**
+   * <p>
    * Get Hypermedia links to resources accessible in GitHub's REST API
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")
