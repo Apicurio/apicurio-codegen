@@ -16,41 +16,42 @@
 
 package io.apicurio.hub.api.codegen.jaxrs;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.Document;
-import io.apicurio.datamodels.core.models.DocumentType;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.Node;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.Info;
-import io.apicurio.datamodels.core.models.common.Operation;
-import io.apicurio.datamodels.core.models.common.Parameter;
-import io.apicurio.datamodels.core.util.VisitorUtil;
-import io.apicurio.datamodels.openapi.models.OasOperation;
-import io.apicurio.datamodels.openapi.models.OasParameter;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
-import io.apicurio.datamodels.openapi.models.OasResponse;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Operation;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Parameter;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Response;
-import io.apicurio.datamodels.openapi.v3.models.Oas30MediaType;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
-import io.apicurio.datamodels.openapi.v3.models.Oas30RequestBody;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
+import io.apicurio.datamodels.models.Document;
+import io.apicurio.datamodels.models.Extensible;
+import io.apicurio.datamodels.models.Info;
+import io.apicurio.datamodels.models.Node;
+import io.apicurio.datamodels.models.Operation;
+import io.apicurio.datamodels.models.Parameter;
+import io.apicurio.datamodels.models.Referenceable;
+import io.apicurio.datamodels.models.Schema;
+import io.apicurio.datamodels.models.openapi.OpenApiMediaType;
+import io.apicurio.datamodels.models.openapi.OpenApiOperation;
+import io.apicurio.datamodels.models.openapi.OpenApiParameter;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
+import io.apicurio.datamodels.models.openapi.OpenApiRequestBody;
+import io.apicurio.datamodels.models.openapi.OpenApiResponse;
+import io.apicurio.datamodels.models.openapi.OpenApiSchema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30MediaType;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Response;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
@@ -66,7 +67,9 @@ import io.apicurio.hub.api.codegen.util.SchemaSigner;
  * Visitor used to create a Codegen Info object from a OpenAPI document.
  * @author eric.wittmann@gmail.com
  */
-public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
+public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     private String packageName;
     private Map<String, String> interfacesIndex = new HashMap<>();
@@ -75,11 +78,12 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     private CodegenJavaInterface _currentInterface;
     private List<CodegenJavaMethod> _currentMethods;
     private CodegenJavaArgument _currentArgument;
-    private CodegenTarget codegenTarget;
 
     private int _methodCounter = 1;
 
     private boolean _processPathItemParams = false;
+
+    private String currentPath;
 
     /**
      * Constructor.
@@ -87,11 +91,10 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
      * @param interfaces
      */
     public OpenApi2CodegenVisitor(String packageName, List<InterfaceInfo> interfaces, CodegenTarget target) {
-        this.codegenInfo.setName("Thorntail API");
+        this.codegenInfo.setName("Generated API");
         this.codegenInfo.setVersion("1.0.0");
         this.codegenInfo.setInterfaces(new ArrayList<>());
         this.codegenInfo.setBeans(new ArrayList<>());
-        this.codegenTarget = target;
 
         this.packageName = packageName;
         for (InterfaceInfo iface : interfaces) {
@@ -113,100 +116,69 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
      * are the same.
      * @param node
      */
-    private static String createSignature(OasSchema node) {
+    private static String createSignature(OpenApi30Schema node) {
         SchemaSigner signer = new SchemaSigner();
         Library.visitNode(node, signer);
         return signer.getSignature();
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitDocument(io.apicurio.datamodels.core.models.Document)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitDocument(io.apicurio.datamodels.core.models.Document)
      */
     @Override
     public void visitDocument(Document node) {
-        // Extract some configuration from the "x-codegen" root extension property
-        processCodegenConfig(node.getExtension("x-codegen"));
-    }
-
-    @SuppressWarnings("unchecked")
-    private void processCodegenConfig(Extension extension) {
-        if (extension != null && extension.value instanceof Map) {
-            Map<String, Object> codegen = (Map<String, Object>) extension.value;
-            
-            // Process 'bean-annotations'
-            List<?> annotations = (List<?>) codegen.get("bean-annotations");
-            if (annotations != null) {
-                this.codegenInfo.setBeanAnnotations(annotations(annotations));
+        try {
+            JsonNode codegen = CodegenUtil.getExtension((Extensible) node, "x-codegen");
+            if (codegen != null) {
+                // Extract some configuration from the "x-codegen" root extension property
+                processCodegenConfig(mapper.readerFor(Map.class).readValue(codegen));
             }
-            
-            // Process 'contextRoot'
-            String cr = (String) codegen.get("contextRoot");
-            if (cr != null) {
-                this.codegenInfo.setContextRoot(cr);
-            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitInfo(io.apicurio.datamodels.core.models.common.Info)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitInfo(io.apicurio.datamodels.core.models.common.Info)
      */
     @Override
     public void visitInfo(Info node) {
-        this.codegenInfo.setName(node.title);
-        if (node.description != null) {
-            this.codegenInfo.setDescription(node.description);
+        this.codegenInfo.setName(node.getTitle());
+        if (node.getDescription() != null) {
+            this.codegenInfo.setDescription(node.getDescription());
         }
-        this.codegenInfo.setVersion(node.version);
+        this.codegenInfo.setVersion(node.getVersion());
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OasPathItem)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OpenApiPathItem)
      */
     @Override
-    public void visitPathItem(OasPathItem node) {
-        String path = node.getPath();
-        CodegenJavaInterface cgInterface = this.getOrCreateInterface(path);
+    public void visitPathItem(OpenApiPathItem node) {
+        currentPath = getPathTemplate(node);
+        CodegenJavaInterface cgInterface = this.getOrCreateInterface(currentPath);
         this._currentInterface = cgInterface;
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitOperation(io.apicurio.datamodels.core.models.common.Operation)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitOperation(io.apicurio.datamodels.core.models.common.Operation)
      */
     @Override
     public void visitOperation(Operation node) {
-        OasOperation op = (OasOperation) node;
+        OpenApiOperation op = (OpenApiOperation) node;
         CodegenJavaMethod method = new CodegenJavaMethod();
         method.setName(this.methodName(op));
         method.setPath(this.methodPath(op));
-        method.setMethod(node.getType());
+        method.setMethod(getOperationMethod(op));
         method.setProduces(new HashSet<>());
         method.setConsumes(new HashSet<>());
         method.setArguments(new ArrayList<>());
-        if (node.description != null) { method.setDescription(node.description); }
-
-        // Handle 2.0 "produces" and "consumes"
-        if (node.ownerDocument().getDocumentType() == DocumentType.openapi2) {
-            List<String> produces = ((Oas20Operation) node).produces;
-            if (produces == null) {
-                produces = ((Oas20Document) node.ownerDocument()).produces;
-            }
-            if (produces != null) {
-                method.setProduces(new HashSet<>(produces));
-            }
-
-            List<String> consumes = ((Oas20Operation) node).consumes;
-            if (consumes == null) {
-                consumes = ((Oas20Document) node.ownerDocument()).consumes;
-            }
-            if (consumes != null) {
-                method.setConsumes(new HashSet<>(consumes));
-            }
-        }
+        if (node.getDescription() != null) { method.setDescription(node.getDescription()); }
 
         boolean async = false;
-        Extension asyncExt = node.getExtension(CodegenExtensions.ASYNC);
-        if (asyncExt != null && asyncExt.value != null) {
-            async = Boolean.valueOf(asyncExt.value.toString());
+        JsonNode asyncExt = CodegenUtil.getExtension((Extensible) node, CodegenExtensions.ASYNC);
+        if (asyncExt != null) {
+            async = asyncExt.asBoolean();
         }
         method.setAsync(async);
 
@@ -216,17 +188,17 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
 
         // Be sure to process path and query parameters found on the parent!
         this._processPathItemParams = true;
-        List<OasParameter> parentParams = ((OasPathItem) node.parent()).parameters;
+        List<OpenApiParameter> parentParams = ((OpenApiPathItem) node.parent()).getParameters();
         if (parentParams != null && parentParams.size() > 0) {
-            for (OasParameter parentParam : parentParams) {
-                VisitorUtil.visitNode(parentParam, this);
+            for (OpenApiParameter parentParam : parentParams) {
+                parentParam.accept(this);
             }
         }
         this._processPathItemParams = false;
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameter(io.apicurio.datamodels.core.models.common.Parameter)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
     public void visitParameter(Parameter node) {
@@ -235,78 +207,62 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
             return;
         }
 
-        OasParameter param = (OasParameter) node;
+        OpenApi30Parameter param = (OpenApi30Parameter) node;
 
         CodegenJavaArgument cgArgument = new CodegenJavaArgument();
-        cgArgument.setName(param.name);
-        cgArgument.setIn(param.in);
+        cgArgument.setName(param.getName());
+        cgArgument.setIn(param.getIn());
 
         this._currentArgument = cgArgument;
 
-        if (param.required != null) {
-            cgArgument.setRequired(param.required);
+        if (param.isRequired() != null) {
+            cgArgument.setRequired(param.isRequired());
         }
 
         this._currentMethods.forEach(method -> method.getArguments().add(cgArgument));
 
-        if (param.ownerDocument().getDocumentType() == DocumentType.openapi2) {
-            this.visit20Parameter((Oas20Parameter) param);
-        }
-        if (param.ownerDocument().getDocumentType() == DocumentType.openapi3) {
-            this.visit30Parameter((Oas30Parameter) param);
-        }
-    }
-    private void visit20Parameter(Oas20Parameter node) {
-        CodegenJavaReturn cgReturn = this.returnFromSchema((OasSchema) node.schema);
-        if (cgReturn != null) {
-            if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
-            if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
-            if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-
-            this._currentArgument.setTypeSignature(createSignature((OasSchema) node.schema));
-        } else if (node.type != null) {
-            if (node.type != null) { this._currentArgument.setType(node.type); }
-            if (node.format != null) { this._currentArgument.setFormat(node.format); }
-            // TODO:: sign the argument from the type and format on the node.
-        }
-    }
-    private void visit30Parameter(Oas30Parameter node) {
-        List<Oas30MediaType> mediaTypes = node.getMediaTypes();
-        if (mediaTypes.size() > 0) {
-            Oas30MediaType mediaType = mediaTypes.get(0);
-            CodegenJavaReturn cgReturn = this.returnFromSchema(mediaType.schema);
+        Map<String,OpenApi30MediaType> content = param.getContent();
+        if (content != null && !content.isEmpty()) {
+            Collection<OpenApi30MediaType> mediaTypes = content.values();
+            OpenApi30MediaType mediaType = mediaTypes.iterator().next();
+            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
             if (cgReturn != null) {
                 if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
                 if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
                 if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature(mediaType.schema));
+                this._currentArgument.setTypeSignature(createSignature((OpenApi30Schema) mediaType.getSchema()));
             }
-        } else if (node.schema != null) {
-            CodegenJavaReturn cgReturn = this.returnFromSchema((OasSchema) node.schema);
+        } else if (node.getSchema() != null) {
+            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) node.getSchema());
             if (cgReturn != null) {
                 if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
                 if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
                 if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OasSchema) node.schema));
+                this._currentArgument.setTypeSignature(createSignature((OpenApi30Schema) node.getSchema()));
             }
         }
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitRequestBody(io.apicurio.datamodels.openapi.v3.models.Oas30RequestBody)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitRequestBody(io.apicurio.datamodels.models.openapi.OpenApiRequestBody)
      */
     @Override
-    public void visitRequestBody(Oas30RequestBody node) {
-        List<Oas30MediaType> mediaTypes = node.getMediaTypes();
+    public void visitRequestBody(OpenApiRequestBody node) {
+        Map<String, OpenApiMediaType> content = node.getContent();
+        if (content == null) {
+            content = new HashMap<>();
+        }
 
         Map<CodegenJavaReturn, Set<String>> allReturnTypes = new HashMap<>();
-        if (mediaTypes != null && mediaTypes.size() > 0) {
-            mediaTypes.forEach(mediaType -> {
-                CodegenJavaReturn cgReturn = this.returnFromSchema(mediaType.schema);
+        if (!content.isEmpty()) {
+            content.entrySet().forEach(entry -> {
+                String name = entry.getKey();
+                OpenApiMediaType mediaType = entry.getValue();
+                CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
                 if (cgReturn == null) {
                     cgReturn = new CodegenJavaReturn();
                 }
-                allReturnTypes.merge(cgReturn, Collections.singleton(mediaType.getName()), (set1, set2) -> {
+                allReturnTypes.merge(cgReturn, Collections.singleton(name), (set1, set2) -> {
                     Set<String> merged = new HashSet<>();
                     merged.addAll(set1);
                     merged.addAll(set2);
@@ -323,7 +279,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
             List<CodegenJavaMethod> methods = allReturnTypes.entrySet().stream().map(entry -> {
                 CodegenJavaReturn returnType = entry.getKey();
                 Set<String> types = entry.getValue();
-                
+
                 CodegenJavaMethod clonedMethod = methodTemplate.clone();
                 clonedMethod.getConsumes().addAll(types);
 
@@ -335,94 +291,96 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
                 if (returnType.getCollection() != null) { cgArgument.setCollection(returnType.getCollection()); }
                 if (returnType.getType() != null) { cgArgument.setType(returnType.getType()); }
                 if (returnType.getFormat() != null) { cgArgument.setFormat(returnType.getFormat()); }
-                
+
                 clonedMethod.getArguments().add(cgArgument);
-                
+
                 return clonedMethod;
             }).collect(Collectors.toList());
             this._currentInterface.getMethods().remove(methodTemplate);
             this._currentInterface.getMethods().addAll(methods);
             this._currentMethods = methods;
         }
-        
     }
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitResponse(io.apicurio.datamodels.openapi.models.OasResponse)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitResponse(io.apicurio.datamodels.openapi.models.OpenApiResponse)
      */
     @Override
-    public void visitResponse(OasResponse node) {
+    public void visitResponse(OpenApiResponse node) {
+        String statusCode = getMappedNodeName(node);
         // Note: if there are multiple 2xx responses, only the first one will
         // become the method return value.
-        if (node.getStatusCode() != null && node.getStatusCode().indexOf("2") == 0 && this._currentMethods.get(0).getReturn() == null) {
-            if (node.ownerDocument().getDocumentType() == DocumentType.openapi2) {
-                this.visit20Response((Oas20Response) node);
-            }
-            if (node.ownerDocument().getDocumentType() == DocumentType.openapi3) {
-                this.visit30Response((Oas30Response) node);
-            }
-        }
-    }
-    private void visit20Response(Oas20Response node) {
-        if (node.getStatusCode() != null && node.getStatusCode().indexOf("2") == 0) {
-            this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(this.returnFromSchema(node.schema)));
-        }
-    }
-    private void visit30Response(Oas30Response node) {
-        List<Oas30MediaType> mediaTypes = node.getMediaTypes();
-        // TODO if there are multiple response media types, handle it somehow - probably by returning a JAX-RS Response object
-        if (mediaTypes != null && mediaTypes.size() > 0) {
-            Oas30MediaType mediaType = mediaTypes.get(0);
-            Extension returnTypeExt = mediaType.getExtension(CodegenExtensions.RETURN_TYPE);
-            CodegenJavaReturn cgReturn = null;
-            if (returnTypeExt != null) {
-                String returnType = (String) returnTypeExt.value;
-                CodegenJavaReturn customReturn = new CodegenJavaReturn();
-                customReturn.setType(returnType);
-                cgReturn = customReturn;
-            } else {
-                cgReturn = this.returnFromSchema(mediaType.schema);
+        if (statusCode != null && statusCode.indexOf("2") == 0 && this._currentMethods.get(0).getReturn() == null) {
+            OpenApi30Response response = (OpenApi30Response) node;
+            Map<String, OpenApi30MediaType> content = response.getContent();
+            if (content == null) {
+                content = new HashMap<>();
             }
 
-            // If no return was created, it was because we couldn't figure it out from the
-            // schema (likely no schema declared) so we should create something to
-            // indicate that we DO want a return value, but we don't know what it is.
-            if (cgReturn == null) {
-                CodegenJavaReturn unknownReturn = new CodegenJavaReturn();
-                if (codegenTarget.equals(CodegenTarget.THORNTAIL)) {
-                    unknownReturn.setType("javax.ws.rs.core.Response");
+            // TODO if there are multiple response media types, handle it somehow - probably by returning a JAX-RS Response object
+            if (!content.isEmpty()) {
+                Entry<String, OpenApi30MediaType> firstContent = content.entrySet().iterator().next();
+                OpenApi30MediaType mediaType = firstContent.getValue();
+
+                JsonNode returnTypeExt = CodegenUtil.getExtension(mediaType, CodegenExtensions.RETURN_TYPE);
+                CodegenJavaReturn cgReturn = null;
+                if (returnTypeExt != null) {
+                    String returnType = returnTypeExt.asText();
+                    CodegenJavaReturn customReturn = new CodegenJavaReturn();
+                    customReturn.setType(returnType);
+                    cgReturn = customReturn;
                 } else {
-                    unknownReturn.setType("jakarta.ws.rs.core.Response");
+                    cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
                 }
 
-                cgReturn = unknownReturn;
+                // If no return was created, it was because we couldn't figure it out from the
+                // schema (likely no schema declared) so we should create something to
+                // indicate that we DO want a return value, but we don't know what it is.
+                if (cgReturn == null) {
+                    CodegenJavaReturn unknownReturn = new CodegenJavaReturn();
+                    unknownReturn.setType("jakarta.ws.rs.core.Response");
+                    cgReturn = unknownReturn;
+                }
+
+                final CodegenJavaReturn _return = cgReturn;
+                this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(_return));
             }
-            
-            final CodegenJavaReturn _return = cgReturn;
-            this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(_return));
-        }
-        // Push all of the media types onto the "produces" array for the method.
-        for (Oas30MediaType mt : mediaTypes) {
-            this._currentMethods.forEach(_currentMethod -> _currentMethod.getProduces().add(mt.getName()));
+            // Push all of the media types onto the "produces" array for the method.
+            content.entrySet().forEach(entry -> {
+                this._currentMethods.forEach(_currentMethod -> _currentMethod.getProduces().add(entry.getKey()));
+            });
         }
     }
 
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
     @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        String name = node.getName();
-        OasSchema schema = (OasSchema) node;
+    public void visitSchema(Schema node) {
+        if (NodeUtil.isDefinition(node)) {
+            String name = getMappedNodeName(node);
+            OpenApiSchema schema = (OpenApiSchema) node;
 
-        CodegenJavaBean bean = new CodegenJavaBean();
-        bean.setName(name);
-        bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.packageName + ".beans"));
-        bean.set$schema((JsonNode) Library.writeNode(schema));
-        bean.setSignature(createSignature(schema));
-        bean.setAnnotations(annotations(schema.getExtension(CodegenExtensions.ANNOTATIONS)));
+            CodegenJavaBean bean = new CodegenJavaBean();
+            bean.setName(name);
+            bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.packageName + ".beans"));
+            bean.set$schema(Library.writeNode(schema));
+            bean.setSignature(createSignature((OpenApi30Schema) schema));
+            bean.setAnnotations(annotations(CodegenUtil.getExtension((Extensible) schema, CodegenExtensions.ANNOTATIONS)));
 
-        this.codegenInfo.getBeans().add(bean);
+            this.codegenInfo.getBeans().add(bean);
+        }
+    }
+
+    private void processCodegenConfig(Map<String, Object> codegen) {
+        // Process 'bean-annotations'
+        List<?> annotations = (List<?>) codegen.get("bean-annotations");
+        if (annotations != null) {
+            this.codegenInfo.setBeanAnnotations(annotations(annotations));
+        }
+
+        // Process 'contextRoot'
+        String cr = (String) codegen.get("contextRoot");
+        if (cr != null) {
+            this.codegenInfo.setContextRoot(cr);
+        }
     }
 
     /**
@@ -430,12 +388,16 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
      * extension point.
      * @param extension
      */
-    private List<CodegenBeanAnnotationDirective> annotations(Extension extension) {
-        if (extension != null && extension.value instanceof List) {
-            List<?> annotationExtensions = (List<?>) extension.value;
-            return annotations(annotationExtensions);
-        } else {
-            return Collections.emptyList();
+    private List<CodegenBeanAnnotationDirective> annotations(JsonNode extension) {
+        try {
+            if (extension != null && extension.isArray()) {
+                List<?> annotationExtensions = mapper.readerFor(List.class).readValue(extension);
+                return annotations(annotationExtensions);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -489,12 +451,12 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         return cgInterface;
     }
 
-    private String methodName(OasOperation operation) {
-        if (operation.operationId != null && operation.operationId.length() > 0) {
-            return this.operationIdToMethodName(operation.operationId);
+    private String methodName(OpenApiOperation operation) {
+        if (operation.getOperationId() != null && operation.getOperationId().length() > 0) {
+            return this.operationIdToMethodName(operation.getOperationId());
         }
-        if (operation.summary != null && operation.summary.length() > 0) {
-            String[] nameSegments = operation.summary.split(" ");
+        if (operation.getSummary() != null && operation.getSummary().length() > 0) {
+            String[] nameSegments = operation.getSummary().split(" ");
             StringBuilder builder = new StringBuilder();
             for (String segment : nameSegments) {
                 String sanitized = segment.replaceAll("\\W", "");
@@ -512,8 +474,8 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         return operationId.replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
-    private String methodPath(OasOperation operation) {
-        String path = ((OasPathItem) operation.parent()).getPath();
+    private String methodPath(OpenApiOperation operation) {
+        String path = currentPath;
         if (path.equals(this._currentInterface.getPath())) {
             return null;
         }
@@ -524,18 +486,19 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         return path;
     }
 
-    private CodegenJavaReturn returnFromSchema(OasSchema schema) {
+    private CodegenJavaReturn returnFromSchema(OpenApi30Schema schema) {
         if (schema == null) {
             return null;
         }
         CodegenJavaReturn cgReturn = new CodegenJavaReturn();
         cgReturn.setType(null);
-        if (schema.$ref != null) {
-            cgReturn.setType(this.typeFromSchemaRef(schema.ownerDocument(), schema.$ref));
-        } else if ("array".equals(schema.type)) {
+        String $ref = ((Referenceable) schema).get$ref();
+        if ($ref != null) {
+            cgReturn.setType(this.typeFromSchemaRef((Document) schema.root(), $ref));
+        } else if ("array".equals(schema.getType())) {
             cgReturn.setCollection("list");
-            OasSchema items = (OasSchema) schema.items;
-            CodegenJavaReturn subReturn = this.returnFromSchema(items);
+            OpenApiSchema items = schema.getItems();
+            CodegenJavaReturn subReturn = this.returnFromSchema((OpenApi30Schema) items);
             if (subReturn != null && subReturn.getType() != null) {
                 cgReturn.setType(subReturn.getType());
             }
@@ -543,11 +506,11 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
                 cgReturn.setFormat(subReturn.getFormat());
             }
         } else {
-            if (schema.type != null) {
-                cgReturn.setType(schema.type);
+            if (schema.getType() != null) {
+                cgReturn.setType(schema.getType());
             }
-            if (schema.format != null) {
-                cgReturn.setFormat(schema.format);
+            if (schema.getFormat() != null) {
+                cgReturn.setFormat(schema.getFormat());
             }
         }
         return cgReturn;
@@ -559,7 +522,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
 
     private boolean isPathItem(Node node) {
         PathItemDetectionVisitor viz = new PathItemDetectionVisitor();
-        VisitorUtil.visitNode(node, viz);
+        node.accept(viz);
         return viz.isPathItem;
     }
 
@@ -584,6 +547,5 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
         }
         return word.substring(0, 1).toLowerCase() + word.substring(1);
     }
-
 
 }

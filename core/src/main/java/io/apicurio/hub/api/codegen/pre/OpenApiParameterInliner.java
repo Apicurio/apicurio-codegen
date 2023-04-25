@@ -16,45 +16,37 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.ExtensibleNode;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.Node;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.Parameter;
-import io.apicurio.datamodels.core.util.LocalReferenceResolver;
-import io.apicurio.datamodels.openapi.models.OasParameter;
+import io.apicurio.datamodels.models.Extensible;
+import io.apicurio.datamodels.models.Node;
+import io.apicurio.datamodels.models.Parameter;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
+import io.apicurio.datamodels.refs.LocalReferenceResolver;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiParameterInliner extends CombinedVisitorAdapter {
+public class OpenApiParameterInliner extends TraversingOpenApi30VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameter(io.apicurio.datamodels.core.models.common.Parameter)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
     public void visitParameter(Parameter node) {
-        OasParameter param = (OasParameter) node;
+        OpenApi30Parameter param = (OpenApi30Parameter) node;
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
-        if (param.$ref != null) {
-            Node referencedParameterDefNode = resolver.resolveRef(param.$ref, param);
+        if (param.get$ref() != null) {
+            Node referencedParameterDefNode = resolver.resolveRef(param.get$ref(), param);
             if (referencedParameterDefNode != null) {
                 inlineParameter(param, referencedParameterDefNode);
-                markForRemoval((ExtensibleNode) referencedParameterDefNode);
+                markForRemoval((Extensible) referencedParameterDefNode);
             }
         }
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameterDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
-    @Override
-    public void visitParameterDefinition(IDefinition node) {
-        visitParameter((Parameter) node);
     }
 
     /**
@@ -62,23 +54,17 @@ public class OpenApiParameterInliner extends CombinedVisitorAdapter {
      * @param param
      * @param paramDef
      */
-    private void inlineParameter(OasParameter param, Node paramDef) {
-        param.$ref = null;
+    private void inlineParameter(OpenApi30Parameter param, Node paramDef) {
+        param.set$ref(null);
 
         // Copy everything from schemaDef into schema by serializing the former into a JSON
         // object and then deserializing that into the latter.
-        Object serializedParamDef = Library.writeNode(paramDef);
+        ObjectNode serializedParamDef = Library.writeNode(paramDef);
         Library.readNode(serializedParamDef, param);
     }
 
-    /**
-     * @param node
-     */
-    private void markForRemoval(ExtensibleNode node) {
-        Extension extension = node.createExtension();
-        extension.name = CodegenExtensions.INLINED;
-        extension.value = Boolean.TRUE;
-        node.addExtension(extension.name, extension);
+    private void markForRemoval(Extensible node) {
+        node.addExtension(CodegenExtensions.INLINED, factory.booleanNode(true));
     }
 
 }

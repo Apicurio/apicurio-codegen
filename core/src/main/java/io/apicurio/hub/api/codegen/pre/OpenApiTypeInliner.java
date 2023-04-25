@@ -16,124 +16,54 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.ExtensibleNode;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.Node;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.IPropertySchema;
-import io.apicurio.datamodels.core.models.common.Schema;
-import io.apicurio.datamodels.core.util.LocalReferenceResolver;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.datamodels.models.Extensible;
+import io.apicurio.datamodels.models.Node;
+import io.apicurio.datamodels.models.Schema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.refs.LocalReferenceResolver;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiTypeInliner extends CombinedVisitorAdapter {
+public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
 
-    /**
-     * @see io.apicurio.datamodels.core.visitors.VisitorAdapter#visitSchema(io.apicurio.datamodels.core.models.common.Schema)
-     */
     @Override
     public void visitSchema(Schema node) {
-        OasSchema schema = (OasSchema) node;
+        OpenApi30Schema schema = (OpenApi30Schema) node;
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
-        if (node.$ref != null) {
-            Node referencedSchemaDefNode = resolver.resolveRef(node.$ref, node);
+        if (schema.get$ref() != null) {
+            Node referencedSchemaDefNode = resolver.resolveRef(schema.get$ref(), schema);
             if (referencedSchemaDefNode != null) {
-                OasSchema referencedSchema = (OasSchema) referencedSchemaDefNode;
+                OpenApi30Schema referencedSchema = (OpenApi30Schema) referencedSchemaDefNode;
                 if (isSimpleType(referencedSchema)) {
-                    inlineSchema((Oas30Schema) node, referencedSchema);
+                    inlineSchema(schema, referencedSchema);
                     markForRemoval(referencedSchema);
-                } else if (isInlineSchema((ExtensibleNode) referencedSchemaDefNode)) {
-                    inlineSchema(schema, (OasSchema) referencedSchemaDefNode);
-                    markForRemoval((ExtensibleNode) referencedSchemaDefNode);
+                } else if (isInlineSchema((Extensible) referencedSchemaDefNode)) {
+                    inlineSchema(schema, (OpenApi30Schema) referencedSchemaDefNode);
+                    markForRemoval((Extensible) referencedSchemaDefNode);
                 }
             }
         }
     }
 
     /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitItemsSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitItemsSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitPropertySchema(io.apicurio.datamodels.core.models.common.IPropertySchema)
-     */
-    @Override
-    public void visitPropertySchema(IPropertySchema node) {
-        visitSchema((Schema) node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
-    @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        visitSchema((Schema) node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAdditionalPropertiesSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAdditionalPropertiesSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitOneOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema)
-     */
-    @Override
-    public void visitOneOfSchema(Oas30OneOfSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAllOfSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAllOfSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAnyOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema)
-     */
-    @Override
-    public void visitAnyOfSchema(Oas30AnyOfSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitNotSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema)
-     */
-    @Override
-    public void visitNotSchema(Oas30NotSchema node) {
-        visitSchema(node);
-    }
-
-    /**
      * Returns true if the given schema is a simple type (e.g. string, integer, etc).
      * @param schemaDef
      */
-    private boolean isSimpleType(OasSchema schemaDef) {
-        if ("string".equals(schemaDef.type)) {
-            return schemaDef.enum_ == null;
+    private boolean isSimpleType(OpenApi30Schema schemaDef) {
+        if ("string".equals(schemaDef.getType())) {
+            return schemaDef.getEnum() == null;
         } else {
-            return "integer".equals(schemaDef.type) || "number".equals(schemaDef.type) ||
-                    "boolean".equals(schemaDef.type);
+            return "integer".equals(schemaDef.getType()) || "number".equals(schemaDef.getType()) ||
+                    "boolean".equals(schemaDef.getType());
         }
     }
 
@@ -142,12 +72,12 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
      * @param schema
      * @param schemaDef
      */
-    private void inlineSchema(OasSchema schema, OasSchema schemaDef) {
-        schema.$ref = null;
+    private void inlineSchema(OpenApi30Schema schema, OpenApi30Schema schemaDef) {
+        schema.set$ref(null);
 
         // Copy everything from schemaDef into schema by serializing the former into a JSON
         // object and then deserialing that into the latter.
-        Object serializedSchemaDef = Library.writeNode(schemaDef);
+        ObjectNode serializedSchemaDef = Library.writeNode(schemaDef);
         Library.readNode(serializedSchemaDef, schema);
     }
 
@@ -155,22 +85,19 @@ public class OpenApiTypeInliner extends CombinedVisitorAdapter {
      * Returns true if the schema definition is annotated with "x-codegen-inline" : "true".
      * @param referencedSchemaDefNode
      */
-    private boolean isInlineSchema(ExtensibleNode referencedSchemaDefNode) {
-        Extension extension = referencedSchemaDefNode.getExtension(CodegenExtensions.INLINE);
-        if (extension == null) {
+    private boolean isInlineSchema(Extensible referencedSchemaDefNode) {
+        JsonNode extension = CodegenUtil.getExtension(referencedSchemaDefNode, CodegenExtensions.INLINE);
+        if (extension == null || extension.isNull()) {
             return false;
         }
-        return "true".equals(String.valueOf(extension.value));
+        return extension.asBoolean(false);
     }
 
     /**
      * @param node
      */
-    private void markForRemoval(ExtensibleNode node) {
-        Extension extension = node.createExtension();
-        extension.name = CodegenExtensions.INLINED;
-        extension.value = Boolean.TRUE;
-        node.addExtension(extension.name, extension);
+    private void markForRemoval(Extensible node) {
+        node.addExtension(CodegenExtensions.INLINED, factory.booleanNode(true));
     }
 
 }

@@ -21,48 +21,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.apicurio.datamodels.cmd.util.ModelUtils;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.compat.NodeCompat;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
+import io.apicurio.datamodels.models.Node;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
+import io.apicurio.datamodels.util.NodeUtil;
 
 /**
  * Visitor used to organize all of the paths into a set of interface names.
  * @author eric.wittmann@gmail.com
  */
-public class InterfacesVisitor extends CombinedVisitorAdapter {
+public class InterfacesVisitor extends TraversingOpenApi30VisitorAdapter {
 
     private Map<String, InterfaceInfo> interfaces = new HashMap<>();
-    
+
     /**
      * Constructor.
      */
     public InterfacesVisitor() {
     }
-    
+
     public List<InterfaceInfo> getInterfaces() {
         return new ArrayList<>(interfaces.values());
     }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OasPathItem)
-     */
+
     @Override
-    public void visitPathItem(OasPathItem node) {
-        String p = node.getPath();
+    protected String getPathTemplate(OpenApiPathItem pathItem) {
+        if (NodeUtil.isDefinition(pathItem)) {
+            return null;
+        } else {
+            return getMappedNodeName(pathItem);
+        }
+    }
+
+    @Override
+    protected String getMappedNodeName(Node node) {
+        return (String) this.traversalContext.getMostRecentStep().getValue();
+    }
+
+    @Override
+    public void visitPathItem(OpenApiPathItem node) {
+        String p = getPathTemplate(node);
+        if (p == null) {
+            return;
+        }
         if (!p.startsWith("/")) {
             p = "/" + p;
         }
         String[] split = p.split("[\\/\\-_]");
-        if (ModelUtils.isDefined(split) && split.length > 1) {
+        if (NodeUtil.isDefined(split) && split.length > 1) {
             String firstSegment = split[1];
-            if (ModelUtils.isDefined(firstSegment) && !NodeCompat.equals(firstSegment, "") && firstSegment.indexOf("{") == -1) {
+            if (NodeUtil.isDefined(firstSegment) && !NodeUtil.equals(firstSegment, "") && firstSegment.indexOf("{") == -1) {
                 String iname = this.capitalize(firstSegment) + "Resource";
                 this.addPathTo(p, iname);
                 return;
             }
         }
-    
+
         // Default.
         this.addPathTo(p, "RootResource");
     }
@@ -93,5 +106,5 @@ public class InterfacesVisitor extends CombinedVisitorAdapter {
         String cap = word.substring(0, 1).toUpperCase() + word.substring(1);
         return cap;
     }
-    
+
 }

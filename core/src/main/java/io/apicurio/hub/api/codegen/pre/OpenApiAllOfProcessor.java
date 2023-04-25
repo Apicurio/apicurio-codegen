@@ -19,112 +19,45 @@ package io.apicurio.hub.api.codegen.pre;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.IPropertySchema;
-import io.apicurio.datamodels.core.models.common.Schema;
-import io.apicurio.datamodels.core.util.LocalReferenceResolver;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.datamodels.models.Schema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.refs.LocalReferenceResolver;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiAllOfProcessor extends CombinedVisitorAdapter {
-    
+public class OpenApiAllOfProcessor extends TraversingOpenApi30VisitorAdapter {
+
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchema(io.apicurio.datamodels.core.models.common.Schema)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
      */
     @Override
     public void visitSchema(Schema node) {
-        OasSchema schema = (OasSchema) node;
-        if (schema.allOf != null) {
+        OpenApi30Schema schema = (OpenApi30Schema) node;
+        if (schema.getAllOf() != null) {
             List<String> required = new ArrayList<>();
-            schema.allOf.forEach(allOfSchema -> {
-                OasSchema allOf = (OasSchema) allOfSchema;
-                if (allOf.$ref != null) {
+            schema.getAllOf().forEach(allOfSchema -> {
+                OpenApi30Schema allOf = (OpenApi30Schema) allOfSchema;
+                if (allOf.get$ref() != null) {
                     LocalReferenceResolver resolver = new LocalReferenceResolver();
-                    allOf = (OasSchema) resolver.resolveRef(allOf.$ref, allOf);
+                    allOf = (OpenApi30Schema) resolver.resolveRef(allOf.get$ref(), allOf);
                 }
                 if (allOf != null) {
-                    if (allOf.required != null) {
-                        required.addAll(allOf.required);
+                    if (allOf.getRequired() != null) {
+                        required.addAll(allOf.getRequired());
                     }
-                    Object serializedAllOf = Library.writeNode(allOf);
+                    ObjectNode serializedAllOf = Library.writeNode(allOf);
                     Library.readNode(serializedAllOf, schema);
                 }
             });
-            schema.allOf = null;
-            schema.$ref = null;
-            schema.required = required;
+            schema.clearAllOf();
+            schema.set$ref(null);
+            schema.setRequired(required);
         }
-    }
-
-    /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitItemsSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitItemsSchema(OasSchema node) {
-        visitSchema(node);
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitPropertySchema(io.apicurio.datamodels.core.models.common.IPropertySchema)
-     */
-    @Override
-    public void visitPropertySchema(IPropertySchema node) {
-        visitSchema((Schema) node);
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
-    @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        visitSchema((Schema) node);
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAdditionalPropertiesSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAdditionalPropertiesSchema(OasSchema node) {
-        visitSchema(node);
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitOneOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema)
-     */
-    @Override
-    public void visitOneOfSchema(Oas30OneOfSchema node) {
-        visitSchema(node);
-    }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAllOfSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAllOfSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitAnyOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema)
-     */
-    @Override
-    public void visitAnyOfSchema(Oas30AnyOfSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitNotSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema)
-     */
-    @Override
-    public void visitNotSchema(Oas30NotSchema node) {
-        visitSchema(node);
     }
 
 }
