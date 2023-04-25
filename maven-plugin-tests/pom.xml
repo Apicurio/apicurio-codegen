@@ -18,6 +18,7 @@
             <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>3.5.1</version>
             <configuration>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                 <cloneClean>true</cloneClean>
@@ -47,6 +48,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <goals>
