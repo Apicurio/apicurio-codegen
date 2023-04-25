@@ -202,6 +202,11 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
      */
     @Override
     public void visitParameter(Parameter node) {
+        // Skip processing of parameter definitions (found in /components/parameters)
+        if (NodeUtil.isDefinition(node)) {
+            return;
+        }
+
         // Skip processing of the parameter if it is defined at the path level.
         if (!this._processPathItemParams && this.isPathItem(node.parent())) {
             return;
@@ -248,6 +253,11 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
      */
     @Override
     public void visitRequestBody(OpenApiRequestBody node) {
+        // Only process inline request bodies.
+        if (NodeUtil.isDefinition(node)) {
+            return;
+        }
+
         Map<String, OpenApiMediaType> content = node.getContent();
         if (content == null) {
             content = new HashMap<>();
@@ -307,6 +317,11 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
      */
     @Override
     public void visitResponse(OpenApiResponse node) {
+        // Skip processing of response definitions (defined in /components/responses)
+        if (NodeUtil.isDefinition(node)) {
+            return;
+        }
+
         String statusCode = getMappedNodeName(node);
         // Note: if there are multiple 2xx responses, only the first one will
         // become the method return value.

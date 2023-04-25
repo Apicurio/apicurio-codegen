@@ -16,9 +16,9 @@
 
 package io.apicurio.hub.api.codegen;
 
-import org.junit.Test;
-
 import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * @author eric.wittmann@gmail.com
@@ -167,6 +167,14 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     @Test
     public void testMasStudio() throws IOException {
         doFullTest("OpenApi2JaxRsTest/mas-studio.json", UpdateOnly.no, Reactive.no, "_expected-mas-studio/generated-api", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testPetStore() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/petstore-openapi.json", UpdateOnly.no, Reactive.no, "_expected-petstore/generated-api", false);
     }
 
     /**
