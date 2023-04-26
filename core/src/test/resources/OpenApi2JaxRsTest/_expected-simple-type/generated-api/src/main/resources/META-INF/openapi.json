@@ -86,6 +86,10 @@
                     },
                     "id": {
                         "$ref": "#/components/schemas/MyId"
+                    },
+                    "mybytearray": {
+                        "type": "string",
+                        "format": "byte"
                     }
                 }
             }

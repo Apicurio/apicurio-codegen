@@ -13,7 +13,6 @@
 
     <artifactId>apicurio-codegen-quarkus-extension-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.15-SNAPSHOT</version>
 
     <modules>
         <module>deployment</module>
@@ -27,7 +26,7 @@
         <!-- Specifications -->
         <annotation-api.version>1.3.5</annotation-api.version>
         <!-- Quarkus Version -->
-        <quarkus.version>3.0.0.Alpha4</quarkus.version>
+        <quarkus.version>3.0.0.Beta1</quarkus.version>
 
         <!-- Plugins -->
         <version.maven-javadoc-plugin>3.5.0</version.maven-javadoc-plugin>

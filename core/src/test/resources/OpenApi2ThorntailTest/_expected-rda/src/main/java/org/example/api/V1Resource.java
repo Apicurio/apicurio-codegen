@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import org.example.api.beans.TemplateMetadata;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/v1")
 public interface V1Resource {
@@ -22,7 +22,10 @@ public interface V1Resource {
   List<TemplateMetadata> generatedMethod1();
 
   /**
+   * <p>
    * Publish a new metadata document for a template
+   * </p>
+   * 
    */
   @Path("templates/metadata")
   @POST
@@ -30,17 +33,22 @@ public interface V1Resource {
   void generatedMethod2(TemplateMetadata data);
 
   /**
+   * <p>
    * Search template metadata and return a list of matching template metadata
+   * </p>
+   * 
    */
   @Path("templates/metadata/search")
   @GET
   @Produces("application/json")
   List<TemplateMetadata> thisIsTheSearchEndpointUseAGETRequestAlongWithParametersToSearchForMetadataOnTemplates(
-      @QueryParam("tag") String tag, @QueryParam("free-text") String freeText,
-      @QueryParam("author") String author);
+      @QueryParam("tag") String tag, @QueryParam("free-text") String freeText, @QueryParam("author") String author);
 
   /**
+   * <p>
    * Get the metadata for a single template by id
+   * </p>
+   * 
    */
   @Path("templates/metadata/{id}")
   @GET
@@ -48,7 +56,10 @@ public interface V1Resource {
   TemplateMetadata generatedMethod3();
 
   /**
+   * <p>
    * Update the metadata for a single template by id
+   * </p>
+   * 
    */
   @Path("templates/metadata/{id}")
   @PUT
@@ -56,7 +67,10 @@ public interface V1Resource {
   void generatedMethod4(TemplateMetadata data);
 
   /**
+   * <p>
    * Delete the metadata for a single template by id
+   * </p>
+   * 
    */
   @Path("templates/metadata/{id}")
   @DELETE

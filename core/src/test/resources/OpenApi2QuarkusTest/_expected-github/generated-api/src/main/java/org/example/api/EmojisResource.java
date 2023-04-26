@@ -6,12 +6,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/emojis")
 public interface EmojisResource {
   /**
+   * <p>
    * Lists all the emojis available to use on GitHub.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")

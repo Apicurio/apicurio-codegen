@@ -14,12 +14,12 @@ import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/projects")
 public interface ProjectsResource {
   /**
-   *
+   * 
    */
   @Path("/columns/{column_id}/moves")
   @POST
@@ -28,7 +28,7 @@ public interface ProjectsResource {
   Response projects_move_column(@PathParam("column_id") Integer columnId, InputStream data);
 
   /**
-   *
+   * 
    */
   @Path("/columns/cards/{card_id}")
   @GET
@@ -36,14 +36,14 @@ public interface ProjectsResource {
   Response projects_get_card(@PathParam("card_id") Integer cardId);
 
   /**
-   *
+   * 
    */
   @Path("/columns/cards/{card_id}")
   @DELETE
   void projects_delete_card(@PathParam("card_id") Integer cardId);
 
   /**
-   *
+   * 
    */
   @Path("/columns/cards/{card_id}")
   @PATCH
@@ -52,7 +52,7 @@ public interface ProjectsResource {
   Response projects_update_card(@PathParam("card_id") Integer cardId, InputStream data);
 
   /**
-   *
+   * 
    */
   @Path("/columns/{column_id}")
   @GET
@@ -60,14 +60,14 @@ public interface ProjectsResource {
   Response projects_get_column(@PathParam("column_id") Integer columnId);
 
   /**
-   *
+   * 
    */
   @Path("/columns/{column_id}")
   @DELETE
   void projects_delete_column(@PathParam("column_id") Integer columnId);
 
   /**
-   *
+   * 
    */
   @Path("/columns/{column_id}")
   @PATCH
@@ -76,7 +76,13 @@ public interface ProjectsResource {
   Response projects_update_column(@PathParam("column_id") Integer columnId, InputStream data);
 
   /**
-   * Gets a project by its `id`. Returns a `404 Not Found` status if projects are disabled. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
+   * <p>
+   * Gets a project by its <code>id</code>. Returns a <code>404 Not Found</code>
+   * status if projects are disabled. If you do not have sufficient privileges to
+   * perform this action, a <code>401 Unauthorized</code> or <code>410 Gone</code>
+   * status is returned.
+   * </p>
+   * 
    */
   @Path("/{project_id}")
   @GET
@@ -84,14 +90,24 @@ public interface ProjectsResource {
   Response projects_get(@PathParam("project_id") Integer projectId);
 
   /**
-   * Deletes a project board. Returns a `404 Not Found` status if projects are disabled.
+   * <p>
+   * Deletes a project board. Returns a <code>404 Not Found</code> status if
+   * projects are disabled.
+   * </p>
+   * 
    */
   @Path("/{project_id}")
   @DELETE
   void projects_delete(@PathParam("project_id") Integer projectId);
 
   /**
-   * Updates a project board's information. Returns a `404 Not Found` status if projects are disabled. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
+   * <p>
+   * Updates a project board's information. Returns a <code>404 Not Found</code>
+   * status if projects are disabled. If you do not have sufficient privileges to
+   * perform this action, a <code>401 Unauthorized</code> or <code>410 Gone</code>
+   * status is returned.
+   * </p>
+   * 
    */
   @Path("/{project_id}")
   @PATCH
@@ -100,16 +116,16 @@ public interface ProjectsResource {
   Response projects_update(@PathParam("project_id") Integer projectId, InputStream data);
 
   /**
-   *
+   * 
    */
   @Path("/{project_id}/columns")
   @GET
   @Produces("application/json")
-  Response projects_list_columns(@PathParam("project_id") Integer projectId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response projects_list_columns(@PathParam("project_id") Integer projectId, @QueryParam("per_page") Integer perPage,
+      @QueryParam("page") Integer page);
 
   /**
-   *
+   * 
    */
   @Path("/{project_id}/columns")
   @POST
@@ -118,7 +134,7 @@ public interface ProjectsResource {
   Response projects_create_column(@PathParam("project_id") Integer projectId, InputStream data);
 
   /**
-   *
+   * 
    */
   @Path("/columns/{column_id}/cards")
   @GET
@@ -128,9 +144,21 @@ public interface ProjectsResource {
       @QueryParam("page") Integer page);
 
   /**
-   * **Note**: GitHub's REST API v3 considers every pull request an issue, but not every issue is a pull request. For this reason, "Issues" endpoints may return both issues and pull requests in the response. You can identify pull requests by the `pull_request` key.
-   *
-   * Be aware that the `id` of a pull request returned from "Issues" endpoints will be an _issue id_. To find out the pull request id, use the "[List pull requests](https://developer.github.com/v3/pulls/#list-pull-requests)" endpoint.
+   * <p>
+   * <strong>Note</strong>: GitHub's REST API v3 considers every pull request an
+   * issue, but not every issue is a pull request. For this reason,
+   * &quot;Issues&quot; endpoints may return both issues and pull requests in the
+   * response. You can identify pull requests by the <code>pull_request</code>
+   * key.
+   * </p>
+   * <p>
+   * Be aware that the <code>id</code> of a pull request returned from
+   * &quot;Issues&quot; endpoints will be an <em>issue id</em>. To find out the
+   * pull request id, use the &quot;<a href=
+   * "https://developer.github.com/v3/pulls/#list-pull-requests">List pull
+   * requests</a>&quot; endpoint.
+   * </p>
+   * 
    */
   @Path("/columns/{column_id}/cards")
   @POST
@@ -139,24 +167,39 @@ public interface ProjectsResource {
   Response projects_create_card(@PathParam("column_id") Integer columnId, InputStream data);
 
   /**
-   * Adds a collaborator to an organization project and sets their permission level. You must be an organization owner or a project `admin` to add a collaborator.
+   * <p>
+   * Adds a collaborator to an organization project and sets their permission
+   * level. You must be an organization owner or a project <code>admin</code> to
+   * add a collaborator.
+   * </p>
+   * 
    */
   @Path("/{project_id}/collaborators/{username}")
   @PUT
   @Consumes("application/json")
-  void projects_add_collaborator(@PathParam("project_id") Integer projectId,
-      @PathParam("username") String username, InputStream data);
+  void projects_add_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username,
+      InputStream data);
 
   /**
-   * Removes a collaborator from an organization project. You must be an organization owner or a project `admin` to remove a collaborator.
+   * <p>
+   * Removes a collaborator from an organization project. You must be an
+   * organization owner or a project <code>admin</code> to remove a collaborator.
+   * </p>
+   * 
    */
   @Path("/{project_id}/collaborators/{username}")
   @DELETE
-  void projects_remove_collaborator(@PathParam("project_id") Integer projectId,
-      @PathParam("username") String username);
+  void projects_remove_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username);
 
   /**
-   * Returns the collaborator's permission level for an organization project. Possible values for the `permission` key: `admin`, `write`, `read`, `none`. You must be an organization owner or a project `admin` to review a user's permission level.
+   * <p>
+   * Returns the collaborator's permission level for an organization project.
+   * Possible values for the <code>permission</code> key: <code>admin</code>,
+   * <code>write</code>, <code>read</code>, <code>none</code>. You must be an
+   * organization owner or a project <code>admin</code> to review a user's
+   * permission level.
+   * </p>
+   * 
    */
   @Path("/{project_id}/collaborators/{username}/permission")
   @GET
@@ -165,7 +208,7 @@ public interface ProjectsResource {
       @PathParam("username") String username);
 
   /**
-   *
+   * 
    */
   @Path("/columns/cards/{card_id}/moves")
   @POST
@@ -174,7 +217,15 @@ public interface ProjectsResource {
   Response projects_move_card(@PathParam("card_id") Integer cardId, InputStream data);
 
   /**
-   * Lists the collaborators for an organization project. For a project, the list of collaborators includes outside collaborators, organization members that are direct collaborators, organization members with access through team memberships, organization members with access through default organization permissions, and organization owners. You must be an organization owner or a project `admin` to list collaborators.
+   * <p>
+   * Lists the collaborators for an organization project. For a project, the list
+   * of collaborators includes outside collaborators, organization members that
+   * are direct collaborators, organization members with access through team
+   * memberships, organization members with access through default organization
+   * permissions, and organization owners. You must be an organization owner or a
+   * project <code>admin</code> to list collaborators.
+   * </p>
+   * 
    */
   @Path("/{project_id}/collaborators")
   @GET

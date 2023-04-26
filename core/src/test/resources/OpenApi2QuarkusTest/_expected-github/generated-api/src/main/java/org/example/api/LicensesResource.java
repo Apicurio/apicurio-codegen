@@ -8,12 +8,12 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/licenses")
 public interface LicensesResource {
   /**
-   *
+   * 
    */
   @Path("/{license}")
   @GET
@@ -21,7 +21,7 @@ public interface LicensesResource {
   Response licenses_get(@PathParam("license") String license);
 
   /**
-   *
+   * 
    */
   @GET
   @Produces("application/json")

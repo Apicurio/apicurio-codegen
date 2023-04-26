@@ -13,26 +13,35 @@ import java.util.List;
 import org.example.api.beans.Widget;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/widgets")
 public interface WidgetsResource {
   /**
-   * Gets a list of all `Widget` entities.
+   * <p>
+   * Gets a list of all <code>Widget</code> entities.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")
   List<Widget> getWidgets();
 
   /**
-   * Creates a new instance of a `Widget`.
+   * <p>
+   * Creates a new instance of a <code>Widget</code>.
+   * </p>
+   * 
    */
   @POST
   @Consumes("application/json")
   void createWidget(Widget data);
 
   /**
-   * Gets the details of a single instance of a `Widget`.
+   * <p>
+   * Gets the details of a single instance of a <code>Widget</code>.
+   * </p>
+   * 
    */
   @Path("/{widgetId}")
   @GET
@@ -40,7 +49,10 @@ public interface WidgetsResource {
   Response getWidget(@PathParam("widgetId") String widgetId);
 
   /**
-   * Updates an existing `Widget`.
+   * <p>
+   * Updates an existing <code>Widget</code>.
+   * </p>
+   * 
    */
   @Path("/{widgetId}")
   @PUT
@@ -48,7 +60,10 @@ public interface WidgetsResource {
   void updateWidget(@PathParam("widgetId") String widgetId, Widget data);
 
   /**
-   * Deletes an existing `Widget`.
+   * <p>
+   * Deletes an existing <code>Widget</code>.
+   * </p>
+   * 
    */
   @Path("/{widgetId}")
   @DELETE

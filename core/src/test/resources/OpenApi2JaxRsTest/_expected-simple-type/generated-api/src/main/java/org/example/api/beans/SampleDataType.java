@@ -21,7 +21,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "myint",
     "mydate",
     "mymap",
-    "id"
+    "id",
+    "mybytearray"
 })
 @Generated("jsonschema2pojo")
 public class SampleDataType {
@@ -43,6 +44,8 @@ public class SampleDataType {
     @JsonProperty("id")
     @JsonPropertyDescription("")
     private String id;
+    @JsonProperty("mybytearray")
+    private byte[] mybytearray;
 
     @JsonProperty("name")
     public String getName() {
@@ -108,6 +111,16 @@ public class SampleDataType {
     @JsonProperty("id")
     public void setId(String id) {
         this.id = id;
+    }
+
+    @JsonProperty("mybytearray")
+    public byte[] getMybytearray() {
+        return mybytearray;
+    }
+
+    @JsonProperty("mybytearray")
+    public void setMybytearray(byte[] mybytearray) {
+        this.mybytearray = mybytearray;
     }
 
 }

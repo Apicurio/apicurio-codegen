@@ -7,14 +7,21 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/organizations")
 public interface OrganizationsResource {
   /**
+   * <p>
    * Lists all organizations, in the order that they were created on GitHub.
-   *
-   * **Note:** Pagination is powered exclusively by the `since` parameter. Use the [Link header](https://developer.github.com/v3/#link-header) to get the URL for the next page of organizations.
+   * </p>
+   * <p>
+   * <strong>Note:</strong> Pagination is powered exclusively by the
+   * <code>since</code> parameter. Use the
+   * <a href="https://developer.github.com/v3/#link-header">Link header</a> to get
+   * the URL for the next page of organizations.
+   * </p>
+   * 
    */
   @GET
   @Produces("application/json")

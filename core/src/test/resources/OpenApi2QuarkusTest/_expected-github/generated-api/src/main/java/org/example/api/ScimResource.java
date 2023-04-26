@@ -14,12 +14,12 @@ import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 
 /**
- * A JAX-RS interface.  An implementation of this interface must be provided.
+ * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/scim")
 public interface ScimResource {
   /**
-   *
+   * 
    */
   @Path("/v2/organizations/{org}/Users/{scim_user_id}")
   @GET
@@ -28,11 +28,24 @@ public interface ScimResource {
       @PathParam("scim_user_id") String scimUserId);
 
   /**
-   * Replaces an existing provisioned user's information. You must provide all the information required for the user as if you were provisioning them for the first time. Any existing user information that you don't provide will be removed. If you want to only update a specific attribute, use the [Update an attribute for a SCIM user](https://developer.github.com/v3/scim/#update-an-attribute-for-a-scim-user) endpoint instead.
-   *
-   * You must at least provide the required values for the user: `userName`, `name`, and `emails`.
-   *
-   * **Warning:** Setting `active: false` removes the user from the organization, deletes the external identity, and deletes the associated `{scim_user_id}`.
+   * <p>
+   * Replaces an existing provisioned user's information. You must provide all the
+   * information required for the user as if you were provisioning them for the
+   * first time. Any existing user information that you don't provide will be
+   * removed. If you want to only update a specific attribute, use the <a href=
+   * "https://developer.github.com/v3/scim/#update-an-attribute-for-a-scim-user">Update
+   * an attribute for a SCIM user</a> endpoint instead.
+   * </p>
+   * <p>
+   * You must at least provide the required values for the user:
+   * <code>userName</code>, <code>name</code>, and <code>emails</code>.
+   * </p>
+   * <p>
+   * <strong>Warning:</strong> Setting <code>active: false</code> removes the user
+   * from the organization, deletes the external identity, and deletes the
+   * associated <code>{scim_user_id}</code>.
+   * </p>
+   * 
    */
   @Path("/v2/organizations/{org}/Users/{scim_user_id}")
   @PUT
@@ -42,65 +55,129 @@ public interface ScimResource {
       @PathParam("scim_user_id") String scimUserId, InputStream data);
 
   /**
-   *
+   * 
    */
   @Path("/v2/organizations/{org}/Users/{scim_user_id}")
   @DELETE
-  void scim_delete_user_from_org(@PathParam("org") String org,
-      @PathParam("scim_user_id") String scimUserId);
+  void scim_delete_user_from_org(@PathParam("org") String org, @PathParam("scim_user_id") String scimUserId);
 
   /**
-   * Allows you to change a provisioned user's individual attributes. To change a user's values, you must provide a specific `Operations` JSON format that contains at least one of the `add`, `remove`, or `replace` operations. For examples and more information on the SCIM operations format, see the [SCIM specification](https://tools.ietf.org/html/rfc7644#section-3.5.2).
-   *
-   * **Note:** Complicated SCIM `path` selectors that include filters are not supported. For example, a `path` selector defined as `"path": "emails[type eq \"work\"]"` will not work.
-   *
-   * **Warning:** If you set `active:false` using the `replace` operation (as shown in the JSON example below), it removes the user from the organization, deletes the external identity, and deletes the associated `:scim_user_id`.
-   *
-   * ```
-   * {
-   *   "Operations":[{
-   *     "op":"replace",
-   *     "value":{
-   *       "active":false
-   *     }
-   *   }]
-   * }
-   * ```
+   * <p>
+   * Allows you to change a provisioned user's individual attributes. To change a
+   * user's values, you must provide a specific <code>Operations</code> JSON
+   * format that contains at least one of the <code>add</code>,
+   * <code>remove</code>, or <code>replace</code> operations. For examples and
+   * more information on the SCIM operations format, see the
+   * <a href="https://tools.ietf.org/html/rfc7644#section-3.5.2">SCIM
+   * specification</a>.
+   * </p>
+   * <p>
+   * <strong>Note:</strong> Complicated SCIM <code>path</code> selectors that
+   * include filters are not supported. For example, a <code>path</code> selector
+   * defined as
+   * <code>&quot;path&quot;: &quot;emails[type eq \&quot;work\&quot;]&quot;</code>
+   * will not work.
+   * </p>
+   * <p>
+   * <strong>Warning:</strong> If you set <code>active:false</code> using the
+   * <code>replace</code> operation (as shown in the JSON example below), it
+   * removes the user from the organization, deletes the external identity, and
+   * deletes the associated <code>:scim_user_id</code>.
+   * </p>
+   * 
+   * <pre>
+   * <code>{
+    &quot;Operations&quot;:[{
+  &quot;op&quot;:&quot;replace&quot;,
+  &quot;value&quot;:{
+    &quot;active&quot;:false
+  }
+    }]
+  }
+  </code>
+   * </pre>
+   * 
    */
   @Path("/v2/organizations/{org}/Users/{scim_user_id}")
   @PATCH
   @Produces("application/scim+json")
   @Consumes("application/json")
-  Response scim_update_attribute_for_user(@PathParam("org") String org,
-      @PathParam("scim_user_id") String scimUserId, InputStream data);
+  Response scim_update_attribute_for_user(@PathParam("org") String org, @PathParam("scim_user_id") String scimUserId,
+      InputStream data);
 
   /**
-   * Retrieves a paginated list of all provisioned organization members, including pending invitations. If you provide the `filter` parameter, the resources for all matching provisions members are returned.
-   *
-   * When a user with a SAML-provisioned external identity leaves (or is removed from) an organization, the account's metadata is immediately removed. However, the returned list of user accounts might not always match the organization or enterprise member list you see on GitHub. This can happen in certain cases where an external identity associated with an organization will not match an organization member:
-   *   - When a user with a SCIM-provisioned external identity is removed from an organization, the account's metadata is preserved to allow the user to re-join the organization in the future.
-   *   - When inviting a user to join an organization, you can expect to see their external identity in the results before they accept the invitation, or if the invitation is cancelled (or never accepted).
-   *   - When a user is invited over SCIM, an external identity is created that matches with the invitee's email address. However, this identity is only linked to a user account when the user accepts the invitation by going through SAML SSO.
-   *
-   * The returned list of external identities can include an entry for a `null` user. These are unlinked SAML identities that are created when a user goes through the following Single Sign-On (SSO) process but does not sign in to their GitHub account after completing SSO:
-   *
-   * 1. The user is granted access by the IdP and is not a member of the GitHub organization.
-   *
-   * 1. The user attempts to access the GitHub organization and initiates the SAML SSO process, and is not currently signed in to their GitHub account.
-   *
-   * 1. After successfully authenticating with the SAML SSO IdP, the `null` external identity entry is created and the user is prompted to sign in to their GitHub account:
-   *    - If the user signs in, their GitHub account is linked to this entry.
-   *    - If the user does not sign in (or does not create a new account when prompted), they are not added to the GitHub organization, and the external identity `null` entry remains in place.
+   * <p>
+   * Retrieves a paginated list of all provisioned organization members, including
+   * pending invitations. If you provide the <code>filter</code> parameter, the
+   * resources for all matching provisions members are returned.
+   * </p>
+   * <p>
+   * When a user with a SAML-provisioned external identity leaves (or is removed
+   * from) an organization, the account's metadata is immediately removed.
+   * However, the returned list of user accounts might not always match the
+   * organization or enterprise member list you see on GitHub. This can happen in
+   * certain cases where an external identity associated with an organization will
+   * not match an organization member:
+   * </p>
+   * <ul>
+   * <li>When a user with a SCIM-provisioned external identity is removed from an
+   * organization, the account's metadata is preserved to allow the user to
+   * re-join the organization in the future.</li>
+   * <li>When inviting a user to join an organization, you can expect to see their
+   * external identity in the results before they accept the invitation, or if the
+   * invitation is cancelled (or never accepted).</li>
+   * <li>When a user is invited over SCIM, an external identity is created that
+   * matches with the invitee's email address. However, this identity is only
+   * linked to a user account when the user accepts the invitation by going
+   * through SAML SSO.</li>
+   * </ul>
+   * <p>
+   * The returned list of external identities can include an entry for a
+   * <code>null</code> user. These are unlinked SAML identities that are created
+   * when a user goes through the following Single Sign-On (SSO) process but does
+   * not sign in to their GitHub account after completing SSO:
+   * </p>
+   * <ol>
+   * <li>
+   * <p>
+   * The user is granted access by the IdP and is not a member of the GitHub
+   * organization.
+   * </p>
+   * </li>
+   * <li>
+   * <p>
+   * The user attempts to access the GitHub organization and initiates the SAML
+   * SSO process, and is not currently signed in to their GitHub account.
+   * </p>
+   * </li>
+   * <li>
+   * <p>
+   * After successfully authenticating with the SAML SSO IdP, the
+   * <code>null</code> external identity entry is created and the user is prompted
+   * to sign in to their GitHub account:
+   * </p>
+   * <ul>
+   * <li>If the user signs in, their GitHub account is linked to this entry.</li>
+   * <li>If the user does not sign in (or does not create a new account when
+   * prompted), they are not added to the GitHub organization, and the external
+   * identity <code>null</code> entry remains in place.</li>
+   * </ul>
+   * </li>
+   * </ol>
+   * 
    */
   @Path("/v2/organizations/{org}/Users")
   @GET
   @Produces("application/scim+json")
-  Response scim_list_provisioned_identities(@PathParam("org") String org,
-      @QueryParam("startIndex") Integer startIndex, @QueryParam("count") Integer count,
-      @QueryParam("filter") String filter);
+  Response scim_list_provisioned_identities(@PathParam("org") String org, @QueryParam("startIndex") Integer startIndex,
+      @QueryParam("count") Integer count, @QueryParam("filter") String filter);
 
   /**
-   * Provision organization membership for a user, and send an activation email to the email address.
+   * <p>
+   * Provision organization membership for a user, and send an activation email to
+   * the email address.
+   * </p>
+   * 
    */
   @Path("/v2/organizations/{org}/Users")
   @POST
