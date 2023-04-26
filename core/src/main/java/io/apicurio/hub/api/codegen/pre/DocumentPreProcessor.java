@@ -48,11 +48,7 @@ public class DocumentPreProcessor {
      */
     public void process(Document document) {
         for (OpenApi30Visitor proc : processors) {
-            try {
-                Library.visitTree(document, proc, TraverserDirection.down);
-            } catch (Exception e) {
-                System.exit(1);
-            }
+            Library.visitTree(document, proc, TraverserDirection.down);
         }
     }
 
