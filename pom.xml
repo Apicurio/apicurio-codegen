@@ -115,13 +115,6 @@
         <module>quarkus-extension</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>jsweet-release</id>
-            <url>https://repository.jsweet.org/artifactory/libs-release-local</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
