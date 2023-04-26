@@ -16,52 +16,6 @@
 
 package io.apicurio.hub.api.codegen;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.codemodel.JClassContainer;
-import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JType;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.core.models.Document;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.util.VisitorUtil;
-import io.apicurio.datamodels.core.visitors.TraverserDirection;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
-import io.apicurio.hub.api.codegen.beans.CodegenInfo;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
-import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
-import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
-import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
-import io.apicurio.hub.api.codegen.post.JavaBeanPostProcessor;
-import io.apicurio.hub.api.codegen.pre.DocumentPreProcessor;
-import io.apicurio.hub.api.codegen.util.CodegenUtil;
-import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.Type;
-import org.jboss.forge.roaster.model.source.Import;
-import org.jboss.forge.roaster.model.source.Importer;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
-import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.forge.roaster.model.util.Types;
-import org.jsonschema2pojo.Annotator;
-import org.jsonschema2pojo.DefaultGenerationConfig;
-import org.jsonschema2pojo.GenerationConfig;
-import org.jsonschema2pojo.Jackson2Annotator;
-import org.jsonschema2pojo.Schema;
-import org.jsonschema2pojo.SchemaGenerator;
-import org.jsonschema2pojo.SchemaMapper;
-import org.jsonschema2pojo.SchemaStore;
-import org.jsonschema2pojo.rules.Rule;
-import org.jsonschema2pojo.rules.RuleFactory;
-
-import javax.lang.model.SourceVersion;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +39,57 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import javax.lang.model.SourceVersion;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.Import;
+import org.jboss.forge.roaster.model.source.Importer;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.util.Types;
+import org.jsonschema2pojo.Annotator;
+import org.jsonschema2pojo.DefaultGenerationConfig;
+import org.jsonschema2pojo.GenerationConfig;
+import org.jsonschema2pojo.Jackson2Annotator;
+import org.jsonschema2pojo.Schema;
+import org.jsonschema2pojo.SchemaGenerator;
+import org.jsonschema2pojo.SchemaMapper;
+import org.jsonschema2pojo.SchemaStore;
+import org.jsonschema2pojo.rules.Rule;
+import org.jsonschema2pojo.rules.RuleFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.codemodel.JClassContainer;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JType;
+
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.TraverserDirection;
+import io.apicurio.datamodels.VisitorUtil;
+import io.apicurio.datamodels.models.Document;
+import io.apicurio.datamodels.models.Extensible;
+import io.apicurio.datamodels.models.ModelType;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.apicurio.datamodels.util.ModelTypeUtil;
+import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
+import io.apicurio.hub.api.codegen.beans.CodegenInfo;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
+import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
+import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
+import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
+import io.apicurio.hub.api.codegen.post.JavaBeanPostProcessor;
+import io.apicurio.hub.api.codegen.pre.DocumentPreProcessor;
+import io.apicurio.hub.api.codegen.util.CodegenUtil;
+import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
 
 
 /**
@@ -322,6 +327,11 @@ public class OpenApi2JaxRs {
     protected CodegenInfo getInfoFromApiDoc() throws IOException {
         document = Library.readDocumentFromJSONString(openApiDoc);
 
+        // If the document is OpenAPI 2.0, upgrade/transform it to 3.0
+        if (ModelTypeUtil.isOpenApi2Model(document)) {
+            document = Library.transformDocument(document, ModelType.OPENAPI30);
+        }
+
         // Pre-process the document
         document = preProcess(document);
 
@@ -354,11 +364,11 @@ public class OpenApi2JaxRs {
     }
 
     protected String getContextRoot(Document document) {
-        OasDocument oaiDoc = (OasDocument) document;
-        if (oaiDoc.paths != null) {
-            Extension extension = oaiDoc.paths.getExtension(CodegenExtensions.CONTEXT_ROOT);
-            if (extension != null && extension.value != null) {
-                return String.valueOf(extension.value);
+        OpenApiDocument oaiDoc = (OpenApiDocument) document;
+        if (oaiDoc.getPaths() != null) {
+            JsonNode extension = CodegenUtil.getExtension((Extensible) oaiDoc.getPaths(), CodegenExtensions.CONTEXT_ROOT);
+            if (extension != null && !extension.isNull()) {
+                return extension.asText();
             }
         }
         return null;
@@ -428,13 +438,13 @@ public class OpenApi2JaxRs {
                 .setName("JaxRsApplication")
                 .setSuperType(String.format("%s.ws.rs.core.Application", topLevelPackage))
                 .getJavaDoc()
-                    .setFullText("The JAX-RS application.")
-                    .getOrigin()
+                .setFullText("The JAX-RS application.")
+                .getOrigin()
                 .addAnnotation(String.format("%s.enterprise.context.ApplicationScoped", topLevelPackage))
-                    .getOrigin()
+                .getOrigin()
                 .addAnnotation(String.format("%s.ws.rs.ApplicationPath", topLevelPackage))
-                    .setStringValue("/")
-                    .getOrigin();
+                .setStringValue("/")
+                .getOrigin();
 
         sortImports(jaxRsApp);
 
@@ -450,12 +460,12 @@ public class OpenApi2JaxRs {
 
     void sortImports(Importer<?> javaSource) {
         javaSource.getImports()
-            .stream()
-            .sorted(Comparator.comparing(Import::getQualifiedName))
-            .forEach(i -> {
-                javaSource.removeImport(i);
-                javaSource.addImport(i);
-            });
+        .stream()
+        .sorted(Comparator.comparing(Import::getQualifiedName))
+        .forEach(i -> {
+            javaSource.removeImport(i);
+            javaSource.addImport(i);
+        });
     }
 
     /**
@@ -473,11 +483,11 @@ public class OpenApi2JaxRs {
                 .setPublic()
                 .setName(interfaceInfo.getName())
                 .getJavaDoc()
-                    .setFullText("A JAX-RS interface. An implementation of this interface must be provided.")
-                    .getOrigin()
+                .setFullText("A JAX-RS interface. An implementation of this interface must be provided.")
+                .getOrigin()
                 .addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage))
-                    .setStringValue(jaxRsPath)
-                    .getOrigin();
+                .setStringValue(jaxRsPath)
+                .getOrigin();
 
         interfaceInfo.getMethods().forEach(methodInfo -> {
             MethodSource<JavaInterfaceSource> operationMethod = resourceInterface.addMethod()
@@ -485,83 +495,83 @@ public class OpenApi2JaxRs {
 
             Optional.ofNullable(methodInfo.getDescription()).ifPresent(description -> {
                 operationMethod.getJavaDoc()
-                    .setFullText(htmlRenderer.render(markdownParser.parse(description)));
+                .setFullText(htmlRenderer.render(markdownParser.parse(description)));
             });
 
             Optional.ofNullable(methodInfo.getPath()).ifPresent(path ->
-                operationMethod.addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage)).setStringValue(path));
+            operationMethod.addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage)).setStringValue(path));
 
             operationMethod.addAnnotation(String.format("%s.ws.rs.%s", topLevelPackage, methodInfo.getMethod().toUpperCase()));
 
             Optional.ofNullable(methodInfo.getProduces())
-                .filter(Predicate.not(Collection::isEmpty))
-                .map(OpenApi2JaxRs::toStringArrayLiteral)
-                .ifPresent(produces ->
-                    operationMethod.addAnnotation(String.format("%s.ws.rs.Produces", topLevelPackage)).setLiteralValue(produces));
+            .filter(Predicate.not(Collection::isEmpty))
+            .map(OpenApi2JaxRs::toStringArrayLiteral)
+            .ifPresent(produces ->
+            operationMethod.addAnnotation(String.format("%s.ws.rs.Produces", topLevelPackage)).setLiteralValue(produces));
 
             Optional.ofNullable(methodInfo.getConsumes())
-                .filter(Predicate.not(Collection::isEmpty))
-                .map(OpenApi2JaxRs::toStringArrayLiteral)
-                .ifPresent(consumes ->
-                    operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
+            .filter(Predicate.not(Collection::isEmpty))
+            .map(OpenApi2JaxRs::toStringArrayLiteral)
+            .ifPresent(consumes ->
+            operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
 
             Optional.ofNullable(methodInfo.getReturn())
-                .map(rt -> generateTypeName(
-                        rt.getCollection(),
-                        rt.getType(),
-                        rt.getFormat(),
-                        true,
-                        String.format("%s.ws.rs.core.Response", topLevelPackage)))
-                .map(rt -> getSettings().reactive || methodInfo.isAsync() ? generateReactiveTypeName(rt) : rt)
-                .map(Object::toString)
-                .ifPresentOrElse(
-                        operationMethod::setReturnType,
-                        operationMethod::setReturnTypeVoid);
+            .map(rt -> generateTypeName(
+                    rt.getCollection(),
+                    rt.getType(),
+                    rt.getFormat(),
+                    true,
+                    String.format("%s.ws.rs.core.Response", topLevelPackage)))
+            .map(rt -> getSettings().reactive || methodInfo.isAsync() ? generateReactiveTypeName(rt) : rt)
+            .map(Object::toString)
+            .ifPresentOrElse(
+                    operationMethod::setReturnType,
+                    operationMethod::setReturnTypeVoid);
 
             Optional.ofNullable(methodInfo.getArguments())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty)
-                .forEach(arg -> {
-                    String methodArgName = paramNameToJavaArgName(arg.getName());
-                    String defaultParamType = Object.class.getName();
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .forEach(arg -> {
+                String methodArgName = paramNameToJavaArgName(arg.getName());
+                String defaultParamType = Object.class.getName();
 
-                    if (arg.getIn().equals("body")) {
-                        // Swagger 2.0?
-                        defaultParamType = InputStream.class.getName();
-                    }
+                if (arg.getIn().equals("body")) {
+                    // Swagger 2.0?
+                    defaultParamType = InputStream.class.getName();
+                }
 
-                    Type<?> paramType = generateTypeName(arg.getCollection(), arg.getType(),
-                            arg.getFormat(), arg.getRequired(), defaultParamType);
+                Type<?> paramType = generateTypeName(arg.getCollection(), arg.getType(),
+                        arg.getFormat(), arg.getRequired(), defaultParamType);
 
-                    if (arg.getTypeSignature() != null) {
-                        // TODO try to find a re-usable data type that matches the type signature
-                    }
+                if (arg.getTypeSignature() != null) {
+                    // TODO try to find a re-usable data type that matches the type signature
+                }
 
-                    resourceInterface.addImport(paramType);
-                    var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
-                    var param = operationMethod.addParameter(paramTypeName, methodArgName);
+                resourceInterface.addImport(paramType);
+                var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
+                var param = operationMethod.addParameter(paramTypeName, methodArgName);
 
-                    switch (arg.getIn()) {
+                switch (arg.getIn()) {
                     case "path":
                         param.addAnnotation(String.format("%s.ws.rs.PathParam", topLevelPackage))
-                            .setStringValue(arg.getName());
+                        .setStringValue(arg.getName());
                         break;
                     case "query":
                         param.addAnnotation(String.format("%s.ws.rs.QueryParam", topLevelPackage))
-                            .setStringValue(arg.getName());
+                        .setStringValue(arg.getName());
                         break;
                     case "header":
                         param.addAnnotation(String.format("%s.ws.rs.HeaderParam", topLevelPackage))
-                            .setStringValue(arg.getName());
+                        .setStringValue(arg.getName());
                         break;
                     case "cookie":
                         param.addAnnotation(String.format("%s.ws.rs.CookieParam", topLevelPackage))
-                            .setStringValue(arg.getName());
+                        .setStringValue(arg.getName());
                         break;
                     default:
                         break;
-                    }
-                });
+                }
+            });
         });
 
         sortImports(resourceInterface);

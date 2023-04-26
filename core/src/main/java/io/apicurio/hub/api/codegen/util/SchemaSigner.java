@@ -20,19 +20,15 @@ import java.util.Arrays;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-import io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.Schema;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.datamodels.models.Schema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class SchemaSigner extends CombinedAllNodeVisitor {
-    
+public class SchemaSigner extends TraversingOpenApi30VisitorAdapter {
+
     private StringBuilder sigSource = new StringBuilder();
 
     /**
@@ -40,138 +36,88 @@ public class SchemaSigner extends CombinedAllNodeVisitor {
      */
     public SchemaSigner() {
     }
-    
+
     public String getSignature() {
         if (this.sigSource.length() == 0) {
             return null;
         }
         return DigestUtils.sha256Hex(this.sigSource.toString());
     }
-    
+
     /**
      * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitSchema(io.apicurio.datamodels.core.models.common.Schema)
      */
     @Override
     public void visitSchema(Schema node) {
-        OasSchema schema = (OasSchema) node;
+        OpenApi30Schema schema = (OpenApi30Schema) node;
         // Right now we only support simple types.
-        if (schema.type != null && !schema.type.equals("object") && !schema.type.equals("array") && schema.$ref == null) {
+        if (schema.getType() != null && !schema.getType().equals("object") && !schema.getType().equals("array") && schema.get$ref() == null) {
             // Type
             this.sigSource.append("TYPE:");
-            this.sigSource.append(schema.type);
+            this.sigSource.append(schema.getType());
             // Format
-            if (schema.format != null) {
+            if (schema.getFormat() != null) {
                 this.sigSource.append("|FORMAT:");
-                this.sigSource.append(schema.format);
+                this.sigSource.append(schema.getFormat());
             }
             // Enum
-            if (schema.enum_ != null && schema.enum_.size() > 0) {
+            if (schema.getEnum() != null && schema.getEnum().size() > 0) {
                 this.sigSource.append("|ENUM:");
-                String[] options = schema.enum_.toArray(new String[schema.enum_.size()]);
+                String[] options = schema.getEnum().toArray(new String[schema.getEnum().size()]);
                 Arrays.sort(options);
                 for (String option : options) {
                     this.sigSource.append(option);
                     this.sigSource.append(",");
                 }
             }
-            
+
 
             // Max
-            if (schema.maximum != null) {
+            if (schema.getMaximum() != null) {
                 this.sigSource.append("|MAX:");
-                this.sigSource.append(schema.maximum);
+                this.sigSource.append(schema.getMaximum());
             }
             // Max Items
-            if (schema.maxItems != null) {
+            if (schema.getMaxItems() != null) {
                 this.sigSource.append("|MAXITEMS:");
-                this.sigSource.append(schema.maxItems);
+                this.sigSource.append(schema.getMaxItems());
             }
             // Max Length
-            if (schema.maxLength != null) {
+            if (schema.getMaxLength() != null) {
                 this.sigSource.append("|MAXLENGTH:");
-                this.sigSource.append(schema.maxLength);
+                this.sigSource.append(schema.getMaxLength());
             }
             // Min
-            if (schema.minimum != null) {
+            if (schema.getMinimum() != null) {
                 this.sigSource.append("|MIN:");
-                this.sigSource.append(schema.minimum);
+                this.sigSource.append(schema.getMinimum());
             }
             // Min Items
-            if (schema.minItems != null) {
+            if (schema.getMinItems() != null) {
                 this.sigSource.append("|MINITEMS:");
-                this.sigSource.append(schema.minItems);
+                this.sigSource.append(schema.getMinItems());
             }
             // Min Length
-            if (schema.minLength != null) {
+            if (schema.getMinLength() != null) {
                 this.sigSource.append("|MINLENGTH:");
-                this.sigSource.append(schema.minLength);
+                this.sigSource.append(schema.getMinLength());
             }
             // Min Properties
-            if (schema.minProperties != null) {
+            if (schema.getMinProperties() != null) {
                 this.sigSource.append("|MINPROPS:");
-                this.sigSource.append(schema.minProperties);
+                this.sigSource.append(schema.getMinProperties());
             }
             // Multiple Of
-            if (schema.multipleOf != null) {
+            if (schema.getMultipleOf() != null) {
                 this.sigSource.append("|MULTIPLEOF:");
-                this.sigSource.append(schema.multipleOf);
+                this.sigSource.append(schema.getMultipleOf());
             }
             // Pattern
-            if (schema.pattern != null) {
+            if (schema.getPattern() != null) {
                 this.sigSource.append("|PATTERN:");
-                this.sigSource.append(schema.pattern);
+                this.sigSource.append(schema.getPattern());
             }
         }
     }
-    
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitAdditionalPropertiesSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAdditionalPropertiesSchema(OasSchema node) {
-        this.visitSchema(node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitAllOfSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitAllOfSchema(OasSchema node) {
-        this.visitSchema(node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitAnyOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema)
-     */
-    @Override
-    public void visitAnyOfSchema(Oas30AnyOfSchema node) {
-        this.visitSchema(node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitItemsSchema(io.apicurio.datamodels.openapi.models.OasSchema)
-     */
-    @Override
-    public void visitItemsSchema(OasSchema node) {
-        this.visitSchema(node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitSchemaDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
-     */
-    @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        this.visitSchema((OasSchema) node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitNotSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema)
-     */
-    @Override
-    public void visitNotSchema(Oas30NotSchema node) {
-        this.visitSchema(node);
-    }
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitOneOfSchema(io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema)
-     */
-    @Override
-    public void visitOneOfSchema(Oas30OneOfSchema node) {
-        this.visitSchema(node);
-    }
-    
+
 }

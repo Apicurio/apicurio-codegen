@@ -16,50 +16,52 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.ExtensibleNode;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.common.Components;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.visitors.TraverserDirection;
-import io.apicurio.datamodels.openapi.v2.models.Oas20ParameterDefinitions;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Components;
+import io.apicurio.datamodels.TraverserDirection;
+import io.apicurio.datamodels.models.Components;
+import io.apicurio.datamodels.models.Extensible;
+import io.apicurio.datamodels.models.Parameter;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Components;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
+import io.apicurio.datamodels.models.visitors.CombinedVisitorAdapter;
+import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiInlinedParameterRemover extends CombinedVisitorAdapter {
+public class OpenApiInlinedParameterRemover extends TraversingOpenApi30VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitParameterDefinition(io.apicurio.datamodels.core.models.common.IDefinition)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
-    public void visitParameterDefinition(IDefinition def) {
-        ExtensibleNode node = (ExtensibleNode) def;
-        if (wasInlined(node)) {
-            String definitionName = def.getName();
-            Library.visitTree(node.ownerDocument(), new CombinedVisitorAdapter() {
-                @Override
-                public void visitComponents(Components node) {
-                    Oas30Components components = (Oas30Components) node;
-                    components.removeParameterDefinition(definitionName);
-                }
-                @Override
-                public void visitParameterDefinitions(Oas20ParameterDefinitions node) {
-                    node.removeParameter(definitionName);
-                }
-            }, TraverserDirection.down);
+    public void visitParameter(Parameter node) {
+        if (NodeUtil.isDefinition(node)) {
+            OpenApi30Parameter param = (OpenApi30Parameter) node;
+            if (wasInlined(param)) {
+                final String definitionName = getMappedNodeName(node);
+                Library.visitTree(param.root(), new CombinedVisitorAdapter() {
+                    @Override
+                    public void visitComponents(Components node) {
+                        OpenApi30Components components = (OpenApi30Components) node;
+                        components.getParameters().remove(definitionName);
+                    }
+                }, TraverserDirection.down);
+            }
         }
     }
 
-    private boolean wasInlined(ExtensibleNode node) {
-        Extension inlinedExt = node.getExtension(CodegenExtensions.INLINED);
-        if (inlinedExt == null) {
+    private boolean wasInlined(Extensible node) {
+        JsonNode inlinedExt = CodegenUtil.getExtension(node, CodegenExtensions.INLINED);
+        if (inlinedExt == null || inlinedExt.isNull()) {
             return false;
         }
-        return "true".equals(String.valueOf(inlinedExt.value));
+        return inlinedExt.asBoolean(false);
     }
 
 }

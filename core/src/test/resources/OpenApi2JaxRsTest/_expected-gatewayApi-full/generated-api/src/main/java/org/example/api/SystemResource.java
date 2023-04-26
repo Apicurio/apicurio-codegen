@@ -2,6 +2,7 @@ package org.example.api;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import org.example.api.beans.SystemStatus;
 
 /**
@@ -20,5 +21,6 @@ public interface SystemResource {
    */
   @Path("/status")
   @GET
+  @Produces("application/json")
   SystemStatus getGatewayStatus();
 }

@@ -16,95 +16,25 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.core.models.common.IDefinition;
-import io.apicurio.datamodels.core.models.common.IPropertySchema;
-import io.apicurio.datamodels.core.models.common.Schema;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30NotSchema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiByteSimpleTypeProcessor extends CombinedVisitorAdapter {
+public class OpenApiByteSimpleTypeProcessor extends TraversingOpenApi30VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.core.visitors.VisitorAdapter#visitSchema(Schema)
+     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
      */
     @Override
-    public void visitSchema(Schema node) {
-        OasSchema schema = (OasSchema) node;
-        if ("string".equals(schema.type) && "byte".equals(schema.format)) {
-            schema.type = "object";
+    public void visitSchema(io.apicurio.datamodels.models.Schema node) {
+        OpenApi30Schema schema = (OpenApi30Schema) node;
+        if ("string".equals(schema.getType()) && "byte".equals(schema.getFormat())) {
+            schema.setType("object");
             // workaround for a jsonschema2pojo limitation
-            schema.addExtraProperty("existingJavaType", "APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION");
+            schema.addExtraProperty("existingJavaType", factory.textNode("APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION"));
         }
-    }
-
-    /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitItemsSchema(OasSchema)
-     */
-    @Override
-    public void visitItemsSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see io.apicurio.datamodels.openapi.visitors.OasVisitorAdapter#visitPropertySchema(IPropertySchema)
-     */
-    @Override
-    public void visitPropertySchema(IPropertySchema node) {
-        visitSchema((Schema) node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitSchemaDefinition(IDefinition)
-     */
-    @Override
-    public void visitSchemaDefinition(IDefinition node) {
-        visitSchema((Schema) node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitAdditionalPropertiesSchema(OasSchema)
-     */
-    @Override
-    public void visitAdditionalPropertiesSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitOneOfSchema(Oas30OneOfSchema)
-     */
-    @Override
-    public void visitOneOfSchema(Oas30OneOfSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitAllOfSchema(OasSchema)
-     */
-    @Override
-    public void visitAllOfSchema(OasSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitAnyOfSchema(Oas30AnyOfSchema)
-     */
-    @Override
-    public void visitAnyOfSchema(Oas30AnyOfSchema node) {
-        visitSchema(node);
-    }
-
-    /**
-     * @see CombinedVisitorAdapter#visitNotSchema(Oas30NotSchema)
-     */
-    @Override
-    public void visitNotSchema(Oas30NotSchema node) {
-        visitSchema(node);
     }
 
 }

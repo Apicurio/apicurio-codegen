@@ -16,21 +16,20 @@
 
 package io.apicurio.hub.api.codegen.jaxrs;
 
-import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class PathItemDetectionVisitor extends CombinedVisitorAdapter {
-    
+public class PathItemDetectionVisitor extends TraversingOpenApi30VisitorAdapter {
+
     public boolean isPathItem = false;
-    
+
     /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OasPathItem)
+     * @see io.apicurio.datamodels.models.visitors.CombinedVisitorAdapter#visitPathItem(io.apicurio.datamodels.models.openapi.OpenApiPathItem)
      */
     @Override
-    public void visitPathItem(OasPathItem node) {
+    public void visitPathItem(OpenApiPathItem node) {
         this.isPathItem = true;
     }
 

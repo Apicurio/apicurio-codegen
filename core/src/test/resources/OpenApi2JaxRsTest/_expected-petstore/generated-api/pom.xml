@@ -5,10 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.example.api</groupId>
     <artifactId>generated-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.17</version>
     <packaging>jar</packaging>
-    <name>Context Root Sample API</name>
-    <description>A generated project with JAX-RS and Microprofile OpenAPI features enabled.</description>
+    <name>Swagger Petstore - OpenAPI 3.0</name>
+    <description>This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+Some useful links:
+- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)</description>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
