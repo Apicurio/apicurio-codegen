@@ -50,6 +50,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.Importer;
@@ -579,6 +580,16 @@ public class OpenApi2JaxRs {
                         !arg.getRequired();
 
                 addValidationConstraints(param, arg, forbidNotNull, topLevelPackage);
+
+                Optional.ofNullable(arg.getAnnotations())
+                    .map(Collection::stream)
+                    .orElseGet(Stream::empty)
+                    .map(CodegenBeanAnnotationDirective::getAnnotation)
+                    .map(this::parseParameterAnnotation)
+                    .forEach(source -> {
+                        AnnotationSource<?> target = param.addAnnotation(source.getQualifiedName());
+                        source.getValues().forEach(value -> target.setLiteralValue(value.getName(), value.getLiteralValue()));
+                    });
             });
         });
 
@@ -615,6 +626,12 @@ public class OpenApi2JaxRs {
             JavaClassSource temp = (JavaClassSource) Roaster.parse(stub);
             return temp.getMethods().get(0).getParameters().get(0).getType();
         });
+    }
+
+    AnnotationSource<?> parseParameterAnnotation(String annotation) {
+        String stub = "public class Stub { public void method( " + annotation + " Object arg0 ) {} }";
+        JavaClassSource temp = (JavaClassSource) Roaster.parse(stub);
+        return temp.getMethods().get(0).getParameters().get(0).getAnnotations().get(0);
     }
 
     /**

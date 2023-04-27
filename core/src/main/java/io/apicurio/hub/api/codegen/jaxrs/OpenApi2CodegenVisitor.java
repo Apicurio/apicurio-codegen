@@ -242,6 +242,8 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
                 setSchemaProperties(cgArgument, schema);
                 cgArgument.setTypeSignature(createSignature(schema));
             });
+
+        cgArgument.setAnnotations(annotations(CodegenUtil.getExtension(param, CodegenExtensions.ANNOTATIONS)));
     }
 
     /**

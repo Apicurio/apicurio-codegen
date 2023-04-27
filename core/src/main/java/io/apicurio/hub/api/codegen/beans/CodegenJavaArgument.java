@@ -16,6 +16,9 @@
 
 package io.apicurio.hub.api.codegen.beans;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * @author eric.wittmann@gmail.com
  */
@@ -25,11 +28,28 @@ public class CodegenJavaArgument extends CodegenJavaSchema {
     private String in;
     private boolean required;
     private String typeSignature;
+    private List<CodegenBeanAnnotationDirective> annotations;
 
-    /**
-     * Constructor.
-     */
-    public CodegenJavaArgument() {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(annotations, in, name, required, typeSignature);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CodegenJavaArgument other = (CodegenJavaArgument) obj;
+        return Objects.equals(annotations, other.annotations) && Objects.equals(in, other.in)
+                && Objects.equals(name, other.name) && required == other.required
+                && Objects.equals(typeSignature, other.typeSignature);
     }
 
     /**
@@ -88,4 +108,17 @@ public class CodegenJavaArgument extends CodegenJavaSchema {
         this.typeSignature = typeSignature;
     }
 
+    /**
+     * @return the annotations
+     */
+    public List<CodegenBeanAnnotationDirective> getAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * @param annotations the annotations to set
+     */
+    public void setAnnotations(List<CodegenBeanAnnotationDirective> annotations) {
+        this.annotations = annotations;
+    }
 }
