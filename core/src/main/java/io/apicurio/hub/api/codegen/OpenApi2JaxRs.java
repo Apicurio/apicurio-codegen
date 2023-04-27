@@ -78,7 +78,6 @@ import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.ModelType;
 import io.apicurio.datamodels.models.openapi.OpenApiDocument;
-import io.apicurio.datamodels.util.ModelTypeUtil;
 import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
@@ -327,10 +326,8 @@ public class OpenApi2JaxRs {
     protected CodegenInfo getInfoFromApiDoc() throws IOException {
         document = Library.readDocumentFromJSONString(openApiDoc);
 
-        // If the document is OpenAPI 2.0, upgrade/transform it to 3.0
-        if (ModelTypeUtil.isOpenApi2Model(document)) {
-            document = Library.transformDocument(document, ModelType.OPENAPI30);
-        }
+        // If the document is OpenAPI 2.0 or 3.0, upgrade/transform it to 3.1
+        document = Library.transformDocument(document, ModelType.OPENAPI31);
 
         // Pre-process the document
         document = preProcess(document);

@@ -21,7 +21,7 @@ import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 /**
  * @author eric.wittmann@gmail.com
  */
-public class PathItemDetectionVisitor extends TraversingOpenApi30VisitorAdapter {
+public class PathItemDetectionVisitor extends TraversingOpenApi31VisitorAdapter {
 
     public boolean isPathItem = false;
 

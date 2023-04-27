@@ -29,7 +29,7 @@ import io.apicurio.datamodels.util.NodeUtil;
  * Visitor used to organize all of the paths into a set of interface names.
  * @author eric.wittmann@gmail.com
  */
-public class InterfacesVisitor extends TraversingOpenApi30VisitorAdapter {
+public class InterfacesVisitor extends TraversingOpenApi31VisitorAdapter {
 
     private Map<String, InterfaceInfo> interfaces = new HashMap<>();
 

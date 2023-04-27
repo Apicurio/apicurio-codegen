@@ -23,26 +23,26 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.Node;
 import io.apicurio.datamodels.models.Schema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.refs.LocalReferenceResolver;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiTypeInliner extends TraversingOpenApi31VisitorAdapter {
 
     @Override
     public void visitSchema(Schema node) {
-        OpenApi30Schema schema = (OpenApi30Schema) node;
+        OpenApi31Schema schema = (OpenApi31Schema) node;
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (schema.get$ref() != null) {
             Node referencedSchemaDefNode = resolver.resolveRef(schema.get$ref(), schema);
             if (referencedSchemaDefNode != null) {
-                OpenApi30Schema referencedSchema = (OpenApi30Schema) referencedSchemaDefNode;
+                OpenApi31Schema referencedSchema = (OpenApi31Schema) referencedSchemaDefNode;
                 if (isSimpleType(referencedSchema)) {
                     inlineSchema(schema, referencedSchema);
                     markForRemoval(referencedSchema);
@@ -50,7 +50,7 @@ public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
                     inlineSchema(schema, referencedSchema);
                     markForRemoval(referencedSchema);
                 } else if (isInlineSchema((Extensible) referencedSchemaDefNode)) {
-                    inlineSchema(schema, (OpenApi30Schema) referencedSchemaDefNode);
+                    inlineSchema(schema, (OpenApi31Schema) referencedSchemaDefNode);
                     markForRemoval((Extensible) referencedSchemaDefNode);
                 }
             }
@@ -62,7 +62,7 @@ public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
      * or is a primitive type that should be inlined
      * @param schema
      */
-    private boolean isSimpleType(OpenApi30Schema schema) {
+    private boolean isSimpleType(OpenApi31Schema schema) {
         if ("string".equals(schema.getType())) {
             return schema.getEnum() == null;
         } else {
@@ -75,7 +75,7 @@ public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
      * Returns true if the given schema is an array type.
      * @param schema
      */
-    private boolean isArrayType(OpenApi30Schema schema) {
+    private boolean isArrayType(OpenApi31Schema schema) {
         return "array".equals(schema.getType());
     }
 
@@ -84,7 +84,7 @@ public class OpenApiTypeInliner extends TraversingOpenApi30VisitorAdapter {
      * @param schema
      * @param schemaDef
      */
-    private void inlineSchema(OpenApi30Schema schema, OpenApi30Schema schemaDef) {
+    private void inlineSchema(OpenApi31Schema schema, OpenApi31Schema schemaDef) {
         schema.set$ref(null);
 
         // Copy everything from schemaDef into schema by serializing the former into a JSON

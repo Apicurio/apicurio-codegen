@@ -47,10 +47,10 @@ import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import io.apicurio.datamodels.models.openapi.OpenApiRequestBody;
 import io.apicurio.datamodels.models.openapi.OpenApiResponse;
 import io.apicurio.datamodels.models.openapi.OpenApiSchema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30MediaType;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Response;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31MediaType;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Parameter;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Response;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
@@ -67,7 +67,7 @@ import io.apicurio.hub.api.codegen.util.SchemaSigner;
  * Visitor used to create a Codegen Info object from a OpenAPI document.
  * @author eric.wittmann@gmail.com
  */
-public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
+public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -116,14 +116,14 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
      * are the same.
      * @param node
      */
-    private static String createSignature(OpenApi30Schema node) {
+    private static String createSignature(OpenApi31Schema node) {
         SchemaSigner signer = new SchemaSigner();
         Library.visitNode(node, signer);
         return signer.getSignature();
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitDocument(io.apicurio.datamodels.core.models.Document)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitDocument(io.apicurio.datamodels.models.Document)
      */
     @Override
     public void visitDocument(Document node) {
@@ -139,7 +139,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitInfo(io.apicurio.datamodels.core.models.common.Info)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitInfo(io.apicurio.datamodels.models.Info)
      */
     @Override
     public void visitInfo(Info node) {
@@ -151,7 +151,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitPathItem(io.apicurio.datamodels.openapi.models.OpenApiPathItem)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitPathItem(io.apicurio.datamodels.models.openapi.OpenApiPathItem)
      */
     @Override
     public void visitPathItem(OpenApiPathItem node) {
@@ -161,7 +161,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitOperation(io.apicurio.datamodels.core.models.common.Operation)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitOperation(io.apicurio.datamodels.models.Operation)
      */
     @Override
     public void visitOperation(Operation node) {
@@ -198,7 +198,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
     public void visitParameter(Parameter node) {
@@ -212,7 +212,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
             return;
         }
 
-        OpenApi30Parameter param = (OpenApi30Parameter) node;
+        OpenApi31Parameter param = (OpenApi31Parameter) node;
 
         CodegenJavaArgument cgArgument = new CodegenJavaArgument();
         cgArgument.setName(param.getName());
@@ -226,30 +226,30 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
 
         this._currentMethods.forEach(method -> method.getArguments().add(cgArgument));
 
-        Map<String,OpenApi30MediaType> content = param.getContent();
+        Map<String,OpenApi31MediaType> content = param.getContent();
         if (content != null && !content.isEmpty()) {
-            Collection<OpenApi30MediaType> mediaTypes = content.values();
-            OpenApi30MediaType mediaType = mediaTypes.iterator().next();
-            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
+            Collection<OpenApi31MediaType> mediaTypes = content.values();
+            OpenApi31MediaType mediaType = mediaTypes.iterator().next();
+            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
             if (cgReturn != null) {
                 if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
                 if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
                 if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OpenApi30Schema) mediaType.getSchema()));
+                this._currentArgument.setTypeSignature(createSignature((OpenApi31Schema) mediaType.getSchema()));
             }
         } else if (node.getSchema() != null) {
-            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) node.getSchema());
+            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) node.getSchema());
             if (cgReturn != null) {
                 if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
                 if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
                 if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OpenApi30Schema) node.getSchema()));
+                this._currentArgument.setTypeSignature(createSignature((OpenApi31Schema) node.getSchema()));
             }
         }
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitRequestBody(io.apicurio.datamodels.models.openapi.OpenApiRequestBody)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitRequestBody(io.apicurio.datamodels.models.openapi.OpenApiRequestBody)
      */
     @Override
     public void visitRequestBody(OpenApiRequestBody node) {
@@ -268,7 +268,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
             content.entrySet().forEach(entry -> {
                 String name = entry.getKey();
                 OpenApiMediaType mediaType = entry.getValue();
-                CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
+                CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
                 if (cgReturn == null) {
                     cgReturn = new CodegenJavaReturn();
                 }
@@ -313,7 +313,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
     }
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitResponse(io.apicurio.datamodels.openapi.models.OpenApiResponse)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitResponse(io.apicurio.datamodels.models.openapi.OpenApiResponse)
      */
     @Override
     public void visitResponse(OpenApiResponse node) {
@@ -326,16 +326,16 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
         // Note: if there are multiple 2xx responses, only the first one will
         // become the method return value.
         if (statusCode != null && statusCode.indexOf("2") == 0 && this._currentMethods.get(0).getReturn() == null) {
-            OpenApi30Response response = (OpenApi30Response) node;
-            Map<String, OpenApi30MediaType> content = response.getContent();
+            OpenApi31Response response = (OpenApi31Response) node;
+            Map<String, OpenApi31MediaType> content = response.getContent();
             if (content == null) {
                 content = new HashMap<>();
             }
 
             // TODO if there are multiple response media types, handle it somehow - probably by returning a JAX-RS Response object
             if (!content.isEmpty()) {
-                Entry<String, OpenApi30MediaType> firstContent = content.entrySet().iterator().next();
-                OpenApi30MediaType mediaType = firstContent.getValue();
+                Entry<String, OpenApi31MediaType> firstContent = content.entrySet().iterator().next();
+                OpenApi31MediaType mediaType = firstContent.getValue();
 
                 JsonNode returnTypeExt = CodegenUtil.getExtension(mediaType, CodegenExtensions.RETURN_TYPE);
                 CodegenJavaReturn cgReturn = null;
@@ -345,7 +345,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
                     customReturn.setType(returnType);
                     cgReturn = customReturn;
                 } else {
-                    cgReturn = this.returnFromSchema((OpenApi30Schema) mediaType.getSchema());
+                    cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
                 }
 
                 // If no return was created, it was because we couldn't figure it out from the
@@ -367,6 +367,9 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
         }
     }
 
+    /**
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
+     */
     @Override
     public void visitSchema(Schema node) {
         if (NodeUtil.isDefinition(node)) {
@@ -377,7 +380,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
             bean.setName(name);
             bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.packageName + ".beans"));
             bean.set$schema(Library.writeNode(schema));
-            bean.setSignature(createSignature((OpenApi30Schema) schema));
+            bean.setSignature(createSignature((OpenApi31Schema) schema));
             bean.setAnnotations(annotations(CodegenUtil.getExtension((Extensible) schema, CodegenExtensions.ANNOTATIONS)));
 
             this.codegenInfo.getBeans().add(bean);
@@ -501,7 +504,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
         return path;
     }
 
-    private CodegenJavaReturn returnFromSchema(OpenApi30Schema schema) {
+    private CodegenJavaReturn returnFromSchema(OpenApi31Schema schema) {
         if (schema == null) {
             return null;
         }
@@ -513,7 +516,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi30VisitorAdapter {
         } else if ("array".equals(schema.getType())) {
             cgReturn.setCollection("list");
             OpenApiSchema items = schema.getItems();
-            CodegenJavaReturn subReturn = this.returnFromSchema((OpenApi30Schema) items);
+            CodegenJavaReturn subReturn = this.returnFromSchema((OpenApi31Schema) items);
             if (subReturn != null && subReturn.getType() != null) {
                 cgReturn.setType(subReturn.getType());
             }

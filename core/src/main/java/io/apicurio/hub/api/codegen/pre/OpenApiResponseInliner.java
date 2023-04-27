@@ -21,21 +21,21 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Node;
 import io.apicurio.datamodels.models.openapi.OpenApiResponse;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Response;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Response;
 import io.apicurio.datamodels.refs.LocalReferenceResolver;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiResponseInliner extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiResponseInliner extends TraversingOpenApi31VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitResponse(io.apicurio.datamodels.models.openapi.OpenApiResponse)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitResponse(io.apicurio.datamodels.models.openapi.OpenApiResponse)
      */
     @Override
     public void visitResponse(OpenApiResponse node) {
-        OpenApi30Response response = (OpenApi30Response) node;
+        OpenApi31Response response = (OpenApi31Response) node;
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (response.get$ref() != null) {
             Node referencedResponseDefNode = resolver.resolveRef(response.get$ref(), response);
@@ -50,7 +50,7 @@ public class OpenApiResponseInliner extends TraversingOpenApi30VisitorAdapter {
      * @param response
      * @param responseDef
      */
-    private void inlineResponse(OpenApi30Response response, Node responseDef) {
+    private void inlineResponse(OpenApi31Response response, Node responseDef) {
         response.set$ref(null);
 
         // Copy everything from schemaDef into schema by serializing the former into a JSON

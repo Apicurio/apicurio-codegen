@@ -23,29 +23,29 @@ import io.apicurio.datamodels.TraverserDirection;
 import io.apicurio.datamodels.models.Components;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.Schema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Components;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Components;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.models.visitors.CombinedVisitorAdapter;
 import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiInlinedSchemaRemover extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiInlinedSchemaRemover extends TraversingOpenApi31VisitorAdapter {
 
     @Override
     public void visitSchema(Schema node) {
-        OpenApi30Schema schema = (OpenApi30Schema) node;
+        OpenApi31Schema schema = (OpenApi31Schema) node;
         if (NodeUtil.isDefinition(schema)) {
             if (wasInlined(schema)) {
                 String definitionName = getMappedNodeName(schema);
                 Library.visitTree(schema.root(), new CombinedVisitorAdapter() {
                     @Override
                     public void visitComponents(Components node) {
-                        OpenApi30Components components = (OpenApi30Components) node;
+                        OpenApi31Components components = (OpenApi31Components) node;
                         components.getSchemas().remove(definitionName);
                     }
                 }, TraverserDirection.down);
