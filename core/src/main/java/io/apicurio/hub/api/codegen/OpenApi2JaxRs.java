@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -48,6 +50,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -82,6 +85,7 @@ import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaSchema;
 import io.apicurio.hub.api.codegen.jaxrs.CodegenTarget;
 import io.apicurio.hub.api.codegen.jaxrs.InterfacesVisitor;
 import io.apicurio.hub.api.codegen.jaxrs.OpenApi2CodegenVisitor;
@@ -568,6 +572,13 @@ public class OpenApi2JaxRs {
                     default:
                         break;
                 }
+
+                boolean forbidNotNull = 
+                        paramType.isPrimitive() ||
+                        "path".equals(arg.getIn()) ||
+                        !arg.getRequired();
+
+                addValidationConstraints(param, arg, forbidNotNull, topLevelPackage);
             });
         });
 
@@ -624,7 +635,7 @@ public class OpenApi2JaxRs {
             required = Boolean.FALSE;
         }
 
-        boolean isList = "list".equals(collection);
+        boolean isCollection = Arrays.asList("list", "set").contains(collection);
         Type<?> coreType = null;
 
         if (type.equals("string")) {
@@ -643,17 +654,17 @@ public class OpenApi2JaxRs {
             }
         } else if (type.equals("integer")) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
-                coreType = (required && !isList && format != null) ? parseType("long") : parseType(Long.class.getName());
+                coreType = (required && !isCollection && format != null) ? parseType("long") : parseType(Long.class.getName());
             } else {
-                coreType = (required && !isList && format != null) ? parseType("int") : parseType(Integer.class.getName());
+                coreType = (required && !isCollection && format != null) ? parseType("int") : parseType(Integer.class.getName());
             }
         } else if (type.equals("number")) {
             coreType = parseType(Number.class.getName());
             if (format != null) {
                 if (format.equals("float")) {
-                    coreType = (required && !isList) ? parseType("float") : parseType(Float.class.getName());
+                    coreType = (required && !isCollection) ? parseType("float") : parseType(Float.class.getName());
                 } else if (format.equals("double")) {
-                    coreType = (required && !isList) ? parseType("double") : parseType(Double.class.getName());
+                    coreType = (required && !isCollection) ? parseType("double") : parseType(Double.class.getName());
                 }
             }
         } else if (type.equals("boolean")) {
@@ -674,6 +685,8 @@ public class OpenApi2JaxRs {
 
         if ("list".equals(collection)) {
             return parseType(String.format("java.util.List<%s>", coreType.toString()));
+        } else if ("set".equals(collection)) {
+            return parseType(String.format("java.util.Set<%s>", coreType.toString()));
         }
 
         return parseType(defaultType);
@@ -716,6 +729,46 @@ public class OpenApi2JaxRs {
             builder.append("}");
         }
         return builder.toString();
+    }
+
+    void addValidationConstraints(AnnotationTargetSource<?, ?> target, CodegenJavaSchema schemaInfo, boolean forbidNotNull, String topLevelPackage) {
+        final String constraintPkg = String.format("%s.validation.constraints", topLevelPackage);
+        final String sizeConstraint = String.format("%s.Size", constraintPkg);
+
+        if (schemaInfo.getMaximum() != null) {
+            BigDecimal max = new BigDecimal(schemaInfo.getMaximum().toString());
+            boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMaximum());
+            target.addAnnotation(String.format("%s.validation.constraints.MaxDecimal", topLevelPackage))
+                .setStringValue(max.toString())
+                .setLiteralValue("inclusive", String.valueOf(inclusive));
+        }
+
+        if (schemaInfo.getMinimum() != null) {
+            BigDecimal min = new BigDecimal(schemaInfo.getMinimum().toString());
+            boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMinimum());
+            target.addAnnotation(String.format("%s.validation.constraints.MinDecimal", topLevelPackage))
+                .setStringValue(min.toString())
+                .setLiteralValue("inclusive", String.valueOf(inclusive));
+        }
+
+        addConstraint(target, schemaInfo.getMaxLength(), sizeConstraint, "max");
+        addConstraint(target, schemaInfo.getMinLength(), sizeConstraint, "min");
+        addConstraint(target, schemaInfo.getMaxItems(), sizeConstraint, "max");
+        addConstraint(target, schemaInfo.getMinItems(), sizeConstraint, "min");
+        addConstraint(target, schemaInfo.getMaxProperties(), sizeConstraint, "max");
+        addConstraint(target, schemaInfo.getMinProperties(), sizeConstraint, "min");
+        addConstraint(target, schemaInfo.getPattern(), String.format("%s.Pattern", constraintPkg), "value");
+
+        if (!forbidNotNull && !Boolean.TRUE.equals(schemaInfo.getNullable())) {
+            // nullable is false by default
+            target.addAnnotation(String.format("%s.validation.constraints.NotNull", topLevelPackage));
+        }
+    }
+
+    <C> void addConstraint(AnnotationTargetSource<?, ?> target, C constraintValue, String annotationName, String annotationProperty) {
+        if (constraintValue != null) {
+            target.addAnnotation(annotationName).setStringValue(annotationProperty, constraintValue.toString());
+        }
     }
 
     /**

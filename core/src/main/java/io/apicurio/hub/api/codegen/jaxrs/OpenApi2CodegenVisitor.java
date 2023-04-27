@@ -18,6 +18,7 @@ package io.apicurio.hub.api.codegen.jaxrs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,8 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +43,6 @@ import io.apicurio.datamodels.models.Info;
 import io.apicurio.datamodels.models.Node;
 import io.apicurio.datamodels.models.Operation;
 import io.apicurio.datamodels.models.Parameter;
-import io.apicurio.datamodels.models.Referenceable;
 import io.apicurio.datamodels.models.Schema;
 import io.apicurio.datamodels.models.openapi.OpenApiMediaType;
 import io.apicurio.datamodels.models.openapi.OpenApiOperation;
@@ -60,6 +64,7 @@ import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaMethod;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaReturn;
+import io.apicurio.hub.api.codegen.beans.CodegenJavaSchema;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 import io.apicurio.hub.api.codegen.util.SchemaSigner;
 
@@ -77,7 +82,6 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
     private CodegenJavaInterface _currentInterface;
     private List<CodegenJavaMethod> _currentMethods;
-    private CodegenJavaArgument _currentArgument;
 
     private int _methodCounter = 1;
 
@@ -217,35 +221,27 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         CodegenJavaArgument cgArgument = new CodegenJavaArgument();
         cgArgument.setName(param.getName());
         cgArgument.setIn(param.getIn());
-
-        this._currentArgument = cgArgument;
-
-        if (param.isRequired() != null) {
-            cgArgument.setRequired(param.isRequired());
-        }
+        cgArgument.setRequired(Boolean.TRUE.equals(param.isRequired()));
 
         this._currentMethods.forEach(method -> method.getArguments().add(cgArgument));
 
-        Map<String,OpenApi31MediaType> content = param.getContent();
-        if (content != null && !content.isEmpty()) {
-            Collection<OpenApi31MediaType> mediaTypes = content.values();
-            OpenApi31MediaType mediaType = mediaTypes.iterator().next();
-            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
-            if (cgReturn != null) {
-                if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
-                if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
-                if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OpenApi31Schema) mediaType.getSchema()));
-            }
-        } else if (node.getSchema() != null) {
-            CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) node.getSchema());
-            if (cgReturn != null) {
-                if (cgReturn.getCollection() != null) { this._currentArgument.setCollection(cgReturn.getCollection()); }
-                if (cgReturn.getType() != null) { this._currentArgument.setType(cgReturn.getType()); }
-                if (cgReturn.getFormat() != null) { this._currentArgument.setFormat(cgReturn.getFormat()); }
-                this._currentArgument.setTypeSignature(createSignature((OpenApi31Schema) node.getSchema()));
-            }
-        }
+        /*
+         * Attempt to apply the schema from the `content` section's first media type to this
+         * parameter. If no `content` section exists or the first media type's schema is not
+         * present, map the schema attributes from the `schema` directly set on the parameter
+         * in the OpenAPI, if present. 
+         */
+        Optional.ofNullable(param.getContent())
+            .map(Map::values) // gives the collection of media types
+            .map(Collection::stream)
+            .flatMap(Stream::findFirst)
+            .map(OpenApi31MediaType::getSchema)
+            .map(OpenApi31Schema.class::cast)
+            .or(() -> Optional.ofNullable((OpenApi31Schema) node.getSchema()))
+            .ifPresent(schema -> {
+                setSchemaProperties(cgArgument, schema);
+                cgArgument.setTypeSignature(createSignature(schema));
+            });
     }
 
     /**
@@ -268,9 +264,9 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             content.entrySet().forEach(entry -> {
                 String name = entry.getKey();
                 OpenApiMediaType mediaType = entry.getValue();
-                CodegenJavaReturn cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
-                if (cgReturn == null) {
-                    cgReturn = new CodegenJavaReturn();
+                CodegenJavaReturn cgReturn = new CodegenJavaReturn();
+                if (mediaType.getSchema() != null) {
+                    setSchemaProperties(cgReturn, (OpenApi31Schema) mediaType.getSchema());
                 }
                 allReturnTypes.merge(cgReturn, Collections.singleton(name), (set1, set2) -> {
                     Set<String> merged = new HashSet<>();
@@ -344,8 +340,9 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
                     CodegenJavaReturn customReturn = new CodegenJavaReturn();
                     customReturn.setType(returnType);
                     cgReturn = customReturn;
-                } else {
-                    cgReturn = this.returnFromSchema((OpenApi31Schema) mediaType.getSchema());
+                } else if (mediaType.getSchema() != null) {
+                    cgReturn = new CodegenJavaReturn();
+                    setSchemaProperties(cgReturn, (OpenApi31Schema) mediaType.getSchema());
                 }
 
                 // If no return was created, it was because we couldn't figure it out from the
@@ -504,34 +501,58 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         return path;
     }
 
-    private CodegenJavaReturn returnFromSchema(OpenApi31Schema schema) {
+    private void setSchemaProperties(CodegenJavaSchema target, OpenApi31Schema schema) {
         if (schema == null) {
-            return null;
+            return;
         }
-        CodegenJavaReturn cgReturn = new CodegenJavaReturn();
-        cgReturn.setType(null);
-        String $ref = ((Referenceable) schema).get$ref();
+
+        target.setType(null);
+        String $ref = schema.get$ref();
+
         if ($ref != null) {
-            cgReturn.setType(this.typeFromSchemaRef((Document) schema.root(), $ref));
+            target.setType(this.typeFromSchemaRef((Document) schema.root(), $ref));
         } else if ("array".equals(schema.getType())) {
-            cgReturn.setCollection("list");
-            OpenApiSchema items = schema.getItems();
-            CodegenJavaReturn subReturn = this.returnFromSchema((OpenApi31Schema) items);
-            if (subReturn != null && subReturn.getType() != null) {
-                cgReturn.setType(subReturn.getType());
+            if (schema.getItems() != null) {
+                setSchemaProperties(target, schema.getItems());
             }
-            if (subReturn != null && subReturn.getFormat() != null) {
-                cgReturn.setFormat(subReturn.getFormat());
+
+            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(schema::getMaxItems, target::setMaxItems);
+            setIfPresent(schema::getMinItems, target::setMinItems);
+
+            if (Boolean.TRUE.equals(schema.isUniqueItems())) {
+                target.setCollection("set");
+            } else {
+                target.setCollection("list");
             }
+        } else if ("string".equals(schema.getType())) {
+            setIfPresent(schema::getType, target::setType);
+            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(schema::getFormat, target::setFormat);
+            setIfPresent(schema::getMaxLength, target::setMaxLength);
+            setIfPresent(schema::getMinLength, target::setMinLength);
+            setIfPresent(schema::getPattern, target::setPattern);
+        } else if (Arrays.asList("integer", "number").contains(schema.getType())) {
+            setIfPresent(schema::getType, target::setType);
+            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(schema::getFormat, target::setFormat);
+            setIfPresent(schema::getMaximum, target::setMaximum);
+            setIfPresent(schema::isExclusiveMaximum, target::setExclusiveMaximum);
+            setIfPresent(schema::getMinimum, target::setMinimum);
+            setIfPresent(schema::isExclusiveMinimum, target::setExclusiveMinimum);
         } else {
-            if (schema.getType() != null) {
-                cgReturn.setType(schema.getType());
-            }
-            if (schema.getFormat() != null) {
-                cgReturn.setFormat(schema.getFormat());
-            }
+            setIfPresent(schema::getType, target::setType);
+            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(schema::getFormat, target::setFormat);
         }
-        return cgReturn;
+    }
+
+    private <T> void setIfPresent(Supplier<T> source, Consumer<T> target) {
+        T value = source.get();
+
+        if (value != null) {
+            target.accept(value);
+        }
     }
 
     private String typeFromSchemaRef(Document document, String schemaRef) {

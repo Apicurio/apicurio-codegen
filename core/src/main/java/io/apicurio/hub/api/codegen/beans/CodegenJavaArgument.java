@@ -19,16 +19,13 @@ package io.apicurio.hub.api.codegen.beans;
 /**
  * @author eric.wittmann@gmail.com
  */
-public class CodegenJavaArgument {
-    
+public class CodegenJavaArgument extends CodegenJavaSchema {
+
     private String name;
     private String in;
-    private String collection;
-    private String type;
-    private String format;
-    private Boolean required;
+    private boolean required;
     private String typeSignature;
-    
+
     /**
      * Constructor.
      */
@@ -64,58 +61,16 @@ public class CodegenJavaArgument {
     }
 
     /**
-     * @return the collection
-     */
-    public String getCollection() {
-        return collection;
-    }
-
-    /**
-     * @param collection the collection to set
-     */
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the format
-     */
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * @param format the format to set
-     */
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    /**
      * @return the required
      */
-    public Boolean getRequired() {
+    public boolean getRequired() {
         return required;
     }
 
     /**
      * @param required the required to set
      */
-    public void setRequired(Boolean required) {
+    public void setRequired(boolean required) {
         this.required = required;
     }
 
