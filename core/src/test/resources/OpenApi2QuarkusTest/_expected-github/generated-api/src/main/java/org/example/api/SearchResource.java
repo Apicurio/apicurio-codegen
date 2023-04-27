@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -58,8 +59,8 @@ public interface SearchResource {
   @Path("/code")
   @GET
   @Produces("application/json")
-  Response search_code(@QueryParam("q") String q, @QueryParam("sort") String sort, @QueryParam("order") String order,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response search_code(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
+      @QueryParam("order") String order, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
    * <p>
@@ -91,7 +92,7 @@ public interface SearchResource {
   @Path("/labels")
   @GET
   @Produces("application/json")
-  Response search_labels(@QueryParam("repository_id") Integer repositoryId, @QueryParam("q") String q,
+  Response search_labels(@QueryParam("repository_id") @NotNull Integer repositoryId, @QueryParam("q") @NotNull String q,
       @QueryParam("sort") String sort, @QueryParam("order") String order);
 
   /**
@@ -126,8 +127,8 @@ public interface SearchResource {
   @Path("/users")
   @GET
   @Produces("application/json")
-  Response search_users(@QueryParam("q") String q, @QueryParam("sort") String sort, @QueryParam("order") String order,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response search_users(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
+      @QueryParam("order") String order, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
    * <p>
@@ -156,8 +157,8 @@ public interface SearchResource {
   @Path("/commits")
   @GET
   @Produces("application/json")
-  Response search_commits(@QueryParam("q") String q, @QueryParam("sort") String sort, @QueryParam("order") String order,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response search_commits(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
+      @QueryParam("order") String order, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
    * <p>
@@ -192,7 +193,7 @@ public interface SearchResource {
   @Path("/issues")
   @GET
   @Produces("application/json")
-  Response search_issues_and_pull_requests(@QueryParam("q") String q, @QueryParam("sort") String sort,
+  Response search_issues_and_pull_requests(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") String order, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
@@ -235,8 +236,8 @@ public interface SearchResource {
   @Path("/repositories")
   @GET
   @Produces("application/json")
-  Response search_repos(@QueryParam("q") String q, @QueryParam("sort") String sort, @QueryParam("order") String order,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response search_repos(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
+      @QueryParam("order") String order, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
 
   /**
    * <p>
@@ -272,5 +273,5 @@ public interface SearchResource {
   @Path("/topics")
   @GET
   @Produces("application/json")
-  Response search_topics(@QueryParam("q") String q);
+  Response search_topics(@QueryParam("q") @NotNull String q);
 }

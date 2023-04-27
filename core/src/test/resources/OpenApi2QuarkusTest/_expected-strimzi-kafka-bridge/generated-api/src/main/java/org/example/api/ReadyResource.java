@@ -12,7 +12,7 @@ public interface ReadyResource {
    * <p>
    * Check if the bridge is ready and can accept requests.
    * </p>
-   *
+   * 
    */
   @GET
   void ready();

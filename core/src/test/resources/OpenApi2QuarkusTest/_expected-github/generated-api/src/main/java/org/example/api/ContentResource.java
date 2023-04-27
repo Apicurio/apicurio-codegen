@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -39,5 +40,5 @@ public interface ContentResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response apps_create_content_attachment(@PathParam("content_reference_id") Integer contentReferenceId,
-      InputStream data);
+      @NotNull InputStream data);
 }

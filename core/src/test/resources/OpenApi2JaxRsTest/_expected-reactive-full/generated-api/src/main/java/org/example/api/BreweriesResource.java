@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -9,6 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
 import org.example.api.beans.Beer;
 import org.example.api.beans.Brewery;
@@ -26,7 +28,7 @@ public interface BreweriesResource {
    */
   @GET
   @Produces("application/json")
-  CompletionStage<List<Brewery>> listAllBreweries();
+  CompletionStage<Set<Brewery>> listAllBreweries();
 
   /**
    * <p>
@@ -36,7 +38,7 @@ public interface BreweriesResource {
    */
   @POST
   @Consumes("application/json")
-  void addBrewery(Brewery data);
+  void addBrewery(@NotNull Brewery data);
 
   /**
    * <p>
@@ -58,7 +60,7 @@ public interface BreweriesResource {
   @Path("/{breweryId}")
   @PUT
   @Consumes("application/json")
-  void updateBrewery(@PathParam("breweryId") int breweryId, Brewery data);
+  void updateBrewery(@PathParam("breweryId") int breweryId, @NotNull Brewery data);
 
   /**
    * <p>
@@ -90,5 +92,5 @@ public interface BreweriesResource {
   @Path("/{breweryId}/beers")
   @POST
   @Consumes("application/json")
-  void addBeerToBrewery(@PathParam("breweryId") int breweryId, Beer data);
+  void addBeerToBrewery(@PathParam("breweryId") int breweryId, @NotNull Beer data);
 }

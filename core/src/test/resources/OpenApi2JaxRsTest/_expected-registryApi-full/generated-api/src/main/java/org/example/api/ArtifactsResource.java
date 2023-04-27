@@ -2,6 +2,7 @@ package org.example.api;
 
 import io.apicurio.registry.types.ArtifactType;
 import io.apicurio.registry.types.RuleType;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -69,7 +70,7 @@ public interface ArtifactsResource {
   @Consumes({"application/json", "application/x-yaml"})
   CompletionStage<ArtifactMetaData> createArtifact(
       @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType,
-      @HeaderParam("X-Registry-ArtifactId") String xRegistryArtifactId, InputStream data);
+      @HeaderParam("X-Registry-ArtifactId") String xRegistryArtifactId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -145,7 +146,7 @@ public interface ArtifactsResource {
   @Produces("application/json")
   @Consumes({"application/json", "application/x-yaml"})
   ArtifactMetaData updateArtifact(@PathParam("artifactId") String artifactId,
-      @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType, InputStream data);
+      @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType, @NotNull InputStream data);
 
   /**
    * <p>
@@ -203,7 +204,7 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/meta")
   @PUT
   @Consumes("application/json")
-  void updateArtifactMetaData(@PathParam("artifactId") String artifactId, EditableMetaData data);
+  void updateArtifactMetaData(@PathParam("artifactId") String artifactId, @NotNull EditableMetaData data);
 
   /**
    * <p>
@@ -253,7 +254,8 @@ public interface ArtifactsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Rule updateArtifactRuleConfig(@PathParam("rule") String rule, @PathParam("artifactId") String artifactId, Rule data);
+  Rule updateArtifactRuleConfig(@PathParam("rule") String rule, @PathParam("artifactId") String artifactId,
+      @NotNull Rule data);
 
   /**
    * <p>
@@ -349,7 +351,7 @@ public interface ArtifactsResource {
   @Produces("application/json")
   @Consumes({"application/json", "application/x-yaml"})
   VersionMetaData createArtifactVersion(@PathParam("artifactId") String artifactId,
-      @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType, InputStream data);
+      @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType, @NotNull InputStream data);
 
   /**
    * <p>
@@ -447,7 +449,7 @@ public interface ArtifactsResource {
   @PUT
   @Consumes("application/json")
   void updateArtifactVersionMetaData(@PathParam("version") Integer version, @PathParam("artifactId") String artifactId,
-      EditableMetaData data);
+      @NotNull EditableMetaData data);
 
   /**
    * <p>
@@ -514,7 +516,7 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/rules")
   @POST
   @Consumes("application/json")
-  void createArtifactRule(@PathParam("artifactId") String artifactId, Rule data);
+  void createArtifactRule(@PathParam("artifactId") String artifactId, @NotNull Rule data);
 
   /**
    * <p>

@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -100,7 +101,7 @@ public interface AuthorizationsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response oauth_authorizations_create_authorization(InputStream data);
+  Response oauth_authorizations_create_authorization(@NotNull InputStream data);
 
   /**
    * <p>
@@ -150,7 +151,7 @@ public interface AuthorizationsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response oauth_authorizations_get_or_create_authorization_for_app_and_fingerprint(
-      @PathParam("client_id") String clientId, @PathParam("fingerprint") String fingerprint, InputStream data);
+      @PathParam("client_id") String clientId, @PathParam("fingerprint") String fingerprint, @NotNull InputStream data);
 
   /**
    * <p>
@@ -227,7 +228,7 @@ public interface AuthorizationsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response oauth_authorizations_update_authorization(@PathParam("authorization_id") Integer authorizationId,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -289,5 +290,5 @@ public interface AuthorizationsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response oauth_authorizations_get_or_create_authorization_for_app(@PathParam("client_id") String clientId,
-      InputStream data);
+      @NotNull InputStream data);
 }

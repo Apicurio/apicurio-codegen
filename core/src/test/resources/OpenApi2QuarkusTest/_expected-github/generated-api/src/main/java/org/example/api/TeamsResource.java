@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -67,7 +68,7 @@ public interface TeamsResource {
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
       @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -117,7 +118,7 @@ public interface TeamsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -284,7 +285,7 @@ public interface TeamsResource {
   @Consumes("application/json")
   Response teams_update_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
       @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -341,7 +342,7 @@ public interface TeamsResource {
   @PUT
   @Consumes("application/json")
   void teams_add_or_update_repo_permissions_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+      @PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -447,7 +448,7 @@ public interface TeamsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_add_or_update_membership_for_user_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("username") String username, InputStream data);
+      @PathParam("username") String username, @NotNull InputStream data);
 
   /**
    * <p>
@@ -549,7 +550,7 @@ public interface TeamsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_update_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -610,7 +611,7 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_legacy(@PathParam("team_id") Integer teamId, InputStream data);
+  Response teams_update_legacy(@PathParam("team_id") Integer teamId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -662,7 +663,8 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create_or_update_idp_group_connections_legacy(@PathParam("team_id") Integer teamId, InputStream data);
+  Response teams_create_or_update_idp_group_connections_legacy(@PathParam("team_id") Integer teamId,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -740,7 +742,7 @@ public interface TeamsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -815,7 +817,7 @@ public interface TeamsResource {
   @PUT
   @Consumes("application/json")
   void teams_add_or_update_project_permissions_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("project_id") Integer projectId, InputStream data);
+      @PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -909,7 +911,7 @@ public interface TeamsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create_discussion_legacy(@PathParam("team_id") Integer teamId, InputStream data);
+  Response teams_create_discussion_legacy(@PathParam("team_id") Integer teamId, @NotNull InputStream data);
 
   /**
    * <p>

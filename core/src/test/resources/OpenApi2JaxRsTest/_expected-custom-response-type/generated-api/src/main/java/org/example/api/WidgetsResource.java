@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -35,7 +36,7 @@ public interface WidgetsResource {
    */
   @POST
   @Consumes("application/json")
-  void createWidget(Widget data);
+  void createWidget(@NotNull Widget data);
 
   /**
    * <p>
@@ -57,7 +58,7 @@ public interface WidgetsResource {
   @Path("/{widgetId}")
   @PUT
   @Consumes("application/json")
-  void updateWidget(@PathParam("widgetId") String widgetId, Widget data);
+  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull Widget data);
 
   /**
    * <p>

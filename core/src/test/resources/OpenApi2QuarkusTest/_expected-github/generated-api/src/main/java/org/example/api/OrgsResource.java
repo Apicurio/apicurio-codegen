@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -55,7 +56,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_in_org(@PathParam("org") String org, InputStream data);
+  Response repos_create_in_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -79,7 +80,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_start_for_org(@PathParam("org") String org, InputStream data);
+  Response migrations_start_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -176,7 +177,7 @@ public interface OrgsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response interactions_set_restrictions_for_org(@PathParam("org") String org, InputStream data);
+  Response interactions_set_restrictions_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -226,7 +227,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_for_org(@PathParam("org") String org, InputStream data);
+  Response projects_create_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -315,7 +316,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_comment_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
-      @PathParam("comment_number") Integer commentNumber, InputStream data);
+      @PathParam("comment_number") Integer commentNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -362,7 +363,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -479,7 +480,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response orgs_set_membership_for_user(@PathParam("org") String org, @PathParam("username") String username,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -520,7 +521,8 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update_webhook(@PathParam("org") String org, @PathParam("hook_id") Integer hookId, InputStream data);
+  Response orgs_update_webhook(@PathParam("org") String org, @PathParam("hook_id") Integer hookId,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -572,7 +574,7 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update(@PathParam("org") String org, InputStream data);
+  Response orgs_update(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -705,7 +707,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_create_invitation(@PathParam("org") String org, InputStream data);
+  Response orgs_create_invitation(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * 
@@ -726,7 +728,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_create_webhook(@PathParam("org") String org, InputStream data);
+  Response orgs_create_webhook(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -974,7 +976,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void actions_create_or_update_org_secret(@PathParam("org") String org, @PathParam("secret_name") String secretName,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1145,7 +1147,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void actions_set_selected_repos_for_org_secret(@PathParam("org") String org,
-      @PathParam("secret_name") String secretName, InputStream data);
+      @PathParam("secret_name") String secretName, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1223,7 +1225,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   void teams_add_or_update_repo_permissions_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1309,7 +1311,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_discussion_comment_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1359,7 +1361,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_discussion_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1417,7 +1419,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_update_discussion_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1473,7 +1475,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void teams_add_or_update_project_permissions_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, @PathParam("project_id") Integer projectId, InputStream data);
+      @PathParam("team_slug") String teamSlug, @PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1552,7 +1554,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response teams_update_discussion_comment_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
       @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1676,7 +1678,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_add_or_update_membership_for_user_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, @PathParam("username") String username, InputStream data);
+      @PathParam("team_slug") String teamSlug, @PathParam("username") String username, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1789,7 +1791,8 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug, InputStream data);
+  Response teams_update_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1826,7 +1829,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create(@PathParam("org") String org, InputStream data);
+  Response teams_create(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1892,7 +1895,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_or_update_idp_group_connections_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, InputStream data);
+      @PathParam("team_slug") String teamSlug, @NotNull InputStream data);
 
   /**
    * <p>

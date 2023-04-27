@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -89,7 +90,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_for_authenticated_user(InputStream data);
+  Response repos_create_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * <p>
@@ -166,7 +167,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_start_for_authenticated_user(InputStream data);
+  Response migrations_start_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * <p>
@@ -286,7 +287,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_for_authenticated_user(InputStream data);
+  Response projects_create_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * 
@@ -312,7 +313,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update_membership_for_authenticated_user(@PathParam("org") String org, InputStream data);
+  Response orgs_update_membership_for_authenticated_user(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -387,7 +388,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_create_gpg_key_for_authenticated(InputStream data);
+  Response users_create_gpg_key_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -466,7 +467,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_add_email_for_authenticated(InputStream data);
+  Response users_add_email_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -477,7 +478,7 @@ public interface UserResource {
   @Path("/emails")
   @DELETE
   @Consumes("application/json")
-  void users_delete_email_for_authenticated(InputStream data);
+  void users_delete_email_for_authenticated(@NotNull InputStream data);
 
   /**
    * 
@@ -596,7 +597,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_create_public_ssh_key_for_authenticated(InputStream data);
+  Response users_create_public_ssh_key_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -627,7 +628,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_update_authenticated(InputStream data);
+  Response users_update_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -639,7 +640,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_set_primary_email_visibility_for_authenticated(InputStream data);
+  Response users_set_primary_email_visibility_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>

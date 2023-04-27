@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -74,7 +75,7 @@ public interface NotificationsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, InputStream data);
+  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -121,5 +122,5 @@ public interface NotificationsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_mark_notifications_as_read(InputStream data);
+  Response activity_mark_notifications_as_read(@NotNull InputStream data);
 }

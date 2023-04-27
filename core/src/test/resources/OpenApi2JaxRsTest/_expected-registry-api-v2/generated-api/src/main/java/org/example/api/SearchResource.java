@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -45,5 +46,5 @@ public interface SearchResource {
   @Consumes("*/*")
   ArtifactSearchResults searchArtifactsByContent(@QueryParam("offset") Integer offset,
       @QueryParam("limit") Integer limit, @QueryParam("order") SortOrder order, @QueryParam("orderby") SortBy orderby,
-      InputStream data);
+      @NotNull InputStream data);
 }

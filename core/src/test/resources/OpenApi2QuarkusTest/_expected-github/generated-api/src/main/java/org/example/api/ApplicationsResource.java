@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -121,7 +122,7 @@ public interface ApplicationsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_check_token(@PathParam("client_id") String clientId, InputStream data);
+  Response apps_check_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -137,7 +138,7 @@ public interface ApplicationsResource {
   @Path("/{client_id}/token")
   @DELETE
   @Consumes("application/json")
-  void apps_delete_token(@PathParam("client_id") String clientId, InputStream data);
+  void apps_delete_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -155,7 +156,7 @@ public interface ApplicationsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_reset_token(@PathParam("client_id") String clientId, InputStream data);
+  Response apps_reset_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -296,5 +297,5 @@ public interface ApplicationsResource {
   @Path("/{client_id}/grant")
   @DELETE
   @Consumes("application/json")
-  void apps_delete_authorization(@PathParam("client_id") String clientId, InputStream data);
+  void apps_delete_authorization(@PathParam("client_id") String clientId, @NotNull InputStream data);
 }

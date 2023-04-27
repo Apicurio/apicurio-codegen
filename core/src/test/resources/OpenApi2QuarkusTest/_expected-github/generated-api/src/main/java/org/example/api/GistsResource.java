@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -80,7 +81,7 @@ public interface GistsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response gists_update_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") Integer commentId,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -127,7 +128,7 @@ public interface GistsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response gists_update(@PathParam("gist_id") String gistId, InputStream data);
+  Response gists_update(@PathParam("gist_id") String gistId, @NotNull InputStream data);
 
   /**
    * 
@@ -175,7 +176,7 @@ public interface GistsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response gists_create(InputStream data);
+  Response gists_create(@NotNull InputStream data);
 
   /**
    * 
@@ -202,7 +203,7 @@ public interface GistsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response gists_create_comment(@PathParam("gist_id") String gistId, InputStream data);
+  Response gists_create_comment(@PathParam("gist_id") String gistId, @NotNull InputStream data);
 
   /**
    * 

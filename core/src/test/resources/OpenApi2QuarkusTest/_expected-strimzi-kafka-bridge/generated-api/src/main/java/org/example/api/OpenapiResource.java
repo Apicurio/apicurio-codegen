@@ -13,7 +13,7 @@ public interface OpenapiResource {
    * <p>
    * Retrieves the OpenAPI v2 specification in JSON format.
    * </p>
-   *
+   * 
    */
   @GET
   @Produces("application/json")

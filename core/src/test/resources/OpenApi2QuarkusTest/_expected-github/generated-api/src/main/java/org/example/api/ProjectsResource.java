@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -25,7 +26,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_column(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_move_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * 
@@ -49,7 +50,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_card(@PathParam("card_id") Integer cardId, InputStream data);
+  Response projects_update_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
 
   /**
    * 
@@ -73,7 +74,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_column(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_update_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -113,7 +114,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update(@PathParam("project_id") Integer projectId, InputStream data);
+  Response projects_update(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -131,7 +132,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_column(@PathParam("project_id") Integer projectId, InputStream data);
+  Response projects_create_column(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -164,7 +165,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_card(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_create_card(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -178,7 +179,7 @@ public interface ProjectsResource {
   @PUT
   @Consumes("application/json")
   void projects_add_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -214,7 +215,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_card(@PathParam("card_id") Integer cardId, InputStream data);
+  Response projects_move_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
 
   /**
    * <p>

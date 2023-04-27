@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -68,7 +69,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_set_team_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -97,7 +98,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_add_team_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -126,7 +127,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_remove_team_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -234,7 +235,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_release_asset(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("asset_id") Integer assetId, InputStream data);
+      @PathParam("asset_id") Integer assetId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -269,7 +270,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   List<String> repos_set_status_check_contexts(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -287,7 +288,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   List<String> repos_add_status_check_contexts(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -305,7 +306,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   List<String> repos_remove_status_check_contexts(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -384,7 +385,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_create_or_update_file_contents(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("path") String path, InputStream data);
+      @PathParam("path") String path, @NotNull InputStream data);
 
   /**
    * <p>
@@ -413,7 +414,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_delete_file(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("path") String path, InputStream data);
+      @PathParam("path") String path, @NotNull InputStream data);
 
   /**
    * 
@@ -430,7 +431,8 @@ public interface ReposResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_replace_all_topics(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_replace_all_topics(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -574,7 +576,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_deployment(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_deployment(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -605,7 +608,7 @@ public interface ReposResource {
   @PUT
   @Consumes("application/json")
   void repos_update_information_about_pages_site(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * 
@@ -614,7 +617,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_pages_site(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_pages_site(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -680,7 +684,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_pull_request_review_protection(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, InputStream data);
+      @PathParam("branch") String branch, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1032,7 +1036,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_set_user_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -1060,7 +1064,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_add_user_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -1088,7 +1092,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_remove_user_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * 
@@ -1128,7 +1132,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_deploy_key(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_deploy_key(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -1178,7 +1183,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_webhook(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("hook_id") Integer hookId, InputStream data);
+      @PathParam("hook_id") Integer hookId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1220,7 +1225,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_release(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_release(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1254,7 +1260,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_create_using_template(@PathParam("template_owner") String templateOwner,
-      @PathParam("template_repo") String templateRepo, InputStream data);
+      @PathParam("template_repo") String templateRepo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1309,7 +1315,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_status_check_protection(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, InputStream data);
+      @PathParam("branch") String branch, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1357,7 +1363,7 @@ public interface ReposResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_update(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_update(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1460,7 +1466,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_release(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("release_id") Integer releaseId, InputStream data);
+      @PathParam("release_id") Integer releaseId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1506,7 +1512,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_branch_protection(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, InputStream data);
+      @PathParam("branch") String branch, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1629,7 +1635,8 @@ public interface ReposResource {
   @Path("/{owner}/{repo}/dispatches")
   @POST
   @Consumes("application/json")
-  void repos_create_dispatch_event(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  void repos_create_dispatch_event(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1668,7 +1675,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_transfer(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_transfer(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * 
@@ -1761,7 +1768,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_add_collaborator(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("username") String username, InputStream data);
+      @PathParam("username") String username, @NotNull InputStream data);
 
   /**
    * 
@@ -1797,7 +1804,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_fork(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_fork(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1882,7 +1890,7 @@ public interface ReposResource {
   @Consumes("*/*")
   Response repos_upload_release_asset(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("release_id") Integer releaseId, @QueryParam("name") String name, @QueryParam("label") String label,
-      String data);
+      @NotNull String data);
 
   /**
    * 
@@ -1909,7 +1917,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_commit_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1951,7 +1959,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_webhook(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_create_webhook(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -1996,7 +2005,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_create_commit_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("commit_sha") String commitSha, InputStream data);
+      @PathParam("commit_sha") String commitSha, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2116,7 +2125,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_set_app_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -2146,7 +2155,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_add_app_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -2176,7 +2185,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_remove_app_access_restrictions(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("branch") String branch, List<String> data);
+      @PathParam("branch") String branch, @NotNull List<String> data);
 
   /**
    * <p>
@@ -2223,7 +2232,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_update_invitation(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("invitation_id") Integer invitationId, InputStream data);
+      @PathParam("invitation_id") Integer invitationId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2272,7 +2281,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_create_commit_status(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("sha") String sha, InputStream data);
+      @PathParam("sha") String sha, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2305,7 +2314,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response repos_create_deployment_status(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("deployment_id") Integer deploymentId, InputStream data);
+      @PathParam("deployment_id") Integer deploymentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2521,7 +2530,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_merge(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response repos_merge(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2663,7 +2672,8 @@ public interface ReposResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_start_import(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response migrations_start_import(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -2687,7 +2697,8 @@ public interface ReposResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_update_import(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response migrations_update_import(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -2701,7 +2712,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response migrations_map_commit_author(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("author_id") Integer authorId, InputStream data);
+      @PathParam("author_id") Integer authorId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -2743,7 +2754,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response migrations_set_lfs_preference(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -2770,7 +2781,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response interactions_set_restrictions_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -2827,7 +2838,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response activity_set_repo_subscription(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -2883,7 +2894,7 @@ public interface ReposResource {
   @PUT
   @Consumes("application/json")
   void activity_mark_repo_notifications_as_read(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -3043,7 +3054,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response checks_update(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("check_run_id") Integer checkRunId, InputStream data);
+      @PathParam("check_run_id") Integer checkRunId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3068,7 +3079,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response checks_create_suite(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response checks_create_suite(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -3108,7 +3120,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response checks_set_suites_preferences(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -3127,7 +3139,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response checks_create(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response checks_create(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3180,7 +3192,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response projects_create_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -3210,7 +3223,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response reactions_create_for_issue_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3240,7 +3253,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response reactions_create_for_issue(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3271,7 +3284,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response reactions_create_for_pull_request_review_comment(@PathParam("owner") String owner,
-      @PathParam("repo") String repo, @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("repo") String repo, @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3370,7 +3383,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response reactions_create_for_commit_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3427,7 +3440,7 @@ public interface ReposResource {
   @POST
   @Consumes("application/json")
   void actions_create_workflow_dispatch(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("workflow_id") Integer workflowId, InputStream data);
+      @PathParam("workflow_id") Integer workflowId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -3647,7 +3660,7 @@ public interface ReposResource {
   @PUT
   @Consumes("application/json")
   void actions_create_or_update_repo_secret(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("secret_name") String secretName, InputStream data);
+      @PathParam("secret_name") String secretName, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4155,7 +4168,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_update_review_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4311,7 +4324,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_create_review_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4398,7 +4411,8 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_update_review(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -4423,7 +4437,8 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_dismiss_review(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -4453,7 +4468,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_request_reviewers(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -4462,7 +4477,7 @@ public interface ReposResource {
   @DELETE
   @Consumes("application/json")
   void pulls_remove_requested_reviewers(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4555,7 +4570,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_update(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4609,7 +4624,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_create_review(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -4637,7 +4652,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_merge(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4651,7 +4666,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_update_branch(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4720,7 +4735,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response pulls_create(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response pulls_create(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4746,7 +4761,8 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_create_reply_for_review_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @PathParam("comment_id") Integer commentId,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -4772,7 +4788,8 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response pulls_submit_review(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId, InputStream data);
+      @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -4840,7 +4857,7 @@ public interface ReposResource {
   @PUT
   @Consumes("application/json")
   void issues_lock(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4878,7 +4895,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_update_milestone(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("milestone_number") Integer milestoneNumber, InputStream data);
+      @PathParam("milestone_number") Integer milestoneNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4911,7 +4928,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response issues_create_milestone(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response issues_create_milestone(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -4938,7 +4956,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_update_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("comment_id") Integer commentId, InputStream data);
+      @PathParam("comment_id") Integer commentId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -4985,7 +5003,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_update(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -5012,7 +5030,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_update_label(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("name") String name, InputStream data);
+      @PathParam("name") String name, @NotNull InputStream data);
 
   /**
    * 
@@ -5030,7 +5048,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response issues_create_label(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response issues_create_label(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * 
@@ -5077,7 +5096,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_set_labels(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -5087,7 +5106,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_add_labels(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -5157,7 +5176,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response issues_create(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response issues_create(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5190,7 +5209,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_create_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5204,7 +5223,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_add_assignees(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5217,7 +5236,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response issues_remove_assignees(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, InputStream data);
+      @PathParam("issue_number") Integer issueNumber, @NotNull InputStream data);
 
   /**
    * 
@@ -5368,7 +5387,7 @@ public interface ReposResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response git_update_ref(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("ref") String ref, InputStream data);
+      @PathParam("ref") String ref, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5422,7 +5441,8 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response git_create_commit(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response git_create_commit(@PathParam("owner") String owner, @PathParam("repo") String repo,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -5491,7 +5511,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response git_create_tree(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response git_create_tree(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5505,7 +5525,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response git_create_ref(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response git_create_ref(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5561,7 +5581,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response git_create_tag(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response git_create_tag(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>
@@ -5593,7 +5613,7 @@ public interface ReposResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response git_create_blob(@PathParam("owner") String owner, @PathParam("repo") String repo, InputStream data);
+  Response git_create_blob(@PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
    * <p>

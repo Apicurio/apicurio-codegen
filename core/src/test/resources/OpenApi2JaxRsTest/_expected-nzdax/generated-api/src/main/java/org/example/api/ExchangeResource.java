@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -48,7 +49,7 @@ public interface ExchangeResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  AccessToken createPrivateConnection(@PathParam("exchangeName") Exchange exchangeName, ExchangeConfig data);
+  AccessToken createPrivateConnection(@PathParam("exchangeName") Exchange exchangeName, @NotNull ExchangeConfig data);
 
   /**
    * <p>
@@ -93,7 +94,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderBookResponse> orderBook(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") String symbol, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") Number limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -112,7 +113,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderBookResponse> l2OrderBook(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") String symbol, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") Number limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -130,9 +131,9 @@ public interface ExchangeResource {
   @Path("/{exchangeName}/trades")
   @GET
   @Produces("application/json")
-  List<TradeResponse> trades(@PathParam("exchangeName") Exchange exchangeName, @QueryParam("symbol") String symbol,
-      @QueryParam("since") String since, @QueryParam("limit") Number limit,
-      @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
+  List<TradeResponse> trades(@PathParam("exchangeName") Exchange exchangeName,
+      @QueryParam("symbol") @NotNull String symbol, @QueryParam("since") String since,
+      @QueryParam("limit") Number limit, @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
    * <p>
@@ -149,8 +150,8 @@ public interface ExchangeResource {
   @Path("/{exchangeName}/ticker")
   @GET
   @Produces("application/json")
-  TickerResponse ticker(@PathParam("exchangeName") Exchange exchangeName, @QueryParam("symbol") String symbol,
-      @QueryParam("exchangeSymbol") String exchangeSymbol,
+  TickerResponse ticker(@PathParam("exchangeName") Exchange exchangeName, @QueryParam("symbol") @NotNull String symbol,
+      @QueryParam("exchangeSymbol") @NotNull String exchangeSymbol,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -270,7 +271,7 @@ public interface ExchangeResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  OrderResponse createOrder(@PathParam("exchangeName") Exchange exchangeName, OrderPlacement data);
+  OrderResponse createOrder(@PathParam("exchangeName") Exchange exchangeName, @NotNull OrderPlacement data);
 
   /**
    * <p>

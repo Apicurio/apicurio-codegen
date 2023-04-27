@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -16,7 +17,7 @@ public interface MarkdownResource {
    */
   @POST
   @Consumes("application/json")
-  void markdown_render(InputStream data);
+  void markdown_render(@NotNull InputStream data);
 
   /**
    * <p>
@@ -33,5 +34,5 @@ public interface MarkdownResource {
   @POST
   @Produces("text/html")
   @Consumes({"text/x-markdown", "text/plain"})
-  String markdown_render_raw(String data);
+  String markdown_render_raw(@NotNull String data);
 }
