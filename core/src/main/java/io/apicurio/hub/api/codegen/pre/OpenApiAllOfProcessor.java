@@ -23,28 +23,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Schema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.refs.LocalReferenceResolver;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiAllOfProcessor extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiAllOfProcessor extends TraversingOpenApi31VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
      */
     @Override
     public void visitSchema(Schema node) {
-        OpenApi30Schema schema = (OpenApi30Schema) node;
+        OpenApi31Schema schema = (OpenApi31Schema) node;
         if (schema.getAllOf() != null) {
             List<String> required = new ArrayList<>();
             schema.getAllOf().forEach(allOfSchema -> {
-                OpenApi30Schema allOf = (OpenApi30Schema) allOfSchema;
+                OpenApi31Schema allOf = (OpenApi31Schema) allOfSchema;
                 if (allOf.get$ref() != null) {
                     LocalReferenceResolver resolver = new LocalReferenceResolver();
-                    allOf = (OpenApi30Schema) resolver.resolveRef(allOf.get$ref(), allOf);
+                    allOf = (OpenApi31Schema) resolver.resolveRef(allOf.get$ref(), allOf);
                 }
                 if (allOf != null) {
                     if (allOf.getRequired() != null) {

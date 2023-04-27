@@ -22,22 +22,22 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.Node;
 import io.apicurio.datamodels.models.Parameter;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Parameter;
 import io.apicurio.datamodels.refs.LocalReferenceResolver;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiParameterInliner extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiParameterInliner extends TraversingOpenApi31VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
     public void visitParameter(Parameter node) {
-        OpenApi30Parameter param = (OpenApi30Parameter) node;
+        OpenApi31Parameter param = (OpenApi31Parameter) node;
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (param.get$ref() != null) {
@@ -54,7 +54,7 @@ public class OpenApiParameterInliner extends TraversingOpenApi30VisitorAdapter {
      * @param param
      * @param paramDef
      */
-    private void inlineParameter(OpenApi30Parameter param, Node paramDef) {
+    private void inlineParameter(OpenApi31Parameter param, Node paramDef) {
         param.set$ref(null);
 
         // Copy everything from schemaDef into schema by serializing the former into a JSON

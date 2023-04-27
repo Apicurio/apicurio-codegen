@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.apicurio.datamodels.models.Node;
 import io.apicurio.datamodels.models.Operation;
 import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
-import io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter;
+import io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter;
 import io.apicurio.datamodels.models.visitors.TraversalContext;
 import io.apicurio.datamodels.models.visitors.TraversingVisitor;
 import io.apicurio.datamodels.util.NodeUtil;
 
-public abstract class TraversingOpenApi30VisitorAdapter extends OpenApi30VisitorAdapter implements TraversingVisitor {
+public abstract class TraversingOpenApi31VisitorAdapter extends OpenApi31VisitorAdapter implements TraversingVisitor {
 
     protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
 

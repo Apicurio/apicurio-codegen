@@ -23,10 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.openapi.OpenApiSchema;
-import io.apicurio.datamodels.models.openapi.v20.OpenApi20Document;
-import io.apicurio.datamodels.models.openapi.v20.OpenApi20Schema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Document;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 public final class CodegenUtil {
@@ -50,19 +48,11 @@ public final class CodegenUtil {
     public static final String schemaRefToFQCN(Document document, String schemaRef, String defaultPackage) {
         String cname = "GeneratedClass_" + System.currentTimeMillis();
         String pname = defaultPackage;
-        if (schemaRef.startsWith("#/definitions/")) {
-            cname = schemaRef.substring(14);
-            OpenApi20Document doc20 = (OpenApi20Document) document;
-            if (doc20.getDefinitions() != null) {
-                OpenApi20Schema definition = doc20.getDefinitions().getItem(cname);
-                pname = CodegenUtil.schemaToPackageName(definition, pname);
-            }
-        }
         if (schemaRef.startsWith("#/components/schemas/")) {
             cname = schemaRef.substring(21);
-            OpenApi30Document doc30 = (OpenApi30Document) document;
-            if (doc30.getComponents() != null) {
-                OpenApi30Schema definition = (OpenApi30Schema) doc30.getComponents().getSchemas().get(cname);
+            OpenApi31Document doc31 = (OpenApi31Document) document;
+            if (doc31.getComponents() != null) {
+                OpenApi31Schema definition = (OpenApi31Schema) doc31.getComponents().getSchemas().get(cname);
                 pname = CodegenUtil.schemaToPackageName(definition, pname);
             }
         }

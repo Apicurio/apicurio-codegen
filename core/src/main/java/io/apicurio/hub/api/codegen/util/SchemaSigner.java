@@ -21,13 +21,13 @@ import java.util.Arrays;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import io.apicurio.datamodels.models.Schema;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class SchemaSigner extends TraversingOpenApi30VisitorAdapter {
+public class SchemaSigner extends TraversingOpenApi31VisitorAdapter {
 
     private StringBuilder sigSource = new StringBuilder();
 
@@ -49,7 +49,7 @@ public class SchemaSigner extends TraversingOpenApi30VisitorAdapter {
      */
     @Override
     public void visitSchema(Schema node) {
-        OpenApi30Schema schema = (OpenApi30Schema) node;
+        OpenApi31Schema schema = (OpenApi31Schema) node;
         // Right now we only support simple types.
         if (schema.getType() != null && !schema.getType().equals("object") && !schema.getType().equals("array") && schema.get$ref() == null) {
             // Type

@@ -16,20 +16,20 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Schema;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiByteSimpleTypeProcessor extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiByteSimpleTypeProcessor extends TraversingOpenApi31VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
      */
     @Override
     public void visitSchema(io.apicurio.datamodels.models.Schema node) {
-        OpenApi30Schema schema = (OpenApi30Schema) node;
+        OpenApi31Schema schema = (OpenApi31Schema) node;
         if ("string".equals(schema.getType()) && "byte".equals(schema.getFormat())) {
             schema.setType("object");
             // workaround for a jsonschema2pojo limitation

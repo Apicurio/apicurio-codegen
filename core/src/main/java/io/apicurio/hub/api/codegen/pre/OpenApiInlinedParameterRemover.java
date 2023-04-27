@@ -23,32 +23,32 @@ import io.apicurio.datamodels.TraverserDirection;
 import io.apicurio.datamodels.models.Components;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.Parameter;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Components;
-import io.apicurio.datamodels.models.openapi.v30.OpenApi30Parameter;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Components;
+import io.apicurio.datamodels.models.openapi.v31.OpenApi31Parameter;
 import io.apicurio.datamodels.models.visitors.CombinedVisitorAdapter;
 import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
-import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi30VisitorAdapter;
+import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
 /**
  * @author eric.wittmann@gmail.com
  */
-public class OpenApiInlinedParameterRemover extends TraversingOpenApi30VisitorAdapter {
+public class OpenApiInlinedParameterRemover extends TraversingOpenApi31VisitorAdapter {
 
     /**
-     * @see io.apicurio.datamodels.models.openapi.v30.visitors.OpenApi30VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
+     * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitParameter(io.apicurio.datamodels.models.Parameter)
      */
     @Override
     public void visitParameter(Parameter node) {
         if (NodeUtil.isDefinition(node)) {
-            OpenApi30Parameter param = (OpenApi30Parameter) node;
+            OpenApi31Parameter param = (OpenApi31Parameter) node;
             if (wasInlined(param)) {
                 final String definitionName = getMappedNodeName(node);
                 Library.visitTree(param.root(), new CombinedVisitorAdapter() {
                     @Override
                     public void visitComponents(Components node) {
-                        OpenApi30Components components = (OpenApi30Components) node;
+                        OpenApi31Components components = (OpenApi31Components) node;
                         components.getParameters().remove(definitionName);
                     }
                 }, TraverserDirection.down);
