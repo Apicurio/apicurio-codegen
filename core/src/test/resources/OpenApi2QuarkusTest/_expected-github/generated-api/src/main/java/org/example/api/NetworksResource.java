@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -19,5 +20,6 @@ public interface NetworksResource {
   @GET
   @Produces("application/json")
   Response activity_list_public_events_for_repo_network(@PathParam("owner") String owner,
-      @PathParam("repo") String repo, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("repo") String repo, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 }

@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -486,9 +487,10 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_deployments(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("sha") String sha, @QueryParam("ref") String ref, @QueryParam("task") String task,
-      @QueryParam("environment") String environment, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("sha") @DefaultValue("none") String sha, @QueryParam("ref") @DefaultValue("none") String ref,
+      @QueryParam("task") @DefaultValue("none") String task,
+      @QueryParam("environment") @DefaultValue("none") String environment,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -714,7 +716,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_commit_statuses_for_ref(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("ref") String ref, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("ref") String ref, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -816,7 +819,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response repos_list_pull_requests_associated_with_commit(@PathParam("owner") String owner,
       @PathParam("repo") String repo, @PathParam("commit_sha") String commitSha,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1101,8 +1104,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_branches(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("protected") Boolean _protected, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("protected") Boolean _protected, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -1120,7 +1123,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_deploy_keys(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1156,7 +1159,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_get_clones(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per") String per);
+      @QueryParam("per") @DefaultValue("day") String per);
 
   /**
    * 
@@ -1203,7 +1206,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_releases(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1541,7 +1544,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_invitations(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1563,7 +1566,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_tags(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -1572,7 +1575,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_teams(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1684,7 +1687,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_pages_builds(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1785,7 +1788,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_forks(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("sort") String sort, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("sort") @DefaultValue("newest") String sort,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1819,7 +1823,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_get_views(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per") String per);
+      @QueryParam("per") @DefaultValue("day") String per);
 
   /**
    * 
@@ -1828,8 +1832,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_release_assets(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("release_id") Integer releaseId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("release_id") Integer releaseId, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1944,7 +1948,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_webhooks(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1981,8 +1985,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_comments_for_commit(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("commit_sha") String commitSha, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("commit_sha") String commitSha, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2070,8 +2074,8 @@ public interface ReposResource {
   @Produces("application/json")
   Response repos_list_commits(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @QueryParam("sha") String sha, @QueryParam("path") String path, @QueryParam("author") String author,
-      @QueryParam("since") String since, @QueryParam("until") String until, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("since") String since, @QueryParam("until") String until,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2293,8 +2297,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_deployment_statuses(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("deployment_id") Integer deploymentId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("deployment_id") Integer deploymentId, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2386,7 +2390,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_commit_comments_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2501,7 +2505,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_contributors(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("anon") String anon, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("anon") String anon, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2520,8 +2525,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response repos_list_collaborators(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("affiliation") String affiliation, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("affiliation") @DefaultValue("all") String affiliation,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -2860,7 +2865,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response activity_list_repo_events(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2872,9 +2877,10 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response activity_list_repo_notifications_for_authenticated_user(@PathParam("owner") String owner,
-      @PathParam("repo") String repo, @QueryParam("all") Boolean all,
-      @QueryParam("participating") Boolean participating, @QueryParam("since") String since,
-      @QueryParam("before") String before, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("repo") String repo, @QueryParam("all") @DefaultValue("false") Boolean all,
+      @QueryParam("participating") @DefaultValue("false") Boolean participating, @QueryParam("since") String since,
+      @QueryParam("before") String before, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2906,7 +2912,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response activity_list_watchers_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2923,7 +2929,7 @@ public interface ReposResource {
   @GET
   @Produces({"application/json", "application/vnd.github.v3.star+json"})
   Response activity_list_stargazers_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2939,8 +2945,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response checks_list_annotations(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("check_run_id") Integer checkRunId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("check_run_id") Integer checkRunId, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2965,7 +2971,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response checks_list_suites_for_ref(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("ref") String ref, @QueryParam("app_id") Integer appId, @QueryParam("check_name") String checkName,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -2988,7 +2994,8 @@ public interface ReposResource {
   @Produces("application/json")
   Response checks_list_for_ref(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("ref") String ref, @QueryParam("check_name") String checkName, @QueryParam("status") String status,
-      @QueryParam("filter") String filter, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("filter") @DefaultValue("latest") String filter,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3011,8 +3018,8 @@ public interface ReposResource {
   @Produces("application/json")
   Response checks_list_for_suite(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("check_suite_id") Integer checkSuiteId, @QueryParam("check_name") String checkName,
-      @QueryParam("status") String status, @QueryParam("filter") String filter, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("status") String status, @QueryParam("filter") @DefaultValue("latest") String filter,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3177,7 +3184,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response projects_list_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("state") String state, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("state") @DefaultValue("open") String state,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3207,7 +3215,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response reactions_list_for_issue_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("comment_id") Integer commentId, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3237,7 +3245,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response reactions_list_for_issue(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("issue_number") Integer issueNumber, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3268,7 +3276,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response reactions_list_for_pull_request_review_comment(@PathParam("owner") String owner,
       @PathParam("repo") String repo, @PathParam("comment_id") Integer commentId, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3367,7 +3375,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response reactions_list_for_commit_comment(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("comment_id") Integer commentId, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3410,7 +3418,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_repo_workflows(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3468,7 +3476,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_artifacts_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3483,7 +3491,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_repo_secrets(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3752,8 +3760,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_jobs_for_workflow_run(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("run_id") Integer runId, @QueryParam("filter") String filter, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("run_id") Integer runId, @QueryParam("filter") @DefaultValue("latest") String filter,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3766,7 +3774,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_self_hosted_runners_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -3946,7 +3954,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response actions_list_workflow_run_artifacts(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("run_id") Integer runId, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("run_id") Integer runId, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4015,7 +4024,7 @@ public interface ReposResource {
   Response actions_list_workflow_runs(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("workflow_id") Integer workflowId, @QueryParam("actor") String actor,
       @QueryParam("branch") String branch, @QueryParam("event") String event, @QueryParam("status") String status,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4036,7 +4045,8 @@ public interface ReposResource {
   @Produces("application/json")
   Response actions_list_workflow_runs_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @QueryParam("actor") String actor, @QueryParam("branch") String branch, @QueryParam("event") String event,
-      @QueryParam("status") String status, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("status") String status, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4232,9 +4242,9 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_review_comments(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @QueryParam("sort") String sort,
+      @PathParam("pull_number") Integer pullNumber, @QueryParam("sort") @DefaultValue("created") String sort,
       @QueryParam("direction") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4388,8 +4398,9 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_review_comments_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("sort") String sort, @QueryParam("direction") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
+      @QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -4447,8 +4458,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_requested_reviewers(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4582,8 +4593,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_reviews(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4679,8 +4690,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_files(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4697,9 +4708,10 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("state") String state, @QueryParam("head") String head, @QueryParam("base") String base,
-      @QueryParam("sort") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("head") String head,
+      @QueryParam("base") String base, @QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") String direction, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4777,8 +4789,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response pulls_list_commits(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("pull_number") Integer pullNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -4802,7 +4814,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response pulls_list_comments_for_review(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("pull_number") Integer pullNumber, @PathParam("review_id") Integer reviewId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -4818,7 +4830,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response code_scanning_list_alerts_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("state") String state, @QueryParam("ref") String ref);
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("ref") String ref);
 
   /**
    * <p>
@@ -4918,8 +4930,9 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_milestones(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("state") String state, @QueryParam("sort") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("sort") @DefaultValue("due_on") String sort,
+      @QueryParam("direction") @DefaultValue("asc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -5039,7 +5052,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_labels_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -5058,8 +5071,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_events_for_timeline(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5073,7 +5086,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_assignees(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -5082,8 +5095,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_labels_on_issue(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5123,8 +5136,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_events(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("issue_number") Integer issueNumber, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5147,11 +5160,12 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("milestone") String milestone, @QueryParam("state") String state,
+      @QueryParam("milestone") String milestone, @QueryParam("state") @DefaultValue("open") String state,
       @QueryParam("assignee") String assignee, @QueryParam("creator") String creator,
-      @QueryParam("mentioned") String mentioned, @QueryParam("labels") String labels, @QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("mentioned") String mentioned, @QueryParam("labels") String labels,
+      @QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5189,7 +5203,7 @@ public interface ReposResource {
   @Produces("application/json")
   Response issues_list_comments(@PathParam("owner") String owner, @PathParam("repo") String repo,
       @PathParam("issue_number") Integer issueNumber, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5245,7 +5259,7 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_events_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5273,8 +5287,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_labels_for_milestone(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("milestone_number") Integer milestoneNumber, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @PathParam("milestone_number") Integer milestoneNumber,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -5295,8 +5309,9 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response issues_list_comments_for_repo(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @QueryParam("sort") String sort, @QueryParam("direction") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
+      @QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -5370,7 +5385,8 @@ public interface ReposResource {
   @GET
   @Produces("application/json")
   Response git_list_matching_refs(@PathParam("owner") String owner, @PathParam("repo") String repo,
-      @PathParam("ref") String ref, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("ref") String ref, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 

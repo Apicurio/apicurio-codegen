@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -55,8 +56,8 @@ public interface GistsResource {
   @Path("/starred")
   @GET
   @Produces("application/json")
-  Response gists_list_starred(@QueryParam("since") String since, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list_starred(@QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -98,8 +99,8 @@ public interface GistsResource {
   @Path("/public")
   @GET
   @Produces("application/json")
-  Response gists_list_public(@QueryParam("since") String since, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list_public(@QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -136,8 +137,8 @@ public interface GistsResource {
   @Path("/{gist_id}/forks")
   @GET
   @Produces("application/json")
-  Response gists_list_forks(@PathParam("gist_id") String gistId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list_forks(@PathParam("gist_id") String gistId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -159,8 +160,8 @@ public interface GistsResource {
    */
   @GET
   @Produces("application/json")
-  Response gists_list(@QueryParam("since") String since, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list(@QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -184,8 +185,8 @@ public interface GistsResource {
   @Path("/{gist_id}/commits")
   @GET
   @Produces("application/json")
-  Response gists_list_commits(@PathParam("gist_id") String gistId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list_commits(@PathParam("gist_id") String gistId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -193,8 +194,8 @@ public interface GistsResource {
   @Path("/{gist_id}/comments")
   @GET
   @Produces("application/json")
-  Response gists_list_comments(@PathParam("gist_id") String gistId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response gists_list_comments(@PathParam("gist_id") String gistId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 

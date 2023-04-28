@@ -519,20 +519,33 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             }
 
             setIfPresent(schema::isNullable, target::setNullable);
-            setIfPresent(schema::getMaxItems, target::setMaxItems);
-            setIfPresent(schema::getMinItems, target::setMinItems);
+            setIfPresent(schema::getMaxItems, value -> target.setMaxItems(value.longValue()));
+            setIfPresent(schema::getMinItems, value -> target.setMinItems(value.longValue()));
 
             if (Boolean.TRUE.equals(schema.isUniqueItems())) {
                 target.setCollection("set");
             } else {
                 target.setCollection("list");
             }
+        } else if ("object".equals(schema.getType())) {
+            setIfPresent(schema::getType, target::setType);
+            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(schema::getFormat, target::setFormat);
+            // TODO: Consider representing object as map
+            //if (schema.getAdditionalProperties() != null && schema.getAdditionalProperties().isSchema()) {
+            //    setSchemaProperties(target, (OpenApi31Schema) schema.getAdditionalProperties().asSchema());
+            //}
+            //
+            //setIfPresent(schema::isNullable, target::setNullable);
+            //setIfPresent(schema::getMaxProperties, value -> target.setMaxProperties(value.longValue()));
+            //setIfPresent(schema::getMinProperties, value -> target.setMinProperties(value.longValue()));
+            //target.setCollection("map");
         } else if ("string".equals(schema.getType())) {
             setIfPresent(schema::getType, target::setType);
             setIfPresent(schema::isNullable, target::setNullable);
             setIfPresent(schema::getFormat, target::setFormat);
-            setIfPresent(schema::getMaxLength, target::setMaxLength);
-            setIfPresent(schema::getMinLength, target::setMinLength);
+            setIfPresent(schema::getMaxLength, value -> target.setMaxLength(value.longValue()));
+            setIfPresent(schema::getMinLength, value -> target.setMinLength(value.longValue()));
             setIfPresent(schema::getPattern, target::setPattern);
         } else if (Arrays.asList("integer", "number").contains(schema.getType())) {
             setIfPresent(schema::getType, target::setType);
@@ -547,6 +560,12 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             setIfPresent(schema::isNullable, target::setNullable);
             setIfPresent(schema::getFormat, target::setFormat);
         }
+
+        setIfPresent(schema::getDefault, defaultValue -> {
+            if (defaultValue.isValueNode()) {
+                target.setDefaultValue(defaultValue.asText());
+            }
+        });
     }
 
     private <T> void setIfPresent(Supplier<T> source, Consumer<T> target) {

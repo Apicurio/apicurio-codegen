@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -122,8 +123,8 @@ public interface ProjectsResource {
   @Path("/{project_id}/columns")
   @GET
   @Produces("application/json")
-  Response projects_list_columns(@PathParam("project_id") Integer projectId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response projects_list_columns(@PathParam("project_id") Integer projectId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -141,8 +142,8 @@ public interface ProjectsResource {
   @GET
   @Produces("application/json")
   Response projects_list_cards(@PathParam("column_id") Integer columnId,
-      @QueryParam("archived_state") String archivedState, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("archived_state") @DefaultValue("not_archived") String archivedState,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -232,6 +233,6 @@ public interface ProjectsResource {
   @GET
   @Produces("application/json")
   Response projects_list_collaborators(@PathParam("project_id") Integer projectId,
-      @QueryParam("affiliation") String affiliation, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("affiliation") @DefaultValue("all") String affiliation,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 }

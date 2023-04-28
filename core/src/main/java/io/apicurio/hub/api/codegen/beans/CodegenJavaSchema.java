@@ -12,20 +12,21 @@ public class CodegenJavaSchema {
     private Boolean exclusiveMaximum;
     private Number minimum;
     private Boolean exclusiveMinimum;
-    private Number maxLength;
-    private Number minLength;
+    private Long maxLength;
+    private Long minLength;
     private String pattern;
-    private Number maxItems;
-    private Number minItems;
+    private Long maxItems;
+    private Long minItems;
     private Boolean uniqueItems;
-    private Integer maxProperties;
-    private Integer minProperties;
+    private Long maxProperties;
+    private Long minProperties;
     private Boolean nullable;
+    private String defaultValue;
 
     @Override
     public int hashCode() {
-        return Objects.hash(collection, constant, exclusiveMaximum, exclusiveMinimum, format, maxItems, maxLength,
-                maxProperties, maximum, minItems, minLength, minProperties, minimum, nullable, pattern, type,
+        return Objects.hash(collection, constant, defaultValue, exclusiveMaximum, exclusiveMinimum, format, maxItems,
+                maxLength, maxProperties, maximum, minItems, minLength, minProperties, minimum, nullable, pattern, type,
                 uniqueItems);
     }
 
@@ -39,6 +40,7 @@ public class CodegenJavaSchema {
             return false;
         CodegenJavaSchema other = (CodegenJavaSchema) obj;
         return Objects.equals(collection, other.collection) && Objects.equals(constant, other.constant)
+                && Objects.equals(defaultValue, other.defaultValue)
                 && Objects.equals(exclusiveMaximum, other.exclusiveMaximum)
                 && Objects.equals(exclusiveMinimum, other.exclusiveMinimum) && Objects.equals(format, other.format)
                 && Objects.equals(maxItems, other.maxItems) && Objects.equals(maxLength, other.maxLength)
@@ -164,28 +166,28 @@ public class CodegenJavaSchema {
     /**
      * @return the maxLength
      */
-    public Number getMaxLength() {
+    public Long getMaxLength() {
         return maxLength;
     }
 
     /**
      * @param maxLength the maxLength to set
      */
-    public void setMaxLength(Number maxLength) {
+    public void setMaxLength(Long maxLength) {
         this.maxLength = maxLength;
     }
 
     /**
      * @return the minLength
      */
-    public Number getMinLength() {
+    public Long getMinLength() {
         return minLength;
     }
 
     /**
      * @param minLength the minLength to set
      */
-    public void setMinLength(Number minLength) {
+    public void setMinLength(Long minLength) {
         this.minLength = minLength;
     }
 
@@ -206,28 +208,28 @@ public class CodegenJavaSchema {
     /**
      * @return the maxItems
      */
-    public Number getMaxItems() {
+    public Long getMaxItems() {
         return maxItems;
     }
 
     /**
      * @param maxItems the maxItems to set
      */
-    public void setMaxItems(Number maxItems) {
+    public void setMaxItems(Long maxItems) {
         this.maxItems = maxItems;
     }
 
     /**
      * @return the minItems
      */
-    public Number getMinItems() {
+    public Long getMinItems() {
         return minItems;
     }
 
     /**
      * @param minItems the minItems to set
      */
-    public void setMinItems(Number minItems) {
+    public void setMinItems(Long minItems) {
         this.minItems = minItems;
     }
 
@@ -248,28 +250,28 @@ public class CodegenJavaSchema {
     /**
      * @return the maxProperties
      */
-    public Integer getMaxProperties() {
+    public Long getMaxProperties() {
         return maxProperties;
     }
 
     /**
      * @param maxProperties the maxProperties to set
      */
-    public void setMaxProperties(Integer maxProperties) {
+    public void setMaxProperties(Long maxProperties) {
         this.maxProperties = maxProperties;
     }
 
     /**
      * @return the minProperties
      */
-    public Integer getMinProperties() {
+    public Long getMinProperties() {
         return minProperties;
     }
 
     /**
      * @param minProperties the minProperties to set
      */
-    public void setMinProperties(Integer minProperties) {
+    public void setMinProperties(Long minProperties) {
         this.minProperties = minProperties;
     }
 
@@ -285,6 +287,20 @@ public class CodegenJavaSchema {
      */
     public void setNullable(Boolean nullable) {
         this.nullable = nullable;
+    }
+
+    /**
+     * @return the defaultValue
+     */
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * @param defaultValue the defaultValue to set
+     */
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
 }

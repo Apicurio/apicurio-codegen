@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -21,5 +22,6 @@ public interface EventsResource {
    */
   @GET
   @Produces("application/json")
-  Response activity_list_public_events(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response activity_list_public_events(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 }

@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -53,7 +54,8 @@ public interface ApplicationsResource {
   @Path("/grants")
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_list_grants(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response oauth_authorizations_list_grants(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>

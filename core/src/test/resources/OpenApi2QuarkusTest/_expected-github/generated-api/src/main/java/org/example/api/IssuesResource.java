@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -35,9 +36,11 @@ public interface IssuesResource {
    */
   @GET
   @Produces("application/json")
-  Response issues_list(@QueryParam("filter") String filter, @QueryParam("state") String state,
-      @QueryParam("labels") String labels, @QueryParam("sort") String sort, @QueryParam("direction") String direction,
-      @QueryParam("since") String since, @QueryParam("collab") Boolean collab, @QueryParam("orgs") Boolean orgs,
-      @QueryParam("owned") Boolean owned, @QueryParam("pulls") Boolean pulls, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response issues_list(@QueryParam("filter") @DefaultValue("assigned") String filter,
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("labels") String labels,
+      @QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
+      @QueryParam("collab") Boolean collab, @QueryParam("orgs") Boolean orgs, @QueryParam("owned") Boolean owned,
+      @QueryParam("pulls") Boolean pulls, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 }

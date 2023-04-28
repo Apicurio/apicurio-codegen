@@ -1,6 +1,7 @@
 package org.example.api;
 
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -26,8 +27,8 @@ public interface InstallationResource {
   @Path("/repositories")
   @GET
   @Produces("application/json")
-  Response apps_list_repos_accessible_to_installation(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_repos_accessible_to_installation(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>

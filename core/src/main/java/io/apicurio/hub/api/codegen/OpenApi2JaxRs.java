@@ -57,6 +57,7 @@ import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.jboss.forge.roaster.model.util.Types;
 import org.jsonschema2pojo.Annotator;
 import org.jsonschema2pojo.DefaultGenerationConfig;
@@ -551,7 +552,7 @@ public class OpenApi2JaxRs {
 
                 resourceInterface.addImport(paramType);
                 var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
-                var param = operationMethod.addParameter(paramTypeName, methodArgName);
+                ParameterSource<JavaInterfaceSource> param = operationMethod.addParameter(paramTypeName, methodArgName);
 
                 switch (arg.getIn()) {
                     case "path":
@@ -645,9 +646,6 @@ public class OpenApi2JaxRs {
      * @param defaultType
      */
     protected Type<?> generateTypeName(String collection, String type, String format, Boolean required, String defaultType) {
-        if (type == null) {
-            return parseType(defaultType);
-        }
         if (required == null) {
             required = Boolean.FALSE;
         }
@@ -655,7 +653,7 @@ public class OpenApi2JaxRs {
         boolean isCollection = Arrays.asList("list", "set").contains(collection);
         Type<?> coreType = null;
 
-        if (type.equals("string")) {
+        if ("string".equals(type)) {
             coreType = parseType(String.class.getName());
 
             if (format != null) {
@@ -669,13 +667,13 @@ public class OpenApi2JaxRs {
                     coreType = parseType("byte[]");
                 }
             }
-        } else if (type.equals("integer")) {
+        } else if ("integer".equals(type)) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
                 coreType = (required && !isCollection && format != null) ? parseType("long") : parseType(Long.class.getName());
             } else {
                 coreType = (required && !isCollection && format != null) ? parseType("int") : parseType(Integer.class.getName());
             }
-        } else if (type.equals("number")) {
+        } else if ("number".equals(type)) {
             coreType = parseType(Number.class.getName());
             if (format != null) {
                 if (format.equals("float")) {
@@ -684,9 +682,9 @@ public class OpenApi2JaxRs {
                     coreType = (required && !isCollection) ? parseType("double") : parseType(Double.class.getName());
                 }
             }
-        } else if (type.equals("boolean")) {
+        } else if ("boolean".equals(type)) {
             coreType = parseType(Boolean.class.getName());
-        } else if (Types.isQualified(type)) {
+        } else if (type != null && Types.isQualified(type)) {
             try {
                 coreType = parseType(type);
             } catch (Exception e) {
@@ -704,6 +702,8 @@ public class OpenApi2JaxRs {
             return parseType(String.format("java.util.List<%s>", coreType.toString()));
         } else if ("set".equals(collection)) {
             return parseType(String.format("java.util.Set<%s>", coreType.toString()));
+        } else if ("map".equals(collection)) {
+            return parseType(String.format("java.util.Map<String, %s>", coreType.toString()));
         }
 
         return parseType(defaultType);
@@ -752,39 +752,49 @@ public class OpenApi2JaxRs {
         final String constraintPkg = String.format("%s.validation.constraints", topLevelPackage);
         final String sizeConstraint = String.format("%s.Size", constraintPkg);
 
+        if (!forbidNotNull && !Boolean.TRUE.equals(schemaInfo.getNullable())) {
+            // nullable is false by default
+            target.addAnnotation(String.format("%s.validation.constraints.NotNull", topLevelPackage));
+        }
+
+        if (schemaInfo.getCollection() != null) {
+            if ("map".equals(schemaInfo.getCollection())) {
+                addConstraint(target, schemaInfo.getMaxProperties(), sizeConstraint, "max");
+                addConstraint(target, schemaInfo.getMinProperties(), sizeConstraint, "min");
+            } else {
+                addConstraint(target, schemaInfo.getMaxItems(), sizeConstraint, "max");
+                addConstraint(target, schemaInfo.getMinItems(), sizeConstraint, "min");
+            }
+            return;
+        }
+
         if (schemaInfo.getMaximum() != null) {
             BigDecimal max = new BigDecimal(schemaInfo.getMaximum().toString());
             boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMaximum());
-            target.addAnnotation(String.format("%s.validation.constraints.MaxDecimal", topLevelPackage))
-                .setStringValue(max.toString())
+            target.addAnnotation(String.format("%s.validation.constraints.DecimalMax", topLevelPackage))
+                .setStringValue(max.toPlainString())
                 .setLiteralValue("inclusive", String.valueOf(inclusive));
         }
 
         if (schemaInfo.getMinimum() != null) {
             BigDecimal min = new BigDecimal(schemaInfo.getMinimum().toString());
             boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMinimum());
-            target.addAnnotation(String.format("%s.validation.constraints.MinDecimal", topLevelPackage))
-                .setStringValue(min.toString())
+            target.addAnnotation(String.format("%s.validation.constraints.DecimalMin", topLevelPackage))
+                .setStringValue(min.toPlainString())
                 .setLiteralValue("inclusive", String.valueOf(inclusive));
         }
 
         addConstraint(target, schemaInfo.getMaxLength(), sizeConstraint, "max");
         addConstraint(target, schemaInfo.getMinLength(), sizeConstraint, "min");
-        addConstraint(target, schemaInfo.getMaxItems(), sizeConstraint, "max");
-        addConstraint(target, schemaInfo.getMinItems(), sizeConstraint, "min");
-        addConstraint(target, schemaInfo.getMaxProperties(), sizeConstraint, "max");
-        addConstraint(target, schemaInfo.getMinProperties(), sizeConstraint, "min");
-        addConstraint(target, schemaInfo.getPattern(), String.format("%s.Pattern", constraintPkg), "value");
-
-        if (!forbidNotNull && !Boolean.TRUE.equals(schemaInfo.getNullable())) {
-            // nullable is false by default
-            target.addAnnotation(String.format("%s.validation.constraints.NotNull", topLevelPackage));
-        }
+        addConstraint(target, schemaInfo.getPattern(), String.format("%s.Pattern", constraintPkg), "regexp");
+        addConstraint(target, schemaInfo.getDefaultValue(), String.format("%s.ws.rs.DefaultValue", topLevelPackage), "value");
     }
 
     <C> void addConstraint(AnnotationTargetSource<?, ?> target, C constraintValue, String annotationName, String annotationProperty) {
-        if (constraintValue != null) {
+        if (constraintValue instanceof String) {
             target.addAnnotation(annotationName).setStringValue(annotationProperty, constraintValue.toString());
+        } else if (constraintValue != null) {
+            target.addAnnotation(annotationName).setLiteralValue(annotationProperty, constraintValue.toString());
         }
     }
 

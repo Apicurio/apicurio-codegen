@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -24,6 +25,6 @@ public interface RepositoriesResource {
    */
   @GET
   @Produces("application/json")
-  Response repos_list_public(@QueryParam("per_page") Integer perPage, @QueryParam("since") String since,
-      @QueryParam("visibility") String visibility);
+  Response repos_list_public(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("since") String since, @QueryParam("visibility") String visibility);
 }

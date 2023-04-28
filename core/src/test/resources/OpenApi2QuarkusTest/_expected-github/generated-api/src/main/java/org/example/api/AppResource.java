@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -118,8 +119,9 @@ public interface AppResource {
   @Path("/installations")
   @GET
   @Produces("application/json")
-  Response apps_list_installations(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page,
-      @QueryParam("since") String since, @QueryParam("outdated") String outdated);
+  Response apps_list_installations(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page, @QueryParam("since") String since,
+      @QueryParam("outdated") String outdated);
 
   /**
    * <p>

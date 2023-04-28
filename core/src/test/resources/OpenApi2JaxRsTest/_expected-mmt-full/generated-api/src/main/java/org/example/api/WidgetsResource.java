@@ -38,8 +38,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v1")
-  void createWidget(@NotNull Widgetv1 data);
+  @Consumes("application/json+v2")
+  void createWidget(@NotNull Widgetv2 data);
 
   /**
    * <p>
@@ -48,8 +48,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v2")
-  void createWidget(@NotNull Widgetv2 data);
+  @Consumes("application/json+v1")
+  void createWidget(@NotNull Widgetv1 data);
 
   /**
    * <p>

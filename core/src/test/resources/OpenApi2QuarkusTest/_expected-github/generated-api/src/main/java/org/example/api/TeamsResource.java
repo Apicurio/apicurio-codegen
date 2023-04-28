@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -41,7 +42,8 @@ public interface TeamsResource {
   @Produces("application/json")
   Response reactions_list_for_team_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
       @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      @QueryParam("content") String content, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("content") String content, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -92,7 +94,7 @@ public interface TeamsResource {
   @Produces("application/json")
   Response reactions_list_for_team_discussion_legacy(@PathParam("team_id") Integer teamId,
       @PathParam("discussion_number") Integer discussionNumber, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -688,7 +690,7 @@ public interface TeamsResource {
   @GET
   @Produces("application/json")
   Response teams_list_pending_invitations_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -709,8 +711,9 @@ public interface TeamsResource {
   @GET
   @Produces("application/json")
   Response teams_list_discussion_comments_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @QueryParam("direction") String direction,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("discussion_number") Integer discussionNumber,
+      @QueryParam("direction") @DefaultValue("desc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -757,8 +760,8 @@ public interface TeamsResource {
   @Path("/{team_id}/repos")
   @GET
   @Produces("application/json")
-  Response teams_list_repos_legacy(@PathParam("team_id") Integer teamId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response teams_list_repos_legacy(@PathParam("team_id") Integer teamId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -773,8 +776,8 @@ public interface TeamsResource {
   @Path("/{team_id}/teams")
   @GET
   @Produces("application/json")
-  Response teams_list_child_legacy(@PathParam("team_id") Integer teamId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response teams_list_child_legacy(@PathParam("team_id") Integer teamId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -857,8 +860,8 @@ public interface TeamsResource {
   @Path("/{team_id}/projects")
   @GET
   @Produces("application/json")
-  Response teams_list_projects_legacy(@PathParam("team_id") Integer teamId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response teams_list_projects_legacy(@PathParam("team_id") Integer teamId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -879,8 +882,8 @@ public interface TeamsResource {
   @GET
   @Produces("application/json")
   Response teams_list_discussions_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("direction") @DefaultValue("desc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -929,6 +932,7 @@ public interface TeamsResource {
   @Path("/{team_id}/members")
   @GET
   @Produces("application/json")
-  Response teams_list_members_legacy(@PathParam("team_id") Integer teamId, @QueryParam("role") String role,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response teams_list_members_legacy(@PathParam("team_id") Integer teamId,
+      @QueryParam("role") @DefaultValue("all") String role, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 }

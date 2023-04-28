@@ -1,0 +1,90 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Simple Widget API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/widget-names": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Returns the list of widget names."
+                    }
+                },
+                "operationId": "getWidgetNames"
+            },
+            "parameters": [
+                {
+                    "name": "ownerId",
+                    "schema": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "exclusiveMinimum": false,
+                        "maximum": 1000000000,
+                        "exclusiveMaximum": true,
+                        "default": 100
+                    },
+                    "in": "query",
+                    "required": false
+                },
+                {
+                    "name": "userId",
+                    "schema": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "maximum": 999999999,
+                        "exclusiveMaximum": false
+                    },
+                    "in": "query",
+                    "required": false
+                },
+                {
+                    "name": "nameFilter",
+                    "schema": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 10,
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20
+                        }
+                    },
+                    "in": "query"
+                },
+                {
+                    "name": "sessionToken",
+                    "schema": {
+                        "type": "string",
+                        "nullable": true,
+                        "minLength": 1,
+                        "maxLength": 20,
+                        "pattern": "\\S"
+                    },
+                    "in": "cookie"
+                },
+                {
+                    "name": "sessionInfo",
+                    "schema": {
+                        "type": "object",
+                        "minProperties": 1,
+                        "maxProperties": 20
+                    },
+                    "in": "cookie"
+                }
+            ]
+        }
+    }
+}
