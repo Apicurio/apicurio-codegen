@@ -24,6 +24,7 @@ Some useful links:
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <version.jakarta.ws.rs-jakarta.ws.rs-api>3.1.0</version.jakarta.ws.rs-jakarta.ws.rs-api>
+        <version.jakarta.validation-jakarta.validation-api>3.0.2</version.jakarta.validation-jakarta.validation-api>
         <version.com.fasterxml.jackson>2.9.8</version.com.fasterxml.jackson>
     </properties>
 
@@ -44,6 +45,11 @@ Some useful links:
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${version.jakarta.validation-jakarta.validation-api}</version>
         </dependency>
     </dependencies>
 </project>
