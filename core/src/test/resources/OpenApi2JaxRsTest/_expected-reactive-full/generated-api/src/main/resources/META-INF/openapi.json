@@ -68,7 +68,10 @@
           "schema": {
             "format": "int32",
             "type": "integer"
-          }
+          },
+          "x-codegen-annotations": [
+            "@jakarta.validation.constraints.Positive(message = \"The beerId must be a natural number!\")"
+          ]
         }
       ]
     },
@@ -84,6 +87,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
+                  "uniqueItems": true,
                   "items": {
                     "$ref": "#/components/schemas/Brewery"
                   }

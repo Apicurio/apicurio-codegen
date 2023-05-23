@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -33,9 +34,9 @@ public interface MarketplaceResource {
   @Path("/plans/{plan_id}/accounts")
   @GET
   @Produces("application/json")
-  Response apps_list_accounts_for_plan(@PathParam("plan_id") Integer planId, @QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_accounts_for_plan(@PathParam("plan_id") Integer planId,
+      @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -81,9 +82,9 @@ public interface MarketplaceResource {
   @Path("/stubbed/plans/{plan_id}/accounts")
   @GET
   @Produces("application/json")
-  Response apps_list_accounts_for_plan_stubbed(@PathParam("plan_id") Integer planId, @QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_accounts_for_plan_stubbed(@PathParam("plan_id") Integer planId,
+      @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -124,7 +125,8 @@ public interface MarketplaceResource {
   @Path("/stubbed/plans")
   @GET
   @Produces("application/json")
-  Response apps_list_plans_stubbed(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response apps_list_plans_stubbed(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -143,5 +145,6 @@ public interface MarketplaceResource {
   @Path("/plans")
   @GET
   @Produces("application/json")
-  Response apps_list_plans(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response apps_list_plans(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 }

@@ -1,7 +1,9 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -52,7 +54,8 @@ public interface ApplicationsResource {
   @Path("/grants")
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_list_grants(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response oauth_authorizations_list_grants(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -121,7 +124,7 @@ public interface ApplicationsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_check_token(@PathParam("client_id") String clientId, InputStream data);
+  Response apps_check_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -137,7 +140,7 @@ public interface ApplicationsResource {
   @Path("/{client_id}/token")
   @DELETE
   @Consumes("application/json")
-  void apps_delete_token(@PathParam("client_id") String clientId, InputStream data);
+  void apps_delete_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -155,7 +158,7 @@ public interface ApplicationsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_reset_token(@PathParam("client_id") String clientId, InputStream data);
+  Response apps_reset_token(@PathParam("client_id") String clientId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -296,5 +299,5 @@ public interface ApplicationsResource {
   @Path("/{client_id}/grant")
   @DELETE
   @Consumes("application/json")
-  void apps_delete_authorization(@PathParam("client_id") String clientId, InputStream data);
+  void apps_delete_authorization(@PathParam("client_id") String clientId, @NotNull InputStream data);
 }

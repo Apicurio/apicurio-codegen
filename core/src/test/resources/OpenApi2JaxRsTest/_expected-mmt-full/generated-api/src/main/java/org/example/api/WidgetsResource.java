@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -37,8 +38,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v1")
-  void createWidget(Widgetv1 data);
+  @Consumes("application/json+v2")
+  void createWidget(@NotNull Widgetv2 data);
 
   /**
    * <p>
@@ -47,8 +48,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v2")
-  void createWidget(Widgetv2 data);
+  @Consumes("application/json+v1")
+  void createWidget(@NotNull Widgetv1 data);
 
   /**
    * <p>
@@ -70,7 +71,7 @@ public interface WidgetsResource {
   @Path("/{widgetId}")
   @PUT
   @Consumes("application/json")
-  void updateWidget(@PathParam("widgetId") String widgetId, Widget data);
+  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull Widget data);
 
   /**
    * <p>
@@ -81,7 +82,7 @@ public interface WidgetsResource {
   @Path("/{widgetId}")
   @PUT
   @Consumes("*/*")
-  void updateWidget(@PathParam("widgetId") String widgetId, InputStream data);
+  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull InputStream data);
 
   /**
    * <p>

@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -25,5 +26,5 @@ public interface OrganizationsResource {
    */
   @GET
   @Produces("application/json")
-  Response orgs_list(@QueryParam("since") String since, @QueryParam("per_page") Integer perPage);
+  Response orgs_list(@QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage);
 }

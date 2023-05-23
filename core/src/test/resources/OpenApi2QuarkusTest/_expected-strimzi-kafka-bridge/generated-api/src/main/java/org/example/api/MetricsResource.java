@@ -13,7 +13,7 @@ public interface MetricsResource {
    * <p>
    * Retrieves the bridge metrics in Prometheus format.
    * </p>
-   *
+   * 
    */
   @GET
   @Produces("text/plain")

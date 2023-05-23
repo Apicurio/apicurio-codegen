@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -24,7 +25,7 @@ public interface TopicsResource {
    * <p>
    * Retrieves a list of all topics.
    * </p>
-   *
+   * 
    */
   @GET
   @Produces("application/vnd.kafka.v2+json")
@@ -34,7 +35,7 @@ public interface TopicsResource {
    * <p>
    * Retrieves the metadata about a given topic.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}")
   @GET
@@ -46,20 +47,20 @@ public interface TopicsResource {
    * Sends one or more records to a given topic, optionally specifying a
    * partition, key, or both.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}")
   @POST
   @Produces("application/vnd.kafka.v2+json")
   @Consumes({"application/vnd.kafka.binary.v2+json", "application/vnd.kafka.json.v2+json"})
   OffsetRecordSentList send(@PathParam("topicname") String topicname, @QueryParam("async") Boolean async,
-      ProducerRecordList data);
+      @NotNull ProducerRecordList data);
 
   /**
    * <p>
    * Retrieves a list of partitions for the topic.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}/partitions")
   @GET
@@ -70,7 +71,7 @@ public interface TopicsResource {
    * <p>
    * Retrieves partition metadata for the topic partition.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}/partitions/{partitionid}")
   @GET
@@ -83,7 +84,7 @@ public interface TopicsResource {
    * Sends one or more records to a given topic partition, optionally specifying a
    * key.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}/partitions/{partitionid}")
   @POST
@@ -91,13 +92,13 @@ public interface TopicsResource {
   @Consumes({"application/vnd.kafka.binary.v2+json", "application/vnd.kafka.json.v2+json"})
   OffsetRecordSentList sendToPartition(@PathParam("topicname") String topicname,
       @PathParam("partitionid") Integer partitionid, @QueryParam("async") Boolean async,
-      ProducerRecordToPartitionList data);
+      @NotNull ProducerRecordToPartitionList data);
 
   /**
    * <p>
    * Retrieves a summary of the offsets for the topic partition.
    * </p>
-   *
+   * 
    */
   @Path("/{topicname}/partitions/{partitionid}/offsets")
   @GET

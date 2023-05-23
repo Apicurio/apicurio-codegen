@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -15,7 +16,7 @@ import org.example.api.beans.User;
 @Path("/user")
 public interface UserResource {
   /**
-   *
+   * 
    */
   @Path("/{username}")
   @GET
@@ -26,18 +27,18 @@ public interface UserResource {
    * <p>
    * This can only be done by the logged in user.
    * </p>
-   *
+   * 
    */
   @Path("/{username}")
   @PUT
   @Consumes({"application/xml", "application/json", "application/x-www-form-urlencoded"})
-  void updateUser(@PathParam("username") String username, User data);
+  void updateUser(@PathParam("username") String username, @NotNull User data);
 
   /**
    * <p>
    * This can only be done by the logged in user.
    * </p>
-   *
+   * 
    */
   @Path("/{username}")
   @DELETE

@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -29,43 +30,43 @@ public interface ConsumersResource {
    * base URI which must be used to construct URLs for subsequent requests against
    * this consumer instance.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}")
   @POST
   @Produces("application/vnd.kafka.v2+json")
   @Consumes("application/vnd.kafka.v2+json")
-  CreatedConsumer createConsumer(@PathParam("groupid") String groupid, Consumer data);
+  CreatedConsumer createConsumer(@PathParam("groupid") String groupid, @NotNull Consumer data);
 
   /**
    * <p>
    * Configures a subscribed consumer to seek (and subsequently read from) the
    * first offset in one or more given topic partitions.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/positions/beginning")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void seekToBeginning(@PathParam("groupid") String groupid, @PathParam("name") String name, Partitions data);
+  void seekToBeginning(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull Partitions data);
 
   /**
    * <p>
    * Configures a subscribed consumer to seek (and subsequently read from) the
    * offset at the end of one or more of the given topic partitions.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/positions/end")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void seekToEnd(@PathParam("groupid") String groupid, @PathParam("name") String name, Partitions data);
+  void seekToEnd(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull Partitions data);
 
   /**
    * <p>
    * Retrieves a list of the topics to which the consumer is subscribed.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/subscription")
   @GET
@@ -79,18 +80,18 @@ public interface ConsumersResource {
    * as a <code>topic_pattern</code> field. Each call replaces the subscriptions
    * for the subscriber.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/subscription")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void subscribe(@PathParam("groupid") String groupid, @PathParam("name") String name, Topics data);
+  void subscribe(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull Topics data);
 
   /**
    * <p>
    * Unsubscribes a consumer from all topics.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/subscription")
   @DELETE
@@ -103,23 +104,23 @@ public interface ConsumersResource {
    * overrides the default fetch behavior for consumers. You can specify one or
    * more topic partitions.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/positions")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void seek(@PathParam("groupid") String groupid, @PathParam("name") String name, OffsetCommitSeekList data);
+  void seek(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull OffsetCommitSeekList data);
 
   /**
    * <p>
    * Assigns one or more topic partitions to a consumer.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/assignments")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void assign(@PathParam("groupid") String groupid, @PathParam("name") String name, Partitions data);
+  void assign(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull Partitions data);
 
   /**
    * <p>
@@ -129,7 +130,7 @@ public interface ConsumersResource {
    * <code>POST</code> request to <code>/consumers/{groupid}</code> that was used
    * to create this consumer.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/records")
   @GET
@@ -145,7 +146,7 @@ public interface ConsumersResource {
    * the <code>POST</code> request to <code>/consumers/{groupid}</code> that was
    * used to create this consumer.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}")
   @DELETE
@@ -156,10 +157,10 @@ public interface ConsumersResource {
    * Commits a list of consumer offsets. To commit offsets for all records fetched
    * by the consumer, leave the request body empty.
    * </p>
-   *
+   * 
    */
   @Path("/{groupid}/instances/{name}/offsets")
   @POST
   @Consumes("application/vnd.kafka.v2+json")
-  void commit(@PathParam("groupid") String groupid, @PathParam("name") String name, OffsetCommitSeekList data);
+  void commit(@PathParam("groupid") String groupid, @PathParam("name") String name, @NotNull OffsetCommitSeekList data);
 }

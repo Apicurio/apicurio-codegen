@@ -1,7 +1,9 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -29,8 +31,8 @@ public interface UserResource {
   @Path("/repository_invitations")
   @GET
   @Produces("application/json")
-  Response repos_list_invitations_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response repos_list_invitations_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -61,10 +63,12 @@ public interface UserResource {
   @Path("/repos")
   @GET
   @Produces("application/json")
-  Response repos_list_for_authenticated_user(@QueryParam("visibility") String visibility,
-      @QueryParam("affiliation") String affiliation, @QueryParam("type") String type, @QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page, @QueryParam("since") String since, @QueryParam("before") String before);
+  Response repos_list_for_authenticated_user(@QueryParam("visibility") @DefaultValue("all") String visibility,
+      @QueryParam("affiliation") @DefaultValue("owner,collaborator,organization_member") String affiliation,
+      @QueryParam("type") @DefaultValue("all") String type, @QueryParam("sort") @DefaultValue("full_name") String sort,
+      @QueryParam("direction") String direction, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page, @QueryParam("since") String since,
+      @QueryParam("before") String before);
 
   /**
    * <p>
@@ -89,7 +93,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_for_authenticated_user(InputStream data);
+  Response repos_create_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * <p>
@@ -142,7 +146,7 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response migrations_list_repos_for_user(@PathParam("migration_id") Integer migrationId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -153,8 +157,8 @@ public interface UserResource {
   @Path("/migrations")
   @GET
   @Produces("application/json")
-  Response migrations_list_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response migrations_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -166,7 +170,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_start_for_authenticated_user(InputStream data);
+  Response migrations_start_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * <p>
@@ -258,8 +262,8 @@ public interface UserResource {
   @Path("/subscriptions")
   @GET
   @Produces("application/json")
-  Response activity_list_watched_repos_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response activity_list_watched_repos_for_authenticated_user(
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -275,9 +279,9 @@ public interface UserResource {
   @Path("/starred")
   @GET
   @Produces({"application/json", "application/vnd.github.v3.star+json"})
-  Response activity_list_repos_starred_by_authenticated_user(@QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response activity_list_repos_starred_by_authenticated_user(@QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") @DefaultValue("desc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -286,7 +290,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_for_authenticated_user(InputStream data);
+  Response projects_create_for_authenticated_user(@NotNull InputStream data);
 
   /**
    * 
@@ -295,7 +299,7 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response orgs_list_memberships_for_authenticated_user(@QueryParam("state") String state,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -312,7 +316,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update_membership_for_authenticated_user(@PathParam("org") String org, InputStream data);
+  Response orgs_update_membership_for_authenticated_user(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -334,7 +338,8 @@ public interface UserResource {
   @Path("/orgs")
   @GET
   @Produces("application/json")
-  Response orgs_list_for_authenticated_user(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response orgs_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -345,8 +350,8 @@ public interface UserResource {
   @Path("/followers")
   @GET
   @Produces("application/json")
-  Response users_list_followers_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_followers_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -357,8 +362,8 @@ public interface UserResource {
   @Path("/following")
   @GET
   @Produces("application/json")
-  Response users_list_followed_by_authenticated(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_followed_by_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -371,8 +376,8 @@ public interface UserResource {
   @Path("/gpg_keys")
   @GET
   @Produces("application/json")
-  Response users_list_gpg_keys_for_authenticated(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_gpg_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -387,7 +392,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_create_gpg_key_for_authenticated(InputStream data);
+  Response users_create_gpg_key_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -453,8 +458,8 @@ public interface UserResource {
   @Path("/emails")
   @GET
   @Produces("application/json")
-  Response users_list_emails_for_authenticated(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -466,7 +471,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_add_email_for_authenticated(InputStream data);
+  Response users_add_email_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -477,7 +482,7 @@ public interface UserResource {
   @Path("/emails")
   @DELETE
   @Consumes("application/json")
-  void users_delete_email_for_authenticated(InputStream data);
+  void users_delete_email_for_authenticated(@NotNull InputStream data);
 
   /**
    * 
@@ -554,8 +559,8 @@ public interface UserResource {
   @Path("/public_emails")
   @GET
   @Produces("application/json")
-  Response users_list_public_emails_for_authenticated(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_public_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -580,8 +585,8 @@ public interface UserResource {
   @Path("/keys")
   @GET
   @Produces("application/json")
-  Response users_list_public_ssh_keys_for_authenticated(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response users_list_public_ssh_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -596,7 +601,7 @@ public interface UserResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_create_public_ssh_key_for_authenticated(InputStream data);
+  Response users_create_public_ssh_key_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -627,7 +632,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_update_authenticated(InputStream data);
+  Response users_update_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -639,7 +644,7 @@ public interface UserResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response users_set_primary_email_visibility_for_authenticated(InputStream data);
+  Response users_set_primary_email_visibility_for_authenticated(@NotNull InputStream data);
 
   /**
    * <p>
@@ -655,7 +660,8 @@ public interface UserResource {
   @Path("/teams")
   @GET
   @Produces("application/json")
-  Response teams_list_for_authenticated_user(@QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response teams_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -678,9 +684,11 @@ public interface UserResource {
   @Path("/issues")
   @GET
   @Produces("application/json")
-  Response issues_list_for_authenticated_user(@QueryParam("filter") String filter, @QueryParam("state") String state,
-      @QueryParam("labels") String labels, @QueryParam("sort") String sort, @QueryParam("direction") String direction,
-      @QueryParam("since") String since, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response issues_list_for_authenticated_user(@QueryParam("filter") @DefaultValue("assigned") String filter,
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("labels") String labels,
+      @QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -708,8 +716,8 @@ public interface UserResource {
   @Path("/installations")
   @GET
   @Produces("application/json")
-  Response apps_list_installations_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_installations_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -738,7 +746,7 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response apps_list_installation_repos_for_authenticated_user(@PathParam("installation_id") Integer installationId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -756,8 +764,8 @@ public interface UserResource {
   @Path("/marketplace_purchases")
   @GET
   @Produces("application/json")
-  Response apps_list_subscriptions_for_authenticated_user(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_subscriptions_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -817,6 +825,6 @@ public interface UserResource {
   @Path("/marketplace_purchases/stubbed")
   @GET
   @Produces("application/json")
-  Response apps_list_subscriptions_for_authenticated_user_stubbed(@QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response apps_list_subscriptions_for_authenticated_user_stubbed(
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 }

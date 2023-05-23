@@ -1,5 +1,7 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -25,7 +27,7 @@ public interface BeersResource {
   @Path("/{beerId}")
   @GET
   @Produces("application/json")
-  Beer getBeer(@PathParam("beerId") int beerId);
+  Beer getBeer(@PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId);
 
   /**
    * <p>
@@ -36,7 +38,8 @@ public interface BeersResource {
   @Path("/{beerId}")
   @PUT
   @Consumes("application/json")
-  void updateBeer(@PathParam("beerId") int beerId, Beer data);
+  void updateBeer(@PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId,
+      @NotNull Beer data);
 
   /**
    * <p>
@@ -46,7 +49,7 @@ public interface BeersResource {
    */
   @Path("/{beerId}")
   @DELETE
-  void deleteBeer(@PathParam("beerId") int beerId);
+  void deleteBeer(@PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId);
 
   /**
    * <p>
@@ -66,5 +69,5 @@ public interface BeersResource {
    */
   @POST
   @Consumes("application/json")
-  void addBeer(Beer data);
+  void addBeer(@NotNull Beer data);
 }

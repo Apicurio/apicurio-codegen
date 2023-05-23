@@ -1,6 +1,7 @@
 package org.example.api;
 
 import io.apicurio.registry.types.RuleType;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -53,7 +54,7 @@ public interface AdminResource {
   @Path("/rules")
   @POST
   @Consumes("application/json")
-  void createGlobalRule(Rule data);
+  void createGlobalRule(@NotNull Rule data);
 
   /**
    * <p>
@@ -110,7 +111,7 @@ public interface AdminResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Rule updateGlobalRuleConfig(@PathParam("rule") RuleType rule, Rule data);
+  Rule updateGlobalRuleConfig(@PathParam("rule") RuleType rule, @NotNull Rule data);
 
   /**
    * <p>
@@ -169,7 +170,7 @@ public interface AdminResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  NamedLogConfiguration setLogConfiguration(@PathParam("logger") String logger, LogConfiguration data);
+  NamedLogConfiguration setLogConfiguration(@PathParam("logger") String logger, @NotNull LogConfiguration data);
 
   /**
    * <p>

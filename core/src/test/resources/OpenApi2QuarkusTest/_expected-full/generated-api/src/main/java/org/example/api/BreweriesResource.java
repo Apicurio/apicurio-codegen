@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -35,7 +36,7 @@ public interface BreweriesResource {
    */
   @POST
   @Consumes("application/json")
-  void addBrewery(Brewery data);
+  void addBrewery(@NotNull Brewery data);
 
   /**
    * <p>
@@ -57,7 +58,7 @@ public interface BreweriesResource {
   @Path("/{breweryId}")
   @PUT
   @Consumes("application/json")
-  void updateBrewery(@PathParam("breweryId") int breweryId, Brewery data);
+  void updateBrewery(@PathParam("breweryId") int breweryId, @NotNull Brewery data);
 
   /**
    * <p>
@@ -89,5 +90,5 @@ public interface BreweriesResource {
   @Path("/{breweryId}/beers")
   @POST
   @Consumes("application/json")
-  void addBeerToBrewery(@PathParam("breweryId") int breweryId, Beer data);
+  void addBeerToBrewery(@PathParam("breweryId") int breweryId, @NotNull Beer data);
 }

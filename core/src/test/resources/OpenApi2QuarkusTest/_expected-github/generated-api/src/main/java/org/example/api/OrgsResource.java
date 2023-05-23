@@ -1,7 +1,9 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -28,8 +30,8 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response repos_list_for_org(@PathParam("org") String org, @QueryParam("type") String type,
-      @QueryParam("sort") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -55,7 +57,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response repos_create_in_org(@PathParam("org") String org, InputStream data);
+  Response repos_create_in_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -66,8 +68,8 @@ public interface OrgsResource {
   @Path("/{org}/migrations")
   @GET
   @Produces("application/json")
-  Response migrations_list_for_org(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response migrations_list_for_org(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -79,7 +81,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response migrations_start_for_org(@PathParam("org") String org, InputStream data);
+  Response migrations_start_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -106,7 +108,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response migrations_list_repos_for_org(@PathParam("org") String org, @PathParam("migration_id") Integer migrationId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -176,7 +178,7 @@ public interface OrgsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response interactions_set_restrictions_for_org(@PathParam("org") String org, InputStream data);
+  Response interactions_set_restrictions_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -195,8 +197,8 @@ public interface OrgsResource {
   @Path("/{org}/events")
   @GET
   @Produces("application/json")
-  Response activity_list_public_org_events(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response activity_list_public_org_events(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -210,8 +212,8 @@ public interface OrgsResource {
   @Path("/{org}/projects")
   @GET
   @Produces("application/json")
-  Response projects_list_for_org(@PathParam("org") String org, @QueryParam("state") String state,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response projects_list_for_org(@PathParam("org") String org, @QueryParam("state") @DefaultValue("open") String state,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -226,7 +228,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_for_org(@PathParam("org") String org, InputStream data);
+  Response projects_create_for_org(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -290,7 +292,7 @@ public interface OrgsResource {
   Response reactions_list_for_team_discussion_comment_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
       @PathParam("comment_number") Integer commentNumber, @QueryParam("content") String content,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -315,7 +317,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_comment_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
-      @PathParam("comment_number") Integer commentNumber, InputStream data);
+      @PathParam("comment_number") Integer commentNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -337,7 +339,8 @@ public interface OrgsResource {
   @Produces("application/json")
   Response reactions_list_for_team_discussion_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
-      @QueryParam("content") String content, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("content") String content, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -362,7 +365,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response reactions_create_for_team_discussion_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("discussion_number") Integer discussionNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -398,7 +401,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response orgs_list_invitation_teams(@PathParam("org") String org, @PathParam("invitation_id") Integer invitationId,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -479,7 +482,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response orgs_set_membership_for_user(@PathParam("org") String org, @PathParam("username") String username,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -520,7 +523,8 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update_webhook(@PathParam("org") String org, @PathParam("hook_id") Integer hookId, InputStream data);
+  Response orgs_update_webhook(@PathParam("org") String org, @PathParam("hook_id") Integer hookId,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -572,7 +576,7 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_update(@PathParam("org") String org, InputStream data);
+  Response orgs_update(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -618,8 +622,8 @@ public interface OrgsResource {
   @Path("/{org}/installations")
   @GET
   @Produces("application/json")
-  Response orgs_list_app_installations(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response orgs_list_app_installations(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -663,8 +667,9 @@ public interface OrgsResource {
   @Path("/{org}/outside_collaborators")
   @GET
   @Produces("application/json")
-  Response orgs_list_outside_collaborators(@PathParam("org") String org, @QueryParam("filter") String filter,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response orgs_list_outside_collaborators(@PathParam("org") String org,
+      @QueryParam("filter") @DefaultValue("all") String filter,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -680,8 +685,8 @@ public interface OrgsResource {
   @Path("/{org}/invitations")
   @GET
   @Produces("application/json")
-  Response orgs_list_pending_invitations(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response orgs_list_pending_invitations(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -705,7 +710,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_create_invitation(@PathParam("org") String org, InputStream data);
+  Response orgs_create_invitation(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * 
@@ -713,8 +718,8 @@ public interface OrgsResource {
   @Path("/{org}/hooks")
   @GET
   @Produces("application/json")
-  Response orgs_list_webhooks(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response orgs_list_webhooks(@PathParam("org") String org, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -726,7 +731,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response orgs_create_webhook(@PathParam("org") String org, InputStream data);
+  Response orgs_create_webhook(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -771,8 +776,9 @@ public interface OrgsResource {
   @Path("/{org}/members")
   @GET
   @Produces("application/json")
-  Response orgs_list_members(@PathParam("org") String org, @QueryParam("filter") String filter,
-      @QueryParam("role") String role, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response orgs_list_members(@PathParam("org") String org, @QueryParam("filter") @DefaultValue("all") String filter,
+      @QueryParam("role") @DefaultValue("all") String role, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -805,8 +811,8 @@ public interface OrgsResource {
   @Path("/{org}/public_members")
   @GET
   @Produces("application/json")
-  Response orgs_list_public_members(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response orgs_list_public_members(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -860,7 +866,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response actions_list_self_hosted_runners_for_org(@PathParam("org") String org,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -974,7 +980,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void actions_create_or_update_org_secret(@PathParam("org") String org, @PathParam("secret_name") String secretName,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1001,8 +1007,8 @@ public interface OrgsResource {
   @Path("/{org}/actions/secrets")
   @GET
   @Produces("application/json")
-  Response actions_list_org_secrets(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response actions_list_org_secrets(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1145,7 +1151,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void actions_set_selected_repos_for_org_secret(@PathParam("org") String org,
-      @PathParam("secret_name") String secretName, InputStream data);
+      @PathParam("secret_name") String secretName, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1223,7 +1229,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   void teams_add_or_update_repo_permissions_in_org(@PathParam("org") String org,
       @PathParam("team_slug") String teamSlug, @PathParam("owner") String owner, @PathParam("repo") String repo,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1259,7 +1265,8 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_members_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("role") String role, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("role") @DefaultValue("all") String role, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1278,8 +1285,9 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_discussion_comments_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @PathParam("discussion_number") Integer discussionNumber, @QueryParam("direction") String direction,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @PathParam("discussion_number") Integer discussionNumber,
+      @QueryParam("direction") @DefaultValue("desc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1309,7 +1317,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_discussion_comment_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1328,8 +1336,8 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_discussions_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("direction") String direction, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("direction") @DefaultValue("desc") String direction,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1359,7 +1367,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_discussion_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1417,7 +1425,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_update_discussion_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @PathParam("discussion_number") Integer discussionNumber, InputStream data);
+      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1434,7 +1442,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_projects_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1473,7 +1481,7 @@ public interface OrgsResource {
   @PUT
   @Consumes("application/json")
   void teams_add_or_update_project_permissions_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, @PathParam("project_id") Integer projectId, InputStream data);
+      @PathParam("team_slug") String teamSlug, @PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1552,7 +1560,7 @@ public interface OrgsResource {
   @Consumes("application/json")
   Response teams_update_discussion_comment_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
       @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1569,7 +1577,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_repos_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1597,8 +1605,8 @@ public interface OrgsResource {
   @Path("/{org}/team-sync/groups")
   @GET
   @Produces("application/json")
-  Response teams_list_idp_groups_for_org(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response teams_list_idp_groups_for_org(@PathParam("org") String org,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1676,7 +1684,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_add_or_update_membership_for_user_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, @PathParam("username") String username, InputStream data);
+      @PathParam("team_slug") String teamSlug, @PathParam("username") String username, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1734,7 +1742,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_pending_invitations_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1789,7 +1797,8 @@ public interface OrgsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug, InputStream data);
+  Response teams_update_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -1801,8 +1810,8 @@ public interface OrgsResource {
   @Path("/{org}/teams")
   @GET
   @Produces("application/json")
-  Response teams_list(@PathParam("org") String org, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response teams_list(@PathParam("org") String org, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1826,7 +1835,7 @@ public interface OrgsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create(@PathParam("org") String org, InputStream data);
+  Response teams_create(@PathParam("org") String org, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1843,7 +1852,7 @@ public interface OrgsResource {
   @GET
   @Produces("application/json")
   Response teams_list_child_in_org(@PathParam("org") String org, @PathParam("team_slug") String teamSlug,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -1892,7 +1901,7 @@ public interface OrgsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Response teams_create_or_update_idp_group_connections_in_org(@PathParam("org") String org,
-      @PathParam("team_slug") String teamSlug, InputStream data);
+      @PathParam("team_slug") String teamSlug, @NotNull InputStream data);
 
   /**
    * <p>
@@ -1914,10 +1923,12 @@ public interface OrgsResource {
   @Path("/{org}/issues")
   @GET
   @Produces("application/json")
-  Response issues_list_for_org(@PathParam("org") String org, @QueryParam("filter") String filter,
-      @QueryParam("state") String state, @QueryParam("labels") String labels, @QueryParam("sort") String sort,
-      @QueryParam("direction") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response issues_list_for_org(@PathParam("org") String org,
+      @QueryParam("filter") @DefaultValue("assigned") String filter,
+      @QueryParam("state") @DefaultValue("open") String state, @QueryParam("labels") String labels,
+      @QueryParam("sort") @DefaultValue("created") String sort,
+      @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>

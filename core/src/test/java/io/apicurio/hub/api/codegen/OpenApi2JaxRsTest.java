@@ -178,6 +178,14 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     }
 
     /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testConstraintParameters() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/constrained-parameters.json", UpdateOnly.no, Reactive.no, "_expected-constrained-parameters/generated-api", false);
+    }
+
+    /**
      * Shared test method.
      * @param apiDef
      * @param updateOnly

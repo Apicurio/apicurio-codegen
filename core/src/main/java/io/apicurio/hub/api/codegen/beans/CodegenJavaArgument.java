@@ -16,23 +16,40 @@
 
 package io.apicurio.hub.api.codegen.beans;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * @author eric.wittmann@gmail.com
  */
-public class CodegenJavaArgument {
-    
+public class CodegenJavaArgument extends CodegenJavaSchema {
+
     private String name;
     private String in;
-    private String collection;
-    private String type;
-    private String format;
-    private Boolean required;
+    private boolean required;
     private String typeSignature;
-    
-    /**
-     * Constructor.
-     */
-    public CodegenJavaArgument() {
+    private List<CodegenBeanAnnotationDirective> annotations;
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(annotations, in, name, required, typeSignature);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CodegenJavaArgument other = (CodegenJavaArgument) obj;
+        return Objects.equals(annotations, other.annotations) && Objects.equals(in, other.in)
+                && Objects.equals(name, other.name) && required == other.required
+                && Objects.equals(typeSignature, other.typeSignature);
     }
 
     /**
@@ -64,58 +81,16 @@ public class CodegenJavaArgument {
     }
 
     /**
-     * @return the collection
-     */
-    public String getCollection() {
-        return collection;
-    }
-
-    /**
-     * @param collection the collection to set
-     */
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the format
-     */
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * @param format the format to set
-     */
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    /**
      * @return the required
      */
-    public Boolean getRequired() {
+    public boolean getRequired() {
         return required;
     }
 
     /**
      * @param required the required to set
      */
-    public void setRequired(Boolean required) {
+    public void setRequired(boolean required) {
         this.required = required;
     }
 
@@ -133,4 +108,17 @@ public class CodegenJavaArgument {
         this.typeSignature = typeSignature;
     }
 
+    /**
+     * @return the annotations
+     */
+    public List<CodegenBeanAnnotationDirective> getAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * @param annotations the annotations to set
+     */
+    public void setAnnotations(List<CodegenBeanAnnotationDirective> annotations) {
+        this.annotations = annotations;
+    }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.example.api</groupId>
+    <artifactId>generated-api</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>Simple Widget API</name>
+    <description>A generated project with JAX-RS and Microprofile OpenAPI features enabled.</description>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <version.jakarta.ws.rs-jakarta.ws.rs-api>3.1.0</version.jakarta.ws.rs-jakarta.ws.rs-api>
+        <version.jakarta.validation-jakarta.validation-api>3.0.2</version.jakarta.validation-jakarta.validation-api>
+        <version.com.fasterxml.jackson>2.9.8</version.com.fasterxml.jackson>
+    </properties>
+
+    <dependencies>
+        <!-- Third Party Dependencies -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${version.com.fasterxml.jackson}</version>
+        </dependency>
+        <!-- Specification Dependencies -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${version.jakarta.ws.rs-jakarta.ws.rs-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${version.jakarta.validation-jakarta.validation-api}</version>
+        </dependency>
+    </dependencies>
+</project>

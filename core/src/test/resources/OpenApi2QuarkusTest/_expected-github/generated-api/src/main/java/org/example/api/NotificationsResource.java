@@ -1,7 +1,9 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.PUT;
@@ -74,7 +76,7 @@ public interface NotificationsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, InputStream data);
+  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -100,9 +102,10 @@ public interface NotificationsResource {
    */
   @GET
   @Produces("application/json")
-  Response activity_list_notifications_for_authenticated_user(@QueryParam("all") Boolean all,
-      @QueryParam("participating") Boolean participating, @QueryParam("since") String since,
-      @QueryParam("before") String before, @QueryParam("per_page") Integer perPage, @QueryParam("page") Integer page);
+  Response activity_list_notifications_for_authenticated_user(@QueryParam("all") @DefaultValue("false") Boolean all,
+      @QueryParam("participating") @DefaultValue("false") Boolean participating, @QueryParam("since") String since,
+      @QueryParam("before") String before, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
+      @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -121,5 +124,5 @@ public interface NotificationsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_mark_notifications_as_read(InputStream data);
+  Response activity_mark_notifications_as_read(@NotNull InputStream data);
 }

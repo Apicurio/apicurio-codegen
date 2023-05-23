@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -52,7 +53,7 @@ public interface ScimResource {
   @Produces("application/scim+json")
   @Consumes("application/json")
   Response scim_set_information_for_provisioned_user(@PathParam("org") String org,
-      @PathParam("scim_user_id") String scimUserId, InputStream data);
+      @PathParam("scim_user_id") String scimUserId, @NotNull InputStream data);
 
   /**
    * 
@@ -103,7 +104,7 @@ public interface ScimResource {
   @Produces("application/scim+json")
   @Consumes("application/json")
   Response scim_update_attribute_for_user(@PathParam("org") String org, @PathParam("scim_user_id") String scimUserId,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -183,5 +184,5 @@ public interface ScimResource {
   @POST
   @Produces("application/scim+json")
   @Consumes("application/json")
-  Response scim_provision_and_invite_user(@PathParam("org") String org, InputStream data);
+  Response scim_provision_and_invite_user(@PathParam("org") String org, @NotNull InputStream data);
 }

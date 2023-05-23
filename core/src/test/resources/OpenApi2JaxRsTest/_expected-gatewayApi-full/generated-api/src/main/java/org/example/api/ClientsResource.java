@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -18,5 +19,5 @@ public interface ClientsResource {
    */
   @PUT
   @Consumes("application/json")
-  void registerAClient(Client data);
+  void registerAClient(@NotNull Client data);
 }

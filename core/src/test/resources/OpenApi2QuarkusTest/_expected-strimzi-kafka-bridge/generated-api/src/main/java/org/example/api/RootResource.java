@@ -14,7 +14,7 @@ public interface RootResource {
    * <p>
    * Retrieves information about the Kafka Bridge instance, in JSON format.
    * </p>
-   *
+   * 
    */
   @GET
   @Produces("application/json")

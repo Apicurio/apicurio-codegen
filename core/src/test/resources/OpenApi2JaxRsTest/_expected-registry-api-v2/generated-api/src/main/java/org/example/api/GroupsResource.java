@@ -2,6 +2,7 @@ package org.example.api;
 
 import io.apicurio.registry.types.ArtifactType;
 import io.apicurio.registry.types.RuleType;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -87,7 +88,7 @@ public interface GroupsResource {
   @Produces("application/json")
   @Consumes("*/*")
   CompletionStage<ArtifactMetaData> updateArtifact(@PathParam("groupId") String groupId,
-      @PathParam("artifactId") String artifactId, InputStream data);
+      @PathParam("artifactId") String artifactId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -147,7 +148,7 @@ public interface GroupsResource {
   @PUT
   @Consumes("*/*")
   void updateArtifactMetaData(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      EditableMetaData data);
+      @NotNull EditableMetaData data);
 
   /**
    * <p>
@@ -174,7 +175,8 @@ public interface GroupsResource {
   @Produces("application/json")
   @Consumes("application/json")
   VersionMetaData getArtifactVersionMetaDataByContent(@PathParam("groupId") String groupId,
-      @PathParam("artifactId") String artifactId, @QueryParam("canonical") Boolean canonical, InputStream data);
+      @PathParam("artifactId") String artifactId, @QueryParam("canonical") Boolean canonical,
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -220,7 +222,8 @@ public interface GroupsResource {
   @Path("/{groupId}/artifacts/{artifactId}/rules")
   @POST
   @Consumes("application/json")
-  void createArtifactRule(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId, Rule data);
+  void createArtifactRule(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
+      @NotNull Rule data);
 
   /**
    * <p>
@@ -291,7 +294,7 @@ public interface GroupsResource {
   @Produces("application/json")
   @Consumes("application/json")
   Rule updateArtifactRuleConfig(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      @PathParam("rule") RuleType rule, Rule data);
+      @PathParam("rule") RuleType rule, @NotNull Rule data);
 
   /**
    * <p>
@@ -339,7 +342,7 @@ public interface GroupsResource {
   @PUT
   @Consumes("application/json")
   void updateArtifactState(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      UpdateState data);
+      @NotNull UpdateState data);
 
   /**
    * <p>
@@ -379,7 +382,7 @@ public interface GroupsResource {
   @PUT
   @Consumes("*/*")
   void testUpdateArtifact(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -454,7 +457,7 @@ public interface GroupsResource {
   @PUT
   @Consumes("application/json")
   void updateArtifactVersionMetaData(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      @PathParam("version") String version, EditableMetaData data);
+      @PathParam("version") String version, @NotNull EditableMetaData data);
 
   /**
    * <p>
@@ -499,7 +502,7 @@ public interface GroupsResource {
   @PUT
   @Consumes("application/json")
   void updateArtifactVersionState(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
-      @PathParam("version") String version, UpdateState data);
+      @PathParam("version") String version, @NotNull UpdateState data);
 
   /**
    * <p>
@@ -555,7 +558,7 @@ public interface GroupsResource {
   @Consumes("*/*")
   CompletionStage<VersionMetaData> createArtifactVersion(@PathParam("groupId") String groupId,
       @PathParam("artifactId") String artifactId, @HeaderParam("X-Registry-Version") String xRegistryVersion,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -656,7 +659,7 @@ public interface GroupsResource {
       @HeaderParam("X-Registry-ArtifactType") ArtifactType xRegistryArtifactType,
       @HeaderParam("X-Registry-ArtifactId") String xRegistryArtifactId,
       @HeaderParam("X-Registry-Version") String xRegistryVersion, @QueryParam("ifExists") IfExists ifExists,
-      @QueryParam("canonical") Boolean canonical, InputStream data);
+      @QueryParam("canonical") Boolean canonical, @NotNull InputStream data);
 
   /**
    * <p>

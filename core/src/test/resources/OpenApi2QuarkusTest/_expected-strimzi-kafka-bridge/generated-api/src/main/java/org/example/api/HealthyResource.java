@@ -13,7 +13,7 @@ public interface HealthyResource {
    * Check if the bridge is running. This does not necessarily imply that it is
    * ready to accept requests.
    * </p>
-   *
+   * 
    */
   @GET
   void healthy();

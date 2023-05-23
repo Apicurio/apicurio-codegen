@@ -1,6 +1,8 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -27,8 +29,9 @@ public interface SearchResource {
   @Path("/artifacts")
   @GET
   @Produces("application/json")
-  ArtifactSearchResults searchArtifacts(@QueryParam("name") String name, @QueryParam("offset") Integer offset,
-      @QueryParam("limit") Integer limit, @QueryParam("order") SortOrder order, @QueryParam("orderby") SortBy orderby,
+  ArtifactSearchResults searchArtifacts(@QueryParam("name") String name,
+      @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") @DefaultValue("20") Integer limit,
+      @QueryParam("order") SortOrder order, @QueryParam("orderby") SortBy orderby,
       @QueryParam("labels") List<String> labels, @QueryParam("properties") List<String> properties,
       @QueryParam("description") String description, @QueryParam("artifactgroup") String artifactgroup);
 
@@ -43,7 +46,7 @@ public interface SearchResource {
   @POST
   @Produces("application/json")
   @Consumes("*/*")
-  ArtifactSearchResults searchArtifactsByContent(@QueryParam("offset") Integer offset,
-      @QueryParam("limit") Integer limit, @QueryParam("order") SortOrder order, @QueryParam("orderby") SortBy orderby,
-      InputStream data);
+  ArtifactSearchResults searchArtifactsByContent(@QueryParam("offset") @DefaultValue("0") Integer offset,
+      @QueryParam("limit") @DefaultValue("20") Integer limit, @QueryParam("order") SortOrder order,
+      @QueryParam("orderby") SortBy orderby, @NotNull InputStream data);
 }

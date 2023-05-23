@@ -1,5 +1,6 @@
 package org.example.api;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -26,5 +27,5 @@ public interface LicensesResource {
   @GET
   @Produces("application/json")
   Response licenses_get_all_commonly_used(@QueryParam("featured") Boolean featured,
-      @QueryParam("per_page") Integer perPage);
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage);
 }

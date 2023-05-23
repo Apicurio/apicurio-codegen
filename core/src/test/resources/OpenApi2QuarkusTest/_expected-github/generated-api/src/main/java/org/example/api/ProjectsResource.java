@@ -1,7 +1,9 @@
 package org.example.api;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -25,7 +27,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_column(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_move_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * 
@@ -49,7 +51,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_card(@PathParam("card_id") Integer cardId, InputStream data);
+  Response projects_update_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
 
   /**
    * 
@@ -73,7 +75,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_column(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_update_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -113,7 +115,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update(@PathParam("project_id") Integer projectId, InputStream data);
+  Response projects_update(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -121,8 +123,8 @@ public interface ProjectsResource {
   @Path("/{project_id}/columns")
   @GET
   @Produces("application/json")
-  Response projects_list_columns(@PathParam("project_id") Integer projectId, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+  Response projects_list_columns(@PathParam("project_id") Integer projectId,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * 
@@ -131,7 +133,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_column(@PathParam("project_id") Integer projectId, InputStream data);
+  Response projects_create_column(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -140,8 +142,8 @@ public interface ProjectsResource {
   @GET
   @Produces("application/json")
   Response projects_list_cards(@PathParam("column_id") Integer columnId,
-      @QueryParam("archived_state") String archivedState, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("archived_state") @DefaultValue("not_archived") String archivedState,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 
   /**
    * <p>
@@ -164,7 +166,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_card(@PathParam("column_id") Integer columnId, InputStream data);
+  Response projects_create_card(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -178,7 +180,7 @@ public interface ProjectsResource {
   @PUT
   @Consumes("application/json")
   void projects_add_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username,
-      InputStream data);
+      @NotNull InputStream data);
 
   /**
    * <p>
@@ -214,7 +216,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_card(@PathParam("card_id") Integer cardId, InputStream data);
+  Response projects_move_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -231,6 +233,6 @@ public interface ProjectsResource {
   @GET
   @Produces("application/json")
   Response projects_list_collaborators(@PathParam("project_id") Integer projectId,
-      @QueryParam("affiliation") String affiliation, @QueryParam("per_page") Integer perPage,
-      @QueryParam("page") Integer page);
+      @QueryParam("affiliation") @DefaultValue("all") String affiliation,
+      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
 }
