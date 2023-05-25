@@ -16,6 +16,8 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.apicurio.datamodels.models.Schema;
@@ -33,7 +35,7 @@ public class OpenApiDateTimeSimpleTypeProcessor extends TraversingOpenApi31Visit
     public void visitSchema(Schema node) {
         OpenApi31Schema schema = (OpenApi31Schema) node;
         // Switch from int64 format to utc-millisec so that jsonschema2pojo will generate a Long instead of an Integer
-        if ("string".equals(schema.getType()) && "date-time".equals(schema.getFormat())) {
+        if (containsValue(schema.getType(), "string") && "date-time".equals(schema.getFormat())) {
             String formatPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
             JsonNode ext = CodegenUtil.getExtension(schema, CodegenExtensions.FORMAT_PATTERN);
             if (ext != null && !ext.isNull() && ext.isTextual()) {

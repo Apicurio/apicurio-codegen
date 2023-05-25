@@ -16,6 +16,12 @@
 
 package io.apicurio.hub.api.codegen.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +31,7 @@ import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.openapi.OpenApiSchema;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Document;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
+import io.apicurio.datamodels.models.union.StringStringListUnion;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 
 public final class CodegenUtil {
@@ -66,4 +73,22 @@ public final class CodegenUtil {
         return null;
     }
 
+    public static List<String> toStringList(StringStringListUnion union) {
+        return Optional.ofNullable(union)
+            .filter(u -> Objects.nonNull(u.unionValue()))
+            .map(u -> u.isStringList() ? u.asStringList() : new ArrayList<>(List.of(u.asString())))
+            .orElse(null);
+    }
+
+    public static boolean containsValue(StringStringListUnion union, String... values) {
+        if (union == null) {
+            return false;
+        }
+
+        if (union.isStringList()) {
+            return union.asStringList().stream().anyMatch(Arrays.asList(values)::contains);
+        }
+
+        return Arrays.asList(values).contains(union.asString());
+    }
 }

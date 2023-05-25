@@ -16,7 +16,7 @@
 
 package io.apicurio.hub.api.codegen.util;
 
-import java.util.Arrays;
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -51,10 +51,12 @@ public class SchemaSigner extends TraversingOpenApi31VisitorAdapter {
     public void visitSchema(Schema node) {
         OpenApi31Schema schema = (OpenApi31Schema) node;
         // Right now we only support simple types.
-        if (schema.getType() != null && !schema.getType().equals("object") && !schema.getType().equals("array") && schema.get$ref() == null) {
+        boolean simpleType = !containsValue(schema.getType(), "array", "object");
+
+        if (simpleType && schema.getType() != null && schema.get$ref() == null) {
             // Type
             this.sigSource.append("TYPE:");
-            this.sigSource.append(schema.getType());
+            this.sigSource.append(CodegenUtil.toStringList(schema.getType()));
             // Format
             if (schema.getFormat() != null) {
                 this.sigSource.append("|FORMAT:");
@@ -63,15 +65,11 @@ public class SchemaSigner extends TraversingOpenApi31VisitorAdapter {
             // Enum
             if (schema.getEnum() != null && schema.getEnum().size() > 0) {
                 this.sigSource.append("|ENUM:");
-                String[] options = schema.getEnum().toArray(new String[schema.getEnum().size()]);
-                Arrays.sort(options);
-                for (String option : options) {
+                schema.getEnum().stream().map(Object::toString).sorted().forEach(option -> {
                     this.sigSource.append(option);
                     this.sigSource.append(",");
-                }
+                });
             }
-
-
             // Max
             if (schema.getMaximum() != null) {
                 this.sigSource.append("|MAX:");

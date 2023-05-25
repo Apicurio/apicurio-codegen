@@ -16,6 +16,8 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+
 import io.apicurio.datamodels.models.Schema;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
@@ -32,7 +34,7 @@ public class OpenApiLongSimpleTypeProcessor extends TraversingOpenApi31VisitorAd
     public void visitSchema(Schema node) {
         OpenApi31Schema schema = (OpenApi31Schema) node;
         // Switch from int64 format to utc-millisec so that jsonschema2pojo will generate a Long instead of an Integer
-        if ("integer".equals(schema.getType()) && "int64".equals(schema.getFormat())) {
+        if (containsValue(schema.getType(), "integer") && "int64".equals(schema.getFormat())) {
             schema.setFormat("utc-millisec");
         }
     }

@@ -129,7 +129,7 @@ public interface GistsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response gists_update(@PathParam("gist_id") String gistId, @NotNull InputStream data);
+  Response gists_update(@PathParam("gist_id") String gistId, InputStream data);
 
   /**
    * 

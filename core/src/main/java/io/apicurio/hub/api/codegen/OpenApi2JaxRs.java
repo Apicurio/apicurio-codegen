@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -520,9 +521,7 @@ public class OpenApi2JaxRs {
 
             Optional.ofNullable(methodInfo.getReturn())
             .map(rt -> generateTypeName(
-                    rt.getCollection(),
-                    rt.getType(),
-                    rt.getFormat(),
+                    rt,
                     true,
                     String.format("%s.ws.rs.core.Response", topLevelPackage)))
             .map(rt -> getSettings().reactive || methodInfo.isAsync() ? generateReactiveTypeName(rt) : rt)
@@ -543,8 +542,7 @@ public class OpenApi2JaxRs {
                     defaultParamType = InputStream.class.getName();
                 }
 
-                Type<?> paramType = generateTypeName(arg.getCollection(), arg.getType(),
-                        arg.getFormat(), arg.getRequired(), defaultParamType);
+                Type<?> paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
 
                 if (arg.getTypeSignature() != null) {
                     // TODO try to find a re-usable data type that matches the type signature
@@ -645,15 +643,19 @@ public class OpenApi2JaxRs {
      * @param required
      * @param defaultType
      */
-    protected Type<?> generateTypeName(String collection, String type, String format, Boolean required, String defaultType) {
+    protected Type<?> generateTypeName(CodegenJavaSchema schema, Boolean required, String defaultType) {
         if (required == null) {
             required = Boolean.FALSE;
         }
 
+        String collection = schema.getCollection();
+        List<String> type = Optional.ofNullable(schema.getType()).orElseGet(Collections::emptyList);
+        String format = schema.getFormat();
+
         boolean isCollection = Arrays.asList("list", "set").contains(collection);
         Type<?> coreType = null;
 
-        if ("string".equals(type)) {
+        if (type.contains("string")) {
             coreType = parseType(String.class.getName());
 
             if (format != null) {
@@ -667,13 +669,13 @@ public class OpenApi2JaxRs {
                     coreType = parseType("byte[]");
                 }
             }
-        } else if ("integer".equals(type)) {
+        } else if (type.contains("integer")) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
                 coreType = (required && !isCollection && format != null) ? parseType("long") : parseType(Long.class.getName());
             } else {
                 coreType = (required && !isCollection && format != null) ? parseType("int") : parseType(Integer.class.getName());
             }
-        } else if ("number".equals(type)) {
+        } else if (type.contains("number")) {
             coreType = parseType(Number.class.getName());
             if (format != null) {
                 if (format.equals("float")) {
@@ -682,16 +684,23 @@ public class OpenApi2JaxRs {
                     coreType = (required && !isCollection) ? parseType("double") : parseType(Double.class.getName());
                 }
             }
-        } else if ("boolean".equals(type)) {
+        } else if (type.contains("boolean")) {
             coreType = parseType(Boolean.class.getName());
-        } else if (type != null && Types.isQualified(type)) {
-            try {
-                coreType = parseType(type);
-            } catch (Exception e) {
+        } else {
+            Optional<String> qualifiedType = type.stream()
+                    .filter(Predicate.not("null"::equals))
+                    .findFirst()
+                    .filter(Types::isQualified);
+
+            if (qualifiedType.isPresent()) {
+                try {
+                    coreType = parseType(qualifiedType.get());
+                } catch (Exception e) {
+                    return parseType(defaultType);
+                }
+            } else {
                 return parseType(defaultType);
             }
-        } else {
-            return parseType(defaultType);
         }
 
         if (collection == null) {
@@ -752,7 +761,7 @@ public class OpenApi2JaxRs {
         final String constraintPkg = String.format("%s.validation.constraints", topLevelPackage);
         final String sizeConstraint = String.format("%s.Size", constraintPkg);
 
-        if (!forbidNotNull && !Boolean.TRUE.equals(schemaInfo.getNullable())) {
+        if (!forbidNotNull && !schemaInfo.isNullable()) {
             // nullable is false by default
             target.addAnnotation(String.format("%s.validation.constraints.NotNull", topLevelPackage));
         }
@@ -770,7 +779,7 @@ public class OpenApi2JaxRs {
 
         if (schemaInfo.getMaximum() != null) {
             BigDecimal max = new BigDecimal(schemaInfo.getMaximum().toString());
-            boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMaximum());
+            boolean inclusive = !schemaInfo.isExclusiveMaximum();
             target.addAnnotation(String.format("%s.validation.constraints.DecimalMax", topLevelPackage))
                 .setStringValue(max.toPlainString())
                 .setLiteralValue("inclusive", String.valueOf(inclusive));
@@ -778,7 +787,7 @@ public class OpenApi2JaxRs {
 
         if (schemaInfo.getMinimum() != null) {
             BigDecimal min = new BigDecimal(schemaInfo.getMinimum().toString());
-            boolean inclusive = !Boolean.TRUE.equals(schemaInfo.getExclusiveMinimum());
+            boolean inclusive = !schemaInfo.isExclusiveMinimum();
             target.addAnnotation(String.format("%s.validation.constraints.DecimalMin", topLevelPackage))
                 .setStringValue(min.toPlainString())
                 .setLiteralValue("inclusive", String.valueOf(inclusive));

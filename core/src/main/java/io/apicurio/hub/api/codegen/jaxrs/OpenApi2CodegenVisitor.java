@@ -16,13 +16,16 @@
 
 package io.apicurio.hub.api.codegen.jaxrs;
 
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.toStringList;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -261,7 +264,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             content = new HashMap<>();
         }
 
-        Map<CodegenJavaReturn, Set<String>> allReturnTypes = new HashMap<>();
+        Map<CodegenJavaReturn, Set<String>> allReturnTypes = new LinkedHashMap<>();
         if (!content.isEmpty()) {
             content.entrySet().forEach(entry -> {
                 String name = entry.getKey();
@@ -508,17 +511,16 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             return;
         }
 
-        target.setType(null);
+        target.setType((List<String>) null);
         String $ref = schema.get$ref();
 
         if ($ref != null) {
             target.setType(this.typeFromSchemaRef((Document) schema.root(), $ref));
-        } else if ("array".equals(schema.getType())) {
+        } else if (containsValue(schema.getType(), "array")) {
             if (schema.getItems() != null) {
                 setSchemaProperties(target, schema.getItems());
             }
 
-            setIfPresent(schema::isNullable, target::setNullable);
             setIfPresent(schema::getMaxItems, value -> target.setMaxItems(value.longValue()));
             setIfPresent(schema::getMinItems, value -> target.setMinItems(value.longValue()));
 
@@ -527,9 +529,8 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             } else {
                 target.setCollection("list");
             }
-        } else if ("object".equals(schema.getType())) {
-            setIfPresent(schema::getType, target::setType);
-            setIfPresent(schema::isNullable, target::setNullable);
+        } else if (containsValue(schema.getType(), "object")) {
+            setIfPresent(() -> toStringList(schema.getType()), target::setType);
             setIfPresent(schema::getFormat, target::setFormat);
             // TODO: Consider representing object as map
             //if (schema.getAdditionalProperties() != null && schema.getAdditionalProperties().isSchema()) {
@@ -540,24 +541,33 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             //setIfPresent(schema::getMaxProperties, value -> target.setMaxProperties(value.longValue()));
             //setIfPresent(schema::getMinProperties, value -> target.setMinProperties(value.longValue()));
             //target.setCollection("map");
-        } else if ("string".equals(schema.getType())) {
-            setIfPresent(schema::getType, target::setType);
-            setIfPresent(schema::isNullable, target::setNullable);
+        } else if (containsValue(schema.getType(), "string")) {
+            setIfPresent(() -> toStringList(schema.getType()), target::setType);
             setIfPresent(schema::getFormat, target::setFormat);
             setIfPresent(schema::getMaxLength, value -> target.setMaxLength(value.longValue()));
             setIfPresent(schema::getMinLength, value -> target.setMinLength(value.longValue()));
             setIfPresent(schema::getPattern, target::setPattern);
-        } else if (Arrays.asList("integer", "number").contains(schema.getType())) {
-            setIfPresent(schema::getType, target::setType);
-            setIfPresent(schema::isNullable, target::setNullable);
+        } else if (containsValue(schema.getType(), "integer", "number")) {
+            setIfPresent(() -> toStringList(schema.getType()), target::setType);
             setIfPresent(schema::getFormat, target::setFormat);
-            setIfPresent(schema::getMaximum, target::setMaximum);
-            setIfPresent(schema::isExclusiveMaximum, target::setExclusiveMaximum);
-            setIfPresent(schema::getMinimum, target::setMinimum);
-            setIfPresent(schema::isExclusiveMinimum, target::setExclusiveMinimum);
+
+            if (schema.getExclusiveMaximum() != null) {
+                target.setMaximum(schema.getExclusiveMaximum());
+                target.setExclusiveMaximum(true);
+            } else {
+                target.setMaximum(schema.getMaximum());
+                target.setExclusiveMaximum(false);
+            }
+
+            if (schema.getExclusiveMinimum() != null) {
+                target.setMinimum(schema.getExclusiveMinimum());
+                target.setExclusiveMinimum(true);
+            } else {
+                target.setMinimum(schema.getMinimum());
+                target.setExclusiveMinimum(false);
+            }
         } else {
-            setIfPresent(schema::getType, target::setType);
-            setIfPresent(schema::isNullable, target::setNullable);
+            setIfPresent(() -> toStringList(schema.getType()), target::setType);
             setIfPresent(schema::getFormat, target::setFormat);
         }
 
@@ -576,8 +586,8 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         }
     }
 
-    private String typeFromSchemaRef(Document document, String schemaRef) {
-        return CodegenUtil.schemaRefToFQCN(document, schemaRef, this.packageName + ".beans");
+    private List<String> typeFromSchemaRef(Document document, String schemaRef) {
+        return List.of(CodegenUtil.schemaRefToFQCN(document, schemaRef, this.packageName + ".beans"));
     }
 
     private boolean isPathItem(Node node) {
