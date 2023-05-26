@@ -1,17 +1,20 @@
 package io.apicurio.hub.api.codegen.beans;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CodegenJavaSchema {
 
     private String collection;
-    private String type;
+    private List<String> type;
     private String format;
     private String constant;
     private Number maximum;
-    private Boolean exclusiveMaximum;
+    private boolean exclusiveMaximum;
     private Number minimum;
-    private Boolean exclusiveMinimum;
+    private boolean exclusiveMinimum;
     private Long maxLength;
     private Long minLength;
     private String pattern;
@@ -20,13 +23,20 @@ public class CodegenJavaSchema {
     private Boolean uniqueItems;
     private Long maxProperties;
     private Long minProperties;
-    private Boolean nullable;
     private String defaultValue;
+
+    public void setType(String type) {
+        this.type = Collections.singletonList(type);
+    }
+
+    public boolean isNullable() {
+        return Optional.ofNullable(type).map(t -> t.contains("null")).orElse(false);
+    }
 
     @Override
     public int hashCode() {
         return Objects.hash(collection, constant, defaultValue, exclusiveMaximum, exclusiveMinimum, format, maxItems,
-                maxLength, maxProperties, maximum, minItems, minLength, minProperties, minimum, nullable, pattern, type,
+                maxLength, maxProperties, maximum, minItems, minLength, minProperties, minimum, pattern, type,
                 uniqueItems);
     }
 
@@ -47,7 +57,6 @@ public class CodegenJavaSchema {
                 && Objects.equals(maxProperties, other.maxProperties) && Objects.equals(maximum, other.maximum)
                 && Objects.equals(minItems, other.minItems) && Objects.equals(minLength, other.minLength)
                 && Objects.equals(minProperties, other.minProperties) && Objects.equals(minimum, other.minimum)
-                && Objects.equals(nullable, other.nullable) && Objects.equals(pattern, other.pattern)
                 && Objects.equals(type, other.type) && Objects.equals(uniqueItems, other.uniqueItems);
     }
 
@@ -68,14 +77,14 @@ public class CodegenJavaSchema {
     /**
      * @return the type
      */
-    public String getType() {
+    public List<String> getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(List<String> type) {
         this.type = type;
     }
 
@@ -124,14 +133,14 @@ public class CodegenJavaSchema {
     /**
      * @return the exclusiveMaximum
      */
-    public Boolean getExclusiveMaximum() {
+    public boolean isExclusiveMaximum() {
         return exclusiveMaximum;
     }
 
     /**
      * @param exclusiveMaximum the exclusiveMaximum to set
      */
-    public void setExclusiveMaximum(Boolean exclusiveMaximum) {
+    public void setExclusiveMaximum(boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
@@ -152,14 +161,14 @@ public class CodegenJavaSchema {
     /**
      * @return the exclusiveMinimum
      */
-    public Boolean getExclusiveMinimum() {
+    public boolean isExclusiveMinimum() {
         return exclusiveMinimum;
     }
 
     /**
      * @param exclusiveMinimum the exclusiveMinimum to set
      */
-    public void setExclusiveMinimum(Boolean exclusiveMinimum) {
+    public void setExclusiveMinimum(boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
 
@@ -275,19 +284,6 @@ public class CodegenJavaSchema {
         this.minProperties = minProperties;
     }
 
-    /**
-     * @return the nullable
-     */
-    public Boolean getNullable() {
-        return nullable;
-    }
-
-    /**
-     * @param nullable the nullable to set
-     */
-    public void setNullable(Boolean nullable) {
-        this.nullable = nullable;
-    }
 
     /**
      * @return the defaultValue

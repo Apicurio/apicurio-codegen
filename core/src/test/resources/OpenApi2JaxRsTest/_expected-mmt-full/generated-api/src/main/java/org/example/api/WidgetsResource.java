@@ -38,8 +38,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v2")
-  void createWidget(@NotNull Widgetv2 data);
+  @Consumes("application/json+v1")
+  void createWidget(@NotNull Widgetv1 data);
 
   /**
    * <p>
@@ -48,8 +48,8 @@ public interface WidgetsResource {
    * 
    */
   @POST
-  @Consumes("application/json+v1")
-  void createWidget(@NotNull Widgetv1 data);
+  @Consumes("application/json+v2")
+  void createWidget(@NotNull Widgetv2 data);
 
   /**
    * <p>
@@ -70,8 +70,8 @@ public interface WidgetsResource {
    */
   @Path("/{widgetId}")
   @PUT
-  @Consumes("application/json")
-  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull Widget data);
+  @Consumes("*/*")
+  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -81,8 +81,8 @@ public interface WidgetsResource {
    */
   @Path("/{widgetId}")
   @PUT
-  @Consumes("*/*")
-  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull InputStream data);
+  @Consumes("application/json")
+  void updateWidget(@PathParam("widgetId") String widgetId, @NotNull Widget data);
 
   /**
    * <p>

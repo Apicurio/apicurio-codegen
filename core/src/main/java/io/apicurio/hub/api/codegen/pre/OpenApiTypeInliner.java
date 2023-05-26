@@ -16,6 +16,8 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -63,11 +65,10 @@ public class OpenApiTypeInliner extends TraversingOpenApi31VisitorAdapter {
      * @param schema
      */
     private boolean isSimpleType(OpenApi31Schema schema) {
-        if ("string".equals(schema.getType())) {
+        if (containsValue(schema.getType(), "string")) {
             return schema.getEnum() == null;
         } else {
-            return "integer".equals(schema.getType()) || "number".equals(schema.getType()) ||
-                    "boolean".equals(schema.getType());
+            return containsValue(schema.getType(), "boolean", "integer", "number");
         }
     }
 
@@ -76,7 +77,7 @@ public class OpenApiTypeInliner extends TraversingOpenApi31VisitorAdapter {
      * @param schema
      */
     private boolean isArrayType(OpenApi31Schema schema) {
-        return "array".equals(schema.getType());
+        return containsValue(schema.getType(), "array");
     }
 
     /**

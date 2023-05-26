@@ -16,7 +16,10 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
+import io.apicurio.datamodels.models.union.StringUnionValueImpl;
 import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
@@ -30,8 +33,8 @@ public class OpenApiByteSimpleTypeProcessor extends TraversingOpenApi31VisitorAd
     @Override
     public void visitSchema(io.apicurio.datamodels.models.Schema node) {
         OpenApi31Schema schema = (OpenApi31Schema) node;
-        if ("string".equals(schema.getType()) && "byte".equals(schema.getFormat())) {
-            schema.setType("object");
+        if (containsValue(schema.getType(), "string") && "byte".equals(schema.getFormat())) {
+            schema.setType(new StringUnionValueImpl("object"));
             // workaround for a jsonschema2pojo limitation
             schema.addExtraProperty("existingJavaType", factory.textNode("APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION"));
         }
