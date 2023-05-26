@@ -29,9 +29,10 @@ import io.apicurio.hub.api.codegen.OpenApi2Quarkus;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 
-@Command(name = "apicurio-codegen", mixinStandardHelpOptions = true, helpCommand = true)
+@Command(name = "apicurio-codegen", mixinStandardHelpOptions = true, helpCommand = true, showDefaultValues = true)
 @RegisterForReflection(targets = {
         java.lang.Object.class,
         java.util.Map.class,
@@ -659,7 +660,7 @@ public class GenerateJavaSources implements Runnable {
     @Option(names = { "-o", "--output" }, description = "The ZIP archive to be generated", required = true)
     File out = null;
 
-    @Option(names = { "--code-only" }, description = "Generates only the code and do not scaffold the entire project")
+    @Option(names = { "--code-only" }, showDefaultValue = Visibility.ALWAYS, description = "Generates only the code and do not scaffold the entire project")
     boolean codeOnly = true;
 
     @Option(names = { "--update-only" }, description = "Generates only updated files")
