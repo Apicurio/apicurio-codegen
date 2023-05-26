@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -25,6 +26,6 @@ public interface RepositoriesResource {
    */
   @GET
   @Produces("application/json")
-  Response repos_list_public(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
+  Response repos_list_public(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
       @QueryParam("since") String since, @QueryParam("visibility") String visibility);
 }

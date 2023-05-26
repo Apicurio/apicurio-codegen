@@ -14,6 +14,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -57,7 +58,8 @@ public interface GistsResource {
   @GET
   @Produces("application/json")
   Response gists_list_starred(@QueryParam("since") String since,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -65,14 +67,14 @@ public interface GistsResource {
   @Path("/{gist_id}/comments/{comment_id}")
   @GET
   @Produces("application/json")
-  Response gists_get_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") Integer commentId);
+  Response gists_get_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") BigInteger commentId);
 
   /**
    * 
    */
   @Path("/{gist_id}/comments/{comment_id}")
   @DELETE
-  void gists_delete_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") Integer commentId);
+  void gists_delete_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") BigInteger commentId);
 
   /**
    * 
@@ -81,7 +83,7 @@ public interface GistsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response gists_update_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") Integer commentId,
+  Response gists_update_comment(@PathParam("gist_id") String gistId, @PathParam("comment_id") BigInteger commentId,
       @NotNull InputStream data);
 
   /**
@@ -100,7 +102,8 @@ public interface GistsResource {
   @GET
   @Produces("application/json")
   Response gists_list_public(@QueryParam("since") String since,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -138,7 +141,8 @@ public interface GistsResource {
   @GET
   @Produces("application/json")
   Response gists_list_forks(@PathParam("gist_id") String gistId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -160,8 +164,8 @@ public interface GistsResource {
    */
   @GET
   @Produces("application/json")
-  Response gists_list(@QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response gists_list(@QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -186,7 +190,8 @@ public interface GistsResource {
   @GET
   @Produces("application/json")
   Response gists_list_commits(@PathParam("gist_id") String gistId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -195,7 +200,8 @@ public interface GistsResource {
   @GET
   @Produces("application/json")
   Response gists_list_comments(@PathParam("gist_id") String gistId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 

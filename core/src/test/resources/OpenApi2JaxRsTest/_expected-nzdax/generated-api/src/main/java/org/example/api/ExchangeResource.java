@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import java.math.BigDecimal;
 import java.util.List;
 import org.example.api.beans.AccessToken;
 import org.example.api.beans.BalanceResponse;
@@ -94,7 +95,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderBookResponse> orderBook(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -113,7 +114,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderBookResponse> l2OrderBook(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") @NotNull String symbol, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -133,7 +134,7 @@ public interface ExchangeResource {
   @Produces("application/json")
   List<TradeResponse> trades(@PathParam("exchangeName") Exchange exchangeName,
       @QueryParam("symbol") @NotNull String symbol, @QueryParam("since") String since,
-      @QueryParam("limit") Number limit, @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
+      @QueryParam("limit") BigDecimal limit, @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
    * <p>
@@ -204,7 +205,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderResponse> fetchOrders(@PathParam("exchangeName") Exchange exchangeName, @QueryParam("symbol") String symbol,
-      @QueryParam("since") String since, @QueryParam("limit") Number limit,
+      @QueryParam("since") String since, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -222,7 +223,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderResponse> fetchOpenOrders(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -240,7 +241,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<OrderResponse> fetchClosedOrders(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**
@@ -258,7 +259,7 @@ public interface ExchangeResource {
   @GET
   @Produces("application/json")
   List<TradeResponse> fetchMyTrades(@PathParam("exchangeName") Exchange exchangeName,
-      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") Number limit,
+      @QueryParam("symbol") String symbol, @QueryParam("since") String since, @QueryParam("limit") BigDecimal limit,
       @QueryParam("exchangeSpecificParams") Object exchangeSpecificParams);
 
   /**

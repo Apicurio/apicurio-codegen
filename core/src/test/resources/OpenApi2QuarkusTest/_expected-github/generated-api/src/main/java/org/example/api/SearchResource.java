@@ -7,6 +7,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -62,7 +63,8 @@ public interface SearchResource {
   @Produces("application/json")
   Response search_code(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") @DefaultValue("desc") String order,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -94,8 +96,9 @@ public interface SearchResource {
   @Path("/labels")
   @GET
   @Produces("application/json")
-  Response search_labels(@QueryParam("repository_id") @NotNull Integer repositoryId, @QueryParam("q") @NotNull String q,
-      @QueryParam("sort") String sort, @QueryParam("order") @DefaultValue("desc") String order);
+  Response search_labels(@QueryParam("repository_id") @NotNull BigInteger repositoryId,
+      @QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
+      @QueryParam("order") @DefaultValue("desc") String order);
 
   /**
    * <p>
@@ -131,7 +134,8 @@ public interface SearchResource {
   @Produces("application/json")
   Response search_users(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") @DefaultValue("desc") String order,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -162,7 +166,8 @@ public interface SearchResource {
   @Produces("application/json")
   Response search_commits(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") @DefaultValue("desc") String order,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -199,7 +204,8 @@ public interface SearchResource {
   @Produces("application/json")
   Response search_issues_and_pull_requests(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") @DefaultValue("desc") String order,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -243,7 +249,8 @@ public interface SearchResource {
   @Produces("application/json")
   Response search_repos(@QueryParam("q") @NotNull String q, @QueryParam("sort") String sort,
       @QueryParam("order") @DefaultValue("desc") String order,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>

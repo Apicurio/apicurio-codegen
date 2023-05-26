@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -653,6 +654,7 @@ public class OpenApi2JaxRs {
         String format = schema.getFormat();
 
         boolean isCollection = Arrays.asList("list", "set").contains(collection);
+        boolean usePrimitive = (required && !isCollection && format != null);
         Type<?> coreType = null;
 
         if (type.contains("string")) {
@@ -671,18 +673,19 @@ public class OpenApi2JaxRs {
             }
         } else if (type.contains("integer")) {
             if (config.isUseLongIntegers() || "int64".equals(format) || "utc-millisec".equals(format)) {
-                coreType = (required && !isCollection && format != null) ? parseType("long") : parseType(Long.class.getName());
+                coreType = usePrimitive ? parseType("long") : parseType(Long.class.getName());
+            } else if ("int32".equals(format)) {
+                coreType = usePrimitive ? parseType("int") : parseType(Integer.class.getName());
             } else {
-                coreType = (required && !isCollection && format != null) ? parseType("int") : parseType(Integer.class.getName());
+                coreType = parseType(BigInteger.class.getName());
             }
         } else if (type.contains("number")) {
-            coreType = parseType(Number.class.getName());
-            if (format != null) {
-                if (format.equals("float")) {
-                    coreType = (required && !isCollection) ? parseType("float") : parseType(Float.class.getName());
-                } else if (format.equals("double")) {
-                    coreType = (required && !isCollection) ? parseType("double") : parseType(Double.class.getName());
-                }
+            if ("float".equals(format)) {
+                coreType = usePrimitive ? parseType("float") : parseType(Float.class.getName());
+            } else if ("double".equals(format)) {
+                coreType = usePrimitive ? parseType("double") : parseType(Double.class.getName());
+            } else {
+                coreType = parseType(BigDecimal.class.getName());
             }
         } else if (type.contains("boolean")) {
             coreType = parseType(Boolean.class.getName());

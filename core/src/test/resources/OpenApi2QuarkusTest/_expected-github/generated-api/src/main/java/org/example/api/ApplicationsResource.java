@@ -13,6 +13,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -54,8 +55,8 @@ public interface ApplicationsResource {
   @Path("/grants")
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_list_grants(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response oauth_authorizations_list_grants(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -77,7 +78,7 @@ public interface ApplicationsResource {
   @Path("/grants/{grant_id}")
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_get_grant(@PathParam("grant_id") Integer grantId);
+  Response oauth_authorizations_get_grant(@PathParam("grant_id") BigInteger grantId);
 
   /**
    * <p>
@@ -105,7 +106,7 @@ public interface ApplicationsResource {
    */
   @Path("/grants/{grant_id}")
   @DELETE
-  void oauth_authorizations_delete_grant(@PathParam("grant_id") Integer grantId);
+  void oauth_authorizations_delete_grant(@PathParam("grant_id") BigInteger grantId);
 
   /**
    * <p>

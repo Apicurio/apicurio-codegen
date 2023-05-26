@@ -14,6 +14,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -39,8 +40,8 @@ public interface AuthorizationsResource {
    */
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_list_authorizations(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response oauth_authorizations_list_authorizations(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -174,7 +175,7 @@ public interface AuthorizationsResource {
   @Path("/{authorization_id}")
   @GET
   @Produces("application/json")
-  Response oauth_authorizations_get_authorization(@PathParam("authorization_id") Integer authorizationId);
+  Response oauth_authorizations_get_authorization(@PathParam("authorization_id") BigInteger authorizationId);
 
   /**
    * <p>
@@ -195,7 +196,7 @@ public interface AuthorizationsResource {
    */
   @Path("/{authorization_id}")
   @DELETE
-  void oauth_authorizations_delete_authorization(@PathParam("authorization_id") Integer authorizationId);
+  void oauth_authorizations_delete_authorization(@PathParam("authorization_id") BigInteger authorizationId);
 
   /**
    * <p>
@@ -228,7 +229,7 @@ public interface AuthorizationsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response oauth_authorizations_update_authorization(@PathParam("authorization_id") Integer authorizationId,
+  Response oauth_authorizations_update_authorization(@PathParam("authorization_id") BigInteger authorizationId,
       @NotNull InputStream data);
 
   /**

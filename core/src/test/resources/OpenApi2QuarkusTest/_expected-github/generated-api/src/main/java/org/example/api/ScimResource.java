@@ -13,6 +13,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -170,8 +171,9 @@ public interface ScimResource {
   @Path("/v2/organizations/{org}/Users")
   @GET
   @Produces("application/scim+json")
-  Response scim_list_provisioned_identities(@PathParam("org") String org, @QueryParam("startIndex") Integer startIndex,
-      @QueryParam("count") Integer count, @QueryParam("filter") String filter);
+  Response scim_list_provisioned_identities(@PathParam("org") String org,
+      @QueryParam("startIndex") BigInteger startIndex, @QueryParam("count") BigInteger count,
+      @QueryParam("filter") String filter);
 
   /**
    * <p>

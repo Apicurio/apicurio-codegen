@@ -7,6 +7,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -25,7 +26,8 @@ public interface UsersResource {
   Response repos_list_for_user(@PathParam("username") String username,
       @QueryParam("type") @DefaultValue("owner") String type,
       @QueryParam("sort") @DefaultValue("full_name") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -34,7 +36,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_public_events_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -47,8 +50,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_org_events_for_authenticated_user(@PathParam("username") String username,
-      @PathParam("org") String org, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+      @PathParam("org") String org, @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -62,7 +65,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_received_events_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -81,7 +85,8 @@ public interface UsersResource {
   Response activity_list_repos_starred_by_user(@PathParam("username") String username,
       @QueryParam("sort") @DefaultValue("created") String sort,
       @QueryParam("direction") @DefaultValue("desc") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -93,7 +98,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_repos_watched_by_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -106,7 +112,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_events_for_authenticated_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -115,7 +122,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response activity_list_received_public_events_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -125,7 +133,8 @@ public interface UsersResource {
   @Produces("application/json")
   Response projects_list_for_user(@PathParam("username") String username,
       @QueryParam("state") @DefaultValue("open") String state,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -146,7 +155,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response orgs_list_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -158,7 +168,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response users_list_following_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -208,7 +219,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response users_list_gpg_keys_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -232,7 +244,8 @@ public interface UsersResource {
    */
   @GET
   @Produces("application/json")
-  Response users_list(@QueryParam("since") String since, @QueryParam("per_page") @DefaultValue("30") Integer perPage);
+  Response users_list(@QueryParam("since") String since,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage);
 
   /**
    * <p>
@@ -272,7 +285,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response users_list_public_keys_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -284,7 +298,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response users_list_followers_for_user(@PathParam("username") String username,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -313,7 +328,8 @@ public interface UsersResource {
   @GET
   @Produces("application/json")
   Response gists_list_for_user(@PathParam("username") String username, @QueryParam("since") String since,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>

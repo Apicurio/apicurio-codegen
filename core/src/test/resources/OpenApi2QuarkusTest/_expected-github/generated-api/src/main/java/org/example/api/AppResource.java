@@ -13,6 +13,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -47,7 +48,7 @@ public interface AppResource {
    */
   @Path("/installations/{installation_id}/suspended")
   @PUT
-  void apps_suspend_installation(@PathParam("installation_id") Integer installationId);
+  void apps_suspend_installation(@PathParam("installation_id") BigInteger installationId);
 
   /**
    * <p>
@@ -75,7 +76,7 @@ public interface AppResource {
    */
   @Path("/installations/{installation_id}/suspended")
   @DELETE
-  void apps_unsuspend_installation(@PathParam("installation_id") Integer installationId);
+  void apps_unsuspend_installation(@PathParam("installation_id") BigInteger installationId);
 
   /**
    * <p>
@@ -101,7 +102,7 @@ public interface AppResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_create_installation_access_token(@PathParam("installation_id") Integer installationId,
+  Response apps_create_installation_access_token(@PathParam("installation_id") BigInteger installationId,
       @NotNull InputStream data);
 
   /**
@@ -119,8 +120,8 @@ public interface AppResource {
   @Path("/installations")
   @GET
   @Produces("application/json")
-  Response apps_list_installations(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page, @QueryParam("since") String since,
+  Response apps_list_installations(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page, @QueryParam("since") String since,
       @QueryParam("outdated") String outdated);
 
   /**
@@ -177,7 +178,7 @@ public interface AppResource {
   @Path("/installations/{installation_id}")
   @GET
   @Produces("application/json")
-  Response apps_get_installation(@PathParam("installation_id") Integer installationId);
+  Response apps_get_installation(@PathParam("installation_id") BigInteger installationId);
 
   /**
    * <p>
@@ -196,5 +197,5 @@ public interface AppResource {
    */
   @Path("/installations/{installation_id}")
   @DELETE
-  void apps_delete_installation(@PathParam("installation_id") Integer installationId);
+  void apps_delete_installation(@PathParam("installation_id") BigInteger installationId);
 }

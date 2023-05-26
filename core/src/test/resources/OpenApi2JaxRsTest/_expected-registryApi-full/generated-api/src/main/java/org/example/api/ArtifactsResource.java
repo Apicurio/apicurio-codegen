@@ -14,6 +14,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import org.example.api.beans.ArtifactMetaData;
@@ -377,7 +378,7 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/versions/{version}")
   @GET
   @Produces({"application/json", "application/x-yaml"})
-  Response getArtifactVersion(@PathParam("version") Integer version, @PathParam("artifactId") String artifactId);
+  Response getArtifactVersion(@PathParam("version") BigInteger version, @PathParam("artifactId") String artifactId);
 
   /**
    * <p>
@@ -400,7 +401,7 @@ public interface ArtifactsResource {
    */
   @Path("/{artifactId}/versions/{version}")
   @DELETE
-  void deleteArtifactVersion(@PathParam("version") Integer version, @PathParam("artifactId") String artifactId);
+  void deleteArtifactVersion(@PathParam("version") BigInteger version, @PathParam("artifactId") String artifactId);
 
   /**
    * <p>
@@ -424,7 +425,7 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/versions/{version}/meta")
   @GET
   @Produces("application/json")
-  VersionMetaData getArtifactVersionMetaData(@PathParam("version") Integer version,
+  VersionMetaData getArtifactVersionMetaData(@PathParam("version") BigInteger version,
       @PathParam("artifactId") String artifactId);
 
   /**
@@ -448,8 +449,8 @@ public interface ArtifactsResource {
   @Path("/{artifactId}/versions/{version}/meta")
   @PUT
   @Consumes("application/json")
-  void updateArtifactVersionMetaData(@PathParam("version") Integer version, @PathParam("artifactId") String artifactId,
-      @NotNull EditableMetaData data);
+  void updateArtifactVersionMetaData(@PathParam("version") BigInteger version,
+      @PathParam("artifactId") String artifactId, @NotNull EditableMetaData data);
 
   /**
    * <p>
@@ -470,7 +471,8 @@ public interface ArtifactsResource {
    */
   @Path("/{artifactId}/versions/{version}/meta")
   @DELETE
-  void deleteArtifactVersionMetaData(@PathParam("version") Integer version, @PathParam("artifactId") String artifactId);
+  void deleteArtifactVersionMetaData(@PathParam("version") BigInteger version,
+      @PathParam("artifactId") String artifactId);
 
   /**
    * <p>

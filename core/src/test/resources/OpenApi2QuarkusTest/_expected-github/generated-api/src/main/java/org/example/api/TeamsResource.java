@@ -14,6 +14,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -40,10 +41,11 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions/{discussion_number}/comments/{comment_number}/reactions")
   @GET
   @Produces("application/json")
-  Response reactions_list_for_team_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      @QueryParam("content") String content, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response reactions_list_for_team_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
+      @PathParam("comment_number") BigInteger commentNumber, @QueryParam("content") String content,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -68,9 +70,9 @@ public interface TeamsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response reactions_create_for_team_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      @NotNull InputStream data);
+  Response reactions_create_for_team_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
+      @PathParam("comment_number") BigInteger commentNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -92,9 +94,10 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions/{discussion_number}/reactions")
   @GET
   @Produces("application/json")
-  Response reactions_list_for_team_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @QueryParam("content") String content,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response reactions_list_for_team_discussion_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber, @QueryParam("content") String content,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -119,8 +122,8 @@ public interface TeamsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response reactions_create_for_team_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
+  Response reactions_create_for_team_discussion_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -140,7 +143,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/members/{username}")
   @GET
-  void teams_get_member_legacy(@PathParam("team_id") Integer teamId, @PathParam("username") String username);
+  void teams_get_member_legacy(@PathParam("team_id") BigInteger teamId, @PathParam("username") String username);
 
   /**
    * <p>
@@ -184,7 +187,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/members/{username}")
   @PUT
-  void teams_add_member_legacy(@PathParam("team_id") Integer teamId, @PathParam("username") String username);
+  void teams_add_member_legacy(@PathParam("team_id") BigInteger teamId, @PathParam("username") String username);
 
   /**
    * <p>
@@ -223,7 +226,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/members/{username}")
   @DELETE
-  void teams_remove_member_legacy(@PathParam("team_id") Integer teamId, @PathParam("username") String username);
+  void teams_remove_member_legacy(@PathParam("team_id") BigInteger teamId, @PathParam("username") String username);
 
   /**
    * <p>
@@ -243,8 +246,9 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions/{discussion_number}/comments/{comment_number}")
   @GET
   @Produces("application/json")
-  Response teams_get_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber);
+  Response teams_get_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
+      @PathParam("comment_number") BigInteger commentNumber);
 
   /**
    * <p>
@@ -263,8 +267,9 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/discussions/{discussion_number}/comments/{comment_number}")
   @DELETE
-  void teams_delete_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber);
+  void teams_delete_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
+      @PathParam("comment_number") BigInteger commentNumber);
 
   /**
    * <p>
@@ -285,9 +290,9 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @PathParam("comment_number") Integer commentNumber,
-      @NotNull InputStream data);
+  Response teams_update_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
+      @PathParam("comment_number") BigInteger commentNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -312,7 +317,7 @@ public interface TeamsResource {
   @Path("/{team_id}/repos/{owner}/{repo}")
   @GET
   @Produces("application/vnd.github.v3.repository+json")
-  Response teams_check_permissions_for_repo_legacy(@PathParam("team_id") Integer teamId,
+  Response teams_check_permissions_for_repo_legacy(@PathParam("team_id") BigInteger teamId,
       @PathParam("owner") String owner, @PathParam("repo") String repo);
 
   /**
@@ -343,7 +348,7 @@ public interface TeamsResource {
   @Path("/{team_id}/repos/{owner}/{repo}")
   @PUT
   @Consumes("application/json")
-  void teams_add_or_update_repo_permissions_legacy(@PathParam("team_id") Integer teamId,
+  void teams_add_or_update_repo_permissions_legacy(@PathParam("team_id") BigInteger teamId,
       @PathParam("owner") String owner, @PathParam("repo") String repo, @NotNull InputStream data);
 
   /**
@@ -365,7 +370,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/repos/{owner}/{repo}")
   @DELETE
-  void teams_remove_repo_legacy(@PathParam("team_id") Integer teamId, @PathParam("owner") String owner,
+  void teams_remove_repo_legacy(@PathParam("team_id") BigInteger teamId, @PathParam("owner") String owner,
       @PathParam("repo") String repo);
 
   /**
@@ -395,7 +400,7 @@ public interface TeamsResource {
   @Path("/{team_id}/memberships/{username}")
   @GET
   @Produces("application/json")
-  Response teams_get_membership_for_user_legacy(@PathParam("team_id") Integer teamId,
+  Response teams_get_membership_for_user_legacy(@PathParam("team_id") BigInteger teamId,
       @PathParam("username") String username);
 
   /**
@@ -449,7 +454,7 @@ public interface TeamsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_add_or_update_membership_for_user_legacy(@PathParam("team_id") Integer teamId,
+  Response teams_add_or_update_membership_for_user_legacy(@PathParam("team_id") BigInteger teamId,
       @PathParam("username") String username, @NotNull InputStream data);
 
   /**
@@ -487,7 +492,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/memberships/{username}")
   @DELETE
-  void teams_remove_membership_for_user_legacy(@PathParam("team_id") Integer teamId,
+  void teams_remove_membership_for_user_legacy(@PathParam("team_id") BigInteger teamId,
       @PathParam("username") String username);
 
   /**
@@ -508,8 +513,8 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions/{discussion_number}")
   @GET
   @Produces("application/json")
-  Response teams_get_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber);
+  Response teams_get_discussion_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber);
 
   /**
    * <p>
@@ -528,8 +533,8 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/discussions/{discussion_number}")
   @DELETE
-  void teams_delete_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber);
+  void teams_delete_discussion_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber);
 
   /**
    * <p>
@@ -551,8 +556,8 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_discussion_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
+  Response teams_update_discussion_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -567,7 +572,7 @@ public interface TeamsResource {
   @Path("/{team_id}")
   @GET
   @Produces("application/json")
-  Response teams_get_legacy(@PathParam("team_id") Integer teamId);
+  Response teams_get_legacy(@PathParam("team_id") BigInteger teamId);
 
   /**
    * <p>
@@ -589,7 +594,7 @@ public interface TeamsResource {
    */
   @Path("/{team_id}")
   @DELETE
-  void teams_delete_legacy(@PathParam("team_id") Integer teamId);
+  void teams_delete_legacy(@PathParam("team_id") BigInteger teamId);
 
   /**
    * <p>
@@ -613,7 +618,7 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_update_legacy(@PathParam("team_id") Integer teamId, @NotNull InputStream data);
+  Response teams_update_legacy(@PathParam("team_id") BigInteger teamId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -637,7 +642,7 @@ public interface TeamsResource {
   @Path("/{team_id}/team-sync/group-mappings")
   @GET
   @Produces("application/json")
-  Response teams_list_idp_groups_for_legacy(@PathParam("team_id") Integer teamId);
+  Response teams_list_idp_groups_for_legacy(@PathParam("team_id") BigInteger teamId);
 
   /**
    * <p>
@@ -665,7 +670,7 @@ public interface TeamsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create_or_update_idp_group_connections_legacy(@PathParam("team_id") Integer teamId,
+  Response teams_create_or_update_idp_group_connections_legacy(@PathParam("team_id") BigInteger teamId,
       @NotNull InputStream data);
 
   /**
@@ -689,8 +694,9 @@ public interface TeamsResource {
   @Path("/{team_id}/invitations")
   @GET
   @Produces("application/json")
-  Response teams_list_pending_invitations_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_pending_invitations_legacy(@PathParam("team_id") BigInteger teamId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -710,10 +716,11 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions/{discussion_number}/comments")
   @GET
   @Produces("application/json")
-  Response teams_list_discussion_comments_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber,
+  Response teams_list_discussion_comments_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber,
       @QueryParam("direction") @DefaultValue("desc") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -744,8 +751,8 @@ public interface TeamsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create_discussion_comment_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("discussion_number") Integer discussionNumber, @NotNull InputStream data);
+  Response teams_create_discussion_comment_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("discussion_number") BigInteger discussionNumber, @NotNull InputStream data);
 
   /**
    * <p>
@@ -760,8 +767,9 @@ public interface TeamsResource {
   @Path("/{team_id}/repos")
   @GET
   @Produces("application/json")
-  Response teams_list_repos_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_repos_legacy(@PathParam("team_id") BigInteger teamId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -776,8 +784,9 @@ public interface TeamsResource {
   @Path("/{team_id}/teams")
   @GET
   @Produces("application/json")
-  Response teams_list_child_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_child_legacy(@PathParam("team_id") BigInteger teamId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -797,8 +806,8 @@ public interface TeamsResource {
   @Path("/{team_id}/projects/{project_id}")
   @GET
   @Produces("application/json")
-  Response teams_check_permissions_for_project_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("project_id") Integer projectId);
+  Response teams_check_permissions_for_project_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("project_id") BigInteger projectId);
 
   /**
    * <p>
@@ -819,8 +828,8 @@ public interface TeamsResource {
   @Path("/{team_id}/projects/{project_id}")
   @PUT
   @Consumes("application/json")
-  void teams_add_or_update_project_permissions_legacy(@PathParam("team_id") Integer teamId,
-      @PathParam("project_id") Integer projectId, @NotNull InputStream data);
+  void teams_add_or_update_project_permissions_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("project_id") BigInteger projectId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -842,7 +851,8 @@ public interface TeamsResource {
    */
   @Path("/{team_id}/projects/{project_id}")
   @DELETE
-  void teams_remove_project_legacy(@PathParam("team_id") Integer teamId, @PathParam("project_id") Integer projectId);
+  void teams_remove_project_legacy(@PathParam("team_id") BigInteger teamId,
+      @PathParam("project_id") BigInteger projectId);
 
   /**
    * <p>
@@ -860,8 +870,9 @@ public interface TeamsResource {
   @Path("/{team_id}/projects")
   @GET
   @Produces("application/json")
-  Response teams_list_projects_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_projects_legacy(@PathParam("team_id") BigInteger teamId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -881,9 +892,10 @@ public interface TeamsResource {
   @Path("/{team_id}/discussions")
   @GET
   @Produces("application/json")
-  Response teams_list_discussions_legacy(@PathParam("team_id") Integer teamId,
+  Response teams_list_discussions_legacy(@PathParam("team_id") BigInteger teamId,
       @QueryParam("direction") @DefaultValue("desc") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -914,7 +926,7 @@ public interface TeamsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response teams_create_discussion_legacy(@PathParam("team_id") Integer teamId, @NotNull InputStream data);
+  Response teams_create_discussion_legacy(@PathParam("team_id") BigInteger teamId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -932,7 +944,8 @@ public interface TeamsResource {
   @Path("/{team_id}/members")
   @GET
   @Produces("application/json")
-  Response teams_list_members_legacy(@PathParam("team_id") Integer teamId,
-      @QueryParam("role") @DefaultValue("all") String role, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_members_legacy(@PathParam("team_id") BigInteger teamId,
+      @QueryParam("role") @DefaultValue("all") String role,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 }

@@ -15,6 +15,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import org.example.api.beans.ArtifactMetaData;
@@ -522,8 +523,8 @@ public interface GroupsResource {
   @GET
   @Produces("application/json")
   VersionSearchResults listArtifactVersions(@PathParam("groupId") String groupId,
-      @PathParam("artifactId") String artifactId, @QueryParam("offset") Integer offset,
-      @QueryParam("limit") Integer limit);
+      @PathParam("artifactId") String artifactId, @QueryParam("offset") BigInteger offset,
+      @QueryParam("limit") BigInteger limit);
 
   /**
    * <p>
@@ -569,9 +570,9 @@ public interface GroupsResource {
   @Path("/{groupId}/artifacts")
   @GET
   @Produces("application/json")
-  ArtifactSearchResults listArtifactsInGroup(@PathParam("groupId") String groupId, @QueryParam("limit") Integer limit,
-      @QueryParam("offset") Integer offset, @QueryParam("order") SortOrder order,
-      @QueryParam("orderby") SortBy orderby);
+  ArtifactSearchResults listArtifactsInGroup(@PathParam("groupId") String groupId,
+      @QueryParam("limit") BigInteger limit, @QueryParam("offset") BigInteger offset,
+      @QueryParam("order") SortOrder order, @QueryParam("orderby") SortBy orderby);
 
   /**
    * <p>
