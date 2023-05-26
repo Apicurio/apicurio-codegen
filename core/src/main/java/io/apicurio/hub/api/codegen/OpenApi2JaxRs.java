@@ -106,8 +106,12 @@ import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
  */
 public class OpenApi2JaxRs {
 
+    static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
+
     protected static ObjectMapper mapper = new ObjectMapper();
     protected static Charset utf8 = StandardCharsets.UTF_8;
+    protected static final Type<?> VOID = parseType("java.lang.Void");
+
     protected static GenerationConfig config = new DefaultGenerationConfig() {
         @Override
         public boolean isUsePrimitives() {
@@ -520,16 +524,26 @@ public class OpenApi2JaxRs {
             .ifPresent(consumes ->
             operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
 
+            final boolean reactive;
+
+            if (getSettings().isReactive()) {
+                // Reactive mode but this operation is explicitly synchronous
+                reactive = !Boolean.FALSE.equals(methodInfo.getAsync());
+            } else {
+                // Non-reactive mode but this operation is explicitly asynchronous
+                reactive = Boolean.TRUE.equals(methodInfo.getAsync());
+            }
+
             Optional.ofNullable(methodInfo.getReturn())
             .map(rt -> generateTypeName(
                     rt,
                     true,
                     String.format("%s.ws.rs.core.Response", topLevelPackage)))
-            .map(rt -> getSettings().reactive || methodInfo.isAsync() ? generateReactiveTypeName(rt) : rt)
+            .map(rt -> reactive ? generateReactiveTypeName(rt) : rt)
             .map(Object::toString)
             .ifPresentOrElse(
                     operationMethod::setReturnType,
-                    operationMethod::setReturnTypeVoid);
+                    () -> setVoidReturnType(operationMethod, reactive));
 
             Optional.ofNullable(methodInfo.getArguments())
             .map(Collection::stream)
@@ -617,8 +631,6 @@ public class OpenApi2JaxRs {
         formattingProperties.setProperty("org.eclipse.jdt.core.formatter.blank_lines_before_method", "1");
         return formattingProperties;
     }
-
-    static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
 
     static Type<?> parseType(String value) {
         return TYPE_CACHE.computeIfAbsent(value, k -> {
@@ -719,6 +731,14 @@ public class OpenApi2JaxRs {
         }
 
         return parseType(defaultType);
+    }
+
+    protected void setVoidReturnType(MethodSource<JavaInterfaceSource> operationMethod, boolean reactive) {
+        if (reactive) {
+            operationMethod.setReturnType(generateReactiveTypeName(VOID));
+        } else {
+            operationMethod.setReturnTypeVoid();
+        }
     }
 
     /**
