@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -31,5 +32,5 @@ public interface ReactionsResource {
    */
   @Path("/{reaction_id}")
   @DELETE
-  void reactions_delete_legacy(@PathParam("reaction_id") Integer reactionId);
+  void reactions_delete_legacy(@PathParam("reaction_id") BigInteger reactionId);
 }

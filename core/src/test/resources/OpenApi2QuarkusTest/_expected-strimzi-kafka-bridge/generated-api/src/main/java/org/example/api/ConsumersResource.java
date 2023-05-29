@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import java.math.BigInteger;
 import java.util.List;
 import org.example.api.beans.Consumer;
 import org.example.api.beans.ConsumerRecord;
@@ -137,7 +138,7 @@ public interface ConsumersResource {
   @Produces({"application/vnd.kafka.binary.v2+json", "application/vnd.kafka.json.v2+json",
       "application/vnd.kafka.v2+json"})
   List<ConsumerRecord> poll(@PathParam("groupid") String groupid, @PathParam("name") String name,
-      @QueryParam("timeout") Integer timeout, @QueryParam("max_bytes") Integer maxBytes);
+      @QueryParam("timeout") BigInteger timeout, @QueryParam("max_bytes") BigInteger maxBytes);
 
   /**
    * <p>

@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -41,6 +42,6 @@ public interface IssuesResource {
       @QueryParam("sort") @DefaultValue("created") String sort,
       @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
       @QueryParam("collab") Boolean collab, @QueryParam("orgs") Boolean orgs, @QueryParam("owned") Boolean owned,
-      @QueryParam("pulls") Boolean pulls, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("pulls") Boolean pulls, @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 }

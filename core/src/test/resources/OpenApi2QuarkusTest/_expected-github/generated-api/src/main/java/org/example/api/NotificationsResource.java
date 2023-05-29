@@ -13,6 +13,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -25,14 +26,14 @@ public interface NotificationsResource {
   @Path("/threads/{thread_id}")
   @GET
   @Produces("application/json")
-  Response activity_get_thread(@PathParam("thread_id") Integer threadId);
+  Response activity_get_thread(@PathParam("thread_id") BigInteger threadId);
 
   /**
    * 
    */
   @Path("/threads/{thread_id}")
   @PATCH
-  void activity_mark_thread_as_read(@PathParam("thread_id") Integer threadId);
+  void activity_mark_thread_as_read(@PathParam("thread_id") BigInteger threadId);
 
   /**
    * <p>
@@ -51,7 +52,7 @@ public interface NotificationsResource {
   @Path("/threads/{thread_id}/subscription")
   @GET
   @Produces("application/json")
-  Response activity_get_thread_subscription_for_authenticated_user(@PathParam("thread_id") Integer threadId);
+  Response activity_get_thread_subscription_for_authenticated_user(@PathParam("thread_id") BigInteger threadId);
 
   /**
    * <p>
@@ -76,7 +77,7 @@ public interface NotificationsResource {
   @PUT
   @Produces("application/json")
   @Consumes("application/json")
-  Response activity_set_thread_subscription(@PathParam("thread_id") Integer threadId, @NotNull InputStream data);
+  Response activity_set_thread_subscription(@PathParam("thread_id") BigInteger threadId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -92,7 +93,7 @@ public interface NotificationsResource {
    */
   @Path("/threads/{thread_id}/subscription")
   @DELETE
-  void activity_delete_thread_subscription(@PathParam("thread_id") Integer threadId);
+  void activity_delete_thread_subscription(@PathParam("thread_id") BigInteger threadId);
 
   /**
    * <p>
@@ -104,8 +105,8 @@ public interface NotificationsResource {
   @Produces("application/json")
   Response activity_list_notifications_for_authenticated_user(@QueryParam("all") @DefaultValue("false") Boolean all,
       @QueryParam("participating") @DefaultValue("false") Boolean participating, @QueryParam("since") String since,
-      @QueryParam("before") String before, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("before") String before, @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>

@@ -8,6 +8,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -39,6 +40,6 @@ public interface ContentResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response apps_create_content_attachment(@PathParam("content_reference_id") Integer contentReferenceId,
+  Response apps_create_content_attachment(@PathParam("content_reference_id") BigInteger contentReferenceId,
       @NotNull InputStream data);
 }

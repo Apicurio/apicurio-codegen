@@ -8,6 +8,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import java.math.BigInteger;
 import java.util.List;
 import org.example.api.beans.OffsetRecordSentList;
 import org.example.api.beans.OffsetsSummary;
@@ -77,7 +78,7 @@ public interface TopicsResource {
   @GET
   @Produces("application/vnd.kafka.v2+json")
   PartitionMetadata getPartition(@PathParam("topicname") String topicname,
-      @PathParam("partitionid") Integer partitionid, @QueryParam("async") Boolean async);
+      @PathParam("partitionid") BigInteger partitionid, @QueryParam("async") Boolean async);
 
   /**
    * <p>
@@ -91,7 +92,7 @@ public interface TopicsResource {
   @Produces("application/vnd.kafka.v2+json")
   @Consumes({"application/vnd.kafka.binary.v2+json", "application/vnd.kafka.json.v2+json"})
   OffsetRecordSentList sendToPartition(@PathParam("topicname") String topicname,
-      @PathParam("partitionid") Integer partitionid, @QueryParam("async") Boolean async,
+      @PathParam("partitionid") BigInteger partitionid, @QueryParam("async") Boolean async,
       @NotNull ProducerRecordToPartitionList data);
 
   /**
@@ -103,5 +104,5 @@ public interface TopicsResource {
   @Path("/{topicname}/partitions/{partitionid}/offsets")
   @GET
   @Produces("application/vnd.kafka.v2+json")
-  OffsetsSummary getOffsets(@PathParam("topicname") String topicname, @PathParam("partitionid") Integer partitionid);
+  OffsetsSummary getOffsets(@PathParam("topicname") String topicname, @PathParam("partitionid") BigInteger partitionid);
 }

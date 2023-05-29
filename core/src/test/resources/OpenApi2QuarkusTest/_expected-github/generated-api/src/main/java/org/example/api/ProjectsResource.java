@@ -14,6 +14,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -27,7 +28,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
+  Response projects_move_column(@PathParam("column_id") BigInteger columnId, @NotNull InputStream data);
 
   /**
    * 
@@ -35,14 +36,14 @@ public interface ProjectsResource {
   @Path("/columns/cards/{card_id}")
   @GET
   @Produces("application/json")
-  Response projects_get_card(@PathParam("card_id") Integer cardId);
+  Response projects_get_card(@PathParam("card_id") BigInteger cardId);
 
   /**
    * 
    */
   @Path("/columns/cards/{card_id}")
   @DELETE
-  void projects_delete_card(@PathParam("card_id") Integer cardId);
+  void projects_delete_card(@PathParam("card_id") BigInteger cardId);
 
   /**
    * 
@@ -51,7 +52,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
+  Response projects_update_card(@PathParam("card_id") BigInteger cardId, @NotNull InputStream data);
 
   /**
    * 
@@ -59,14 +60,14 @@ public interface ProjectsResource {
   @Path("/columns/{column_id}")
   @GET
   @Produces("application/json")
-  Response projects_get_column(@PathParam("column_id") Integer columnId);
+  Response projects_get_column(@PathParam("column_id") BigInteger columnId);
 
   /**
    * 
    */
   @Path("/columns/{column_id}")
   @DELETE
-  void projects_delete_column(@PathParam("column_id") Integer columnId);
+  void projects_delete_column(@PathParam("column_id") BigInteger columnId);
 
   /**
    * 
@@ -75,7 +76,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update_column(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
+  Response projects_update_column(@PathParam("column_id") BigInteger columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -89,7 +90,7 @@ public interface ProjectsResource {
   @Path("/{project_id}")
   @GET
   @Produces("application/json")
-  Response projects_get(@PathParam("project_id") Integer projectId);
+  Response projects_get(@PathParam("project_id") BigInteger projectId);
 
   /**
    * <p>
@@ -100,7 +101,7 @@ public interface ProjectsResource {
    */
   @Path("/{project_id}")
   @DELETE
-  void projects_delete(@PathParam("project_id") Integer projectId);
+  void projects_delete(@PathParam("project_id") BigInteger projectId);
 
   /**
    * <p>
@@ -115,7 +116,7 @@ public interface ProjectsResource {
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_update(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
+  Response projects_update(@PathParam("project_id") BigInteger projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -123,8 +124,9 @@ public interface ProjectsResource {
   @Path("/{project_id}/columns")
   @GET
   @Produces("application/json")
-  Response projects_list_columns(@PathParam("project_id") Integer projectId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response projects_list_columns(@PathParam("project_id") BigInteger projectId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -133,7 +135,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_column(@PathParam("project_id") Integer projectId, @NotNull InputStream data);
+  Response projects_create_column(@PathParam("project_id") BigInteger projectId, @NotNull InputStream data);
 
   /**
    * 
@@ -141,9 +143,10 @@ public interface ProjectsResource {
   @Path("/columns/{column_id}/cards")
   @GET
   @Produces("application/json")
-  Response projects_list_cards(@PathParam("column_id") Integer columnId,
+  Response projects_list_cards(@PathParam("column_id") BigInteger columnId,
       @QueryParam("archived_state") @DefaultValue("not_archived") String archivedState,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -166,7 +169,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_create_card(@PathParam("column_id") Integer columnId, @NotNull InputStream data);
+  Response projects_create_card(@PathParam("column_id") BigInteger columnId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -179,7 +182,7 @@ public interface ProjectsResource {
   @Path("/{project_id}/collaborators/{username}")
   @PUT
   @Consumes("application/json")
-  void projects_add_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username,
+  void projects_add_collaborator(@PathParam("project_id") BigInteger projectId, @PathParam("username") String username,
       @NotNull InputStream data);
 
   /**
@@ -191,7 +194,8 @@ public interface ProjectsResource {
    */
   @Path("/{project_id}/collaborators/{username}")
   @DELETE
-  void projects_remove_collaborator(@PathParam("project_id") Integer projectId, @PathParam("username") String username);
+  void projects_remove_collaborator(@PathParam("project_id") BigInteger projectId,
+      @PathParam("username") String username);
 
   /**
    * <p>
@@ -206,7 +210,7 @@ public interface ProjectsResource {
   @Path("/{project_id}/collaborators/{username}/permission")
   @GET
   @Produces("application/json")
-  Response projects_get_permission_for_user(@PathParam("project_id") Integer projectId,
+  Response projects_get_permission_for_user(@PathParam("project_id") BigInteger projectId,
       @PathParam("username") String username);
 
   /**
@@ -216,7 +220,7 @@ public interface ProjectsResource {
   @POST
   @Produces("application/json")
   @Consumes("application/json")
-  Response projects_move_card(@PathParam("card_id") Integer cardId, @NotNull InputStream data);
+  Response projects_move_card(@PathParam("card_id") BigInteger cardId, @NotNull InputStream data);
 
   /**
    * <p>
@@ -232,7 +236,8 @@ public interface ProjectsResource {
   @Path("/{project_id}/collaborators")
   @GET
   @Produces("application/json")
-  Response projects_list_collaborators(@PathParam("project_id") Integer projectId,
+  Response projects_list_collaborators(@PathParam("project_id") BigInteger projectId,
       @QueryParam("affiliation") @DefaultValue("all") String affiliation,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 }

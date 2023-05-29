@@ -14,6 +14,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -31,22 +32,22 @@ public interface UserResource {
   @Path("/repository_invitations")
   @GET
   @Produces("application/json")
-  Response repos_list_invitations_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response repos_list_invitations_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
    */
   @Path("/repository_invitations/{invitation_id}")
   @DELETE
-  void repos_decline_invitation(@PathParam("invitation_id") Integer invitationId);
+  void repos_decline_invitation(@PathParam("invitation_id") BigInteger invitationId);
 
   /**
    * 
    */
   @Path("/repository_invitations/{invitation_id}")
   @PATCH
-  void repos_accept_invitation(@PathParam("invitation_id") Integer invitationId);
+  void repos_accept_invitation(@PathParam("invitation_id") BigInteger invitationId);
 
   /**
    * <p>
@@ -66,8 +67,8 @@ public interface UserResource {
   Response repos_list_for_authenticated_user(@QueryParam("visibility") @DefaultValue("all") String visibility,
       @QueryParam("affiliation") @DefaultValue("owner,collaborator,organization_member") String affiliation,
       @QueryParam("type") @DefaultValue("all") String type, @QueryParam("sort") @DefaultValue("full_name") String sort,
-      @QueryParam("direction") String direction, @QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page, @QueryParam("since") String since,
+      @QueryParam("direction") String direction, @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page, @QueryParam("since") String since,
       @QueryParam("before") String before);
 
   /**
@@ -116,7 +117,7 @@ public interface UserResource {
   @Path("/migrations/{migration_id}")
   @GET
   @Produces("application/json")
-  Response migrations_get_status_for_authenticated_user(@PathParam("migration_id") Integer migrationId,
+  Response migrations_get_status_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId,
       @QueryParam("exclude") List<String> exclude);
 
   /**
@@ -133,7 +134,7 @@ public interface UserResource {
    */
   @Path("/migrations/{migration_id}/repos/{repo_name}/lock")
   @DELETE
-  void migrations_unlock_repo_for_authenticated_user(@PathParam("migration_id") Integer migrationId,
+  void migrations_unlock_repo_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId,
       @PathParam("repo_name") String repoName);
 
   /**
@@ -145,8 +146,9 @@ public interface UserResource {
   @Path("/migrations/{migration_id}/repositories")
   @GET
   @Produces("application/json")
-  Response migrations_list_repos_for_user(@PathParam("migration_id") Integer migrationId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response migrations_list_repos_for_user(@PathParam("migration_id") BigInteger migrationId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -157,8 +159,8 @@ public interface UserResource {
   @Path("/migrations")
   @GET
   @Produces("application/json")
-  Response migrations_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response migrations_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -206,7 +208,7 @@ public interface UserResource {
    */
   @Path("/migrations/{migration_id}/archive")
   @GET
-  void migrations_get_archive_for_authenticated_user(@PathParam("migration_id") Integer migrationId);
+  void migrations_get_archive_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId);
 
   /**
    * <p>
@@ -223,7 +225,7 @@ public interface UserResource {
    */
   @Path("/migrations/{migration_id}/archive")
   @DELETE
-  void migrations_delete_archive_for_authenticated_user(@PathParam("migration_id") Integer migrationId);
+  void migrations_delete_archive_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId);
 
   /**
    * 
@@ -263,7 +265,8 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response activity_list_watched_repos_for_authenticated_user(
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -281,7 +284,8 @@ public interface UserResource {
   @Produces({"application/json", "application/vnd.github.v3.star+json"})
   Response activity_list_repos_starred_by_authenticated_user(@QueryParam("sort") @DefaultValue("created") String sort,
       @QueryParam("direction") @DefaultValue("desc") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -299,7 +303,8 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response orgs_list_memberships_for_authenticated_user(@QueryParam("state") String state,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * 
@@ -338,8 +343,8 @@ public interface UserResource {
   @Path("/orgs")
   @GET
   @Produces("application/json")
-  Response orgs_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response orgs_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -350,8 +355,8 @@ public interface UserResource {
   @Path("/followers")
   @GET
   @Produces("application/json")
-  Response users_list_followers_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_followers_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -362,8 +367,8 @@ public interface UserResource {
   @Path("/following")
   @GET
   @Produces("application/json")
-  Response users_list_followed_by_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_followed_by_authenticated(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -376,8 +381,8 @@ public interface UserResource {
   @Path("/gpg_keys")
   @GET
   @Produces("application/json")
-  Response users_list_gpg_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_gpg_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -406,7 +411,7 @@ public interface UserResource {
   @Path("/keys/{key_id}")
   @GET
   @Produces("application/json")
-  Response users_get_public_ssh_key_for_authenticated(@PathParam("key_id") Integer keyId);
+  Response users_get_public_ssh_key_for_authenticated(@PathParam("key_id") BigInteger keyId);
 
   /**
    * <p>
@@ -419,7 +424,7 @@ public interface UserResource {
    */
   @Path("/keys/{key_id}")
   @DELETE
-  void users_delete_public_ssh_key_for_authenticated(@PathParam("key_id") Integer keyId);
+  void users_delete_public_ssh_key_for_authenticated(@PathParam("key_id") BigInteger keyId);
 
   /**
    * <p>
@@ -433,7 +438,7 @@ public interface UserResource {
   @Path("/gpg_keys/{gpg_key_id}")
   @GET
   @Produces("application/json")
-  Response users_get_gpg_key_for_authenticated(@PathParam("gpg_key_id") Integer gpgKeyId);
+  Response users_get_gpg_key_for_authenticated(@PathParam("gpg_key_id") BigInteger gpgKeyId);
 
   /**
    * <p>
@@ -446,7 +451,7 @@ public interface UserResource {
    */
   @Path("/gpg_keys/{gpg_key_id}")
   @DELETE
-  void users_delete_gpg_key_for_authenticated(@PathParam("gpg_key_id") Integer gpgKeyId);
+  void users_delete_gpg_key_for_authenticated(@PathParam("gpg_key_id") BigInteger gpgKeyId);
 
   /**
    * <p>
@@ -458,8 +463,8 @@ public interface UserResource {
   @Path("/emails")
   @GET
   @Produces("application/json")
-  Response users_list_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -559,8 +564,8 @@ public interface UserResource {
   @Path("/public_emails")
   @GET
   @Produces("application/json")
-  Response users_list_public_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_public_emails_for_authenticated(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -585,8 +590,8 @@ public interface UserResource {
   @Path("/keys")
   @GET
   @Produces("application/json")
-  Response users_list_public_ssh_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response users_list_public_ssh_keys_for_authenticated(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -660,8 +665,8 @@ public interface UserResource {
   @Path("/teams")
   @GET
   @Produces("application/json")
-  Response teams_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response teams_list_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -688,7 +693,8 @@ public interface UserResource {
       @QueryParam("state") @DefaultValue("open") String state, @QueryParam("labels") String labels,
       @QueryParam("sort") @DefaultValue("created") String sort,
       @QueryParam("direction") @DefaultValue("desc") String direction, @QueryParam("since") String since,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -716,8 +722,9 @@ public interface UserResource {
   @Path("/installations")
   @GET
   @Produces("application/json")
-  Response apps_list_installations_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response apps_list_installations_for_authenticated_user(
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -745,8 +752,9 @@ public interface UserResource {
   @Path("/installations/{installation_id}/repositories")
   @GET
   @Produces("application/json")
-  Response apps_list_installation_repos_for_authenticated_user(@PathParam("installation_id") Integer installationId,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+  Response apps_list_installation_repos_for_authenticated_user(@PathParam("installation_id") BigInteger installationId,
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -764,8 +772,9 @@ public interface UserResource {
   @Path("/marketplace_purchases")
   @GET
   @Produces("application/json")
-  Response apps_list_subscriptions_for_authenticated_user(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response apps_list_subscriptions_for_authenticated_user(
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -785,8 +794,8 @@ public interface UserResource {
    */
   @Path("/installations/{installation_id}/repositories/{repository_id}")
   @PUT
-  void apps_add_repo_to_installation(@PathParam("installation_id") Integer installationId,
-      @PathParam("repository_id") Integer repositoryId);
+  void apps_add_repo_to_installation(@PathParam("installation_id") BigInteger installationId,
+      @PathParam("repository_id") BigInteger repositoryId);
 
   /**
    * <p>
@@ -806,8 +815,8 @@ public interface UserResource {
    */
   @Path("/installations/{installation_id}/repositories/{repository_id}")
   @DELETE
-  void apps_remove_repo_from_installation(@PathParam("installation_id") Integer installationId,
-      @PathParam("repository_id") Integer repositoryId);
+  void apps_remove_repo_from_installation(@PathParam("installation_id") BigInteger installationId,
+      @PathParam("repository_id") BigInteger repositoryId);
 
   /**
    * <p>
@@ -826,5 +835,6 @@ public interface UserResource {
   @GET
   @Produces("application/json")
   Response apps_list_subscriptions_for_authenticated_user_stubbed(
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 }

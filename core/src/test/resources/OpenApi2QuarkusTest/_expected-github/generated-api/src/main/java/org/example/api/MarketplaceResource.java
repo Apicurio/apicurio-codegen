@@ -7,6 +7,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import java.math.BigInteger;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -34,9 +35,10 @@ public interface MarketplaceResource {
   @Path("/plans/{plan_id}/accounts")
   @GET
   @Produces("application/json")
-  Response apps_list_accounts_for_plan(@PathParam("plan_id") Integer planId,
+  Response apps_list_accounts_for_plan(@PathParam("plan_id") BigInteger planId,
       @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -58,7 +60,7 @@ public interface MarketplaceResource {
   @Path("/stubbed/accounts/{account_id}")
   @GET
   @Produces("application/json")
-  Response apps_get_subscription_plan_for_account_stubbed(@PathParam("account_id") Integer accountId);
+  Response apps_get_subscription_plan_for_account_stubbed(@PathParam("account_id") BigInteger accountId);
 
   /**
    * <p>
@@ -82,9 +84,10 @@ public interface MarketplaceResource {
   @Path("/stubbed/plans/{plan_id}/accounts")
   @GET
   @Produces("application/json")
-  Response apps_list_accounts_for_plan_stubbed(@PathParam("plan_id") Integer planId,
+  Response apps_list_accounts_for_plan_stubbed(@PathParam("plan_id") BigInteger planId,
       @QueryParam("sort") @DefaultValue("created") String sort, @QueryParam("direction") String direction,
-      @QueryParam("per_page") @DefaultValue("30") Integer perPage, @QueryParam("page") @DefaultValue("1") Integer page);
+      @QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -106,7 +109,7 @@ public interface MarketplaceResource {
   @Path("/accounts/{account_id}")
   @GET
   @Produces("application/json")
-  Response apps_get_subscription_plan_for_account(@PathParam("account_id") Integer accountId);
+  Response apps_get_subscription_plan_for_account(@PathParam("account_id") BigInteger accountId);
 
   /**
    * <p>
@@ -125,8 +128,8 @@ public interface MarketplaceResource {
   @Path("/stubbed/plans")
   @GET
   @Produces("application/json")
-  Response apps_list_plans_stubbed(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response apps_list_plans_stubbed(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
    * <p>
@@ -145,6 +148,6 @@ public interface MarketplaceResource {
   @Path("/plans")
   @GET
   @Produces("application/json")
-  Response apps_list_plans(@QueryParam("per_page") @DefaultValue("30") Integer perPage,
-      @QueryParam("page") @DefaultValue("1") Integer page);
+  Response apps_list_plans(@QueryParam("per_page") @DefaultValue("30") BigInteger perPage,
+      @QueryParam("page") @DefaultValue("1") BigInteger page);
 }
