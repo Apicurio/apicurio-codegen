@@ -1,23 +1,28 @@
 package io.apicurio.openapi.server.generator.deployment.codegen;
 
-import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
-import io.apicurio.openapi.server.generator.deployment.CodegenConfig;
-import io.quarkus.bootstrap.prebuild.CodeGenException;
-import io.quarkus.deployment.CodeGenContext;
-import io.quarkus.deployment.CodeGenProvider;
-import org.eclipse.microprofile.config.Config;
-
 import static io.apicurio.openapi.server.generator.deployment.CodegenConfig.getBasePackagePropertyName;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import org.eclipse.microprofile.config.Config;
+
+import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
+import io.apicurio.openapi.server.generator.deployment.CodegenConfig;
+import io.quarkus.bootstrap.model.ExtensionCapabilities;
+import io.quarkus.bootstrap.prebuild.CodeGenException;
+import io.quarkus.deployment.CodeGenContext;
+import io.quarkus.deployment.CodeGenProvider;
 
 public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
 
     private static final String DEFAULT_PACKAGE = "io.apicurio.api";
+    private static final Predicate<String> RESTEASY_REACTIVE_PREDICATE = "io.quarkus.resteasy.reactive"::equals;
 
     @Override
     public String providerId() {
@@ -48,7 +53,7 @@ public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
 
         if (Files.isDirectory(openApiDir) && spec.isPresent()) {
             final ApicurioCodegenWrapper apicurioCodegenWrapper =
-                    new ApicurioCodegenWrapper(outDir.toFile(), projectSettings(context.config(), context));
+                    new ApicurioCodegenWrapper(outDir.toFile(), projectSettings(context));
 
             try (Stream<Path> openApiFilesPaths = Files.walk(openApiDir)) {
                 openApiFilesPaths
@@ -71,7 +76,8 @@ public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
         return false;
     }
 
-    private static JaxRsProjectSettings projectSettings(Config config, CodeGenContext context) {
+    private static JaxRsProjectSettings projectSettings(CodeGenContext context) {
+        Config config = context.config();
         JaxRsProjectSettings projectSettings = new JaxRsProjectSettings();
 
         projectSettings.setJavaPackage(config
@@ -81,10 +87,11 @@ public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
         projectSettings.setReactive(config
                 .getOptionalValue(CodegenConfig.getReactivePropertyName(), Boolean.class)
                 .orElseGet(() -> context.applicationModel()
-                            .getDependencies()
+                            .getExtensionCapabilities()
                             .stream()
-                            .filter(dependency -> "quarkus-resteasy-reactive".equals(dependency.getArtifactId()))
-                            .anyMatch(dependency -> "io.quarkus".equals(dependency.getGroupId()))));
+                            .map(ExtensionCapabilities::getProvidesCapabilities)
+                            .flatMap(Collection::stream)
+                            .anyMatch(RESTEASY_REACTIVE_PREDICATE)));
 
         projectSettings.setCodeOnly(true);
         projectSettings.setMavenFileStructure(false);
