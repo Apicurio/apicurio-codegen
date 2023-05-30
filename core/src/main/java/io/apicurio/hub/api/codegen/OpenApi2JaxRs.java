@@ -242,7 +242,7 @@ public class OpenApi2JaxRs {
         if (this.settings.cliGenCI) {
             log.append("Generating .github/workflows/release_cli.yaml\r\n");
             zipOutput.putNextEntry(new ZipEntry(".github/workflows/release_cli.yaml"));
-            zipOutput.write(IOUtils.toString(getResource("release_cli.yaml"), Charset.forName("UTF-8")).getBytes(utf8));
+            zipOutput.write(IOUtils.toString(getCommonResource("release_cli.yaml"), Charset.forName("UTF-8")).getBytes(utf8));
             zipOutput.closeEntry();
         }
 
@@ -426,11 +426,11 @@ public class OpenApi2JaxRs {
      */
     protected String generatePomXml(CodegenInfo info) throws IOException {
         String template = IOUtils.toString(getResource("pom.xml"), Charset.forName("UTF-8"));
-        return template.replace("$GROUP_ID$", this.settings.groupId)
-                .replace("$ARTIFACT_ID$", this.settings.artifactId)
-                .replace("$VERSION$", info.getVersion())
-                .replace("$NAME$", info.getName())
-                .replace("$DESCRIPTION$", info.getDescription());
+        return template.replace("__GROUP_ID__", this.settings.groupId)
+                .replace("_" + getClass().getSimpleName(), this.settings.artifactId)
+                .replace("__VERSION__", info.getVersion())
+                .replace("__NAME__", info.getName())
+                .replace("__DESCRIPTION__", info.getDescription());
     }
 
     /**
@@ -851,6 +851,10 @@ public class OpenApi2JaxRs {
 
         String fqcn = bean.getPackage() + "." + bean.getName();
         codeWriter.indexBean(fqcn, bean);
+    }
+
+    protected URL getCommonResource(String name) {
+        return getClass().getResource("common/" + name);
     }
 
     protected URL getResource(String name) {

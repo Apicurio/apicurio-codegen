@@ -170,6 +170,54 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>quarkus-resources</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <file>
+                    <missing>target/classes/io/apicurio/hub/api/codegen/_OpenApi2Quarkus/pom.xml</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.quarkus</groupId>
+                        <artifactId>quarkus-maven-plugin</artifactId>
+                        <version>3.0.3.Final</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <project>
+                                <modelVersion>4.0.0</modelVersion>
+                            </project>
+                            <projectGroupId>__GROUP_ID__</projectGroupId>
+                            <projectArtifactId>_OpenApi2Quarkus</projectArtifactId>
+                            <projectVersion>__VERSION__</projectVersion>
+                            <projectName>__NAME__</projectName>
+                            <projectDescription>__DESCRIPTION__</projectDescription>
+                            <outputDirectory>${project.build.outputDirectory}/io/apicurio/hub/api/codegen</outputDirectory>
+                            <noCode>true</noCode>
+                            <extensions>
+                                <extension>resteasy-reactive</extension>
+                                <extension>resteasy-jackson</extension>
+                                <extension>hibernate-validator</extension>
+                                <extension>smallrye-openapi</extension>
+                            </extensions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>apicurio-codegen</finalName>
         <plugins>
@@ -192,6 +240,13 @@
                         <io.apicurio.codegen.dumptest>${io.apicurio.codegen.dumptest}</io.apicurio.codegen.dumptest>
                     </systemProperties>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>3.1.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
