@@ -38,7 +38,7 @@ public interface BreweriesResource {
    */
   @POST
   @Consumes("application/json")
-  void addBrewery(@NotNull Brewery data);
+  CompletionStage<Void> addBrewery(@NotNull Brewery data);
 
   /**
    * <p>
@@ -60,7 +60,7 @@ public interface BreweriesResource {
   @Path("/{breweryId}")
   @PUT
   @Consumes("application/json")
-  void updateBrewery(@PathParam("breweryId") int breweryId, @NotNull Brewery data);
+  CompletionStage<Void> updateBrewery(@PathParam("breweryId") int breweryId, @NotNull Brewery data);
 
   /**
    * <p>
@@ -70,7 +70,7 @@ public interface BreweriesResource {
    */
   @Path("/{breweryId}")
   @DELETE
-  void deleteBrewery(@PathParam("breweryId") int breweryId);
+  CompletionStage<Void> deleteBrewery(@PathParam("breweryId") int breweryId);
 
   /**
    * <p>

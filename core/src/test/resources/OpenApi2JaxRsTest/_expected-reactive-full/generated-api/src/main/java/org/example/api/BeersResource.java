@@ -40,8 +40,8 @@ public interface BeersResource {
   @Path("/{beerId}")
   @PUT
   @Consumes("application/json")
-  void updateBeer(@PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId,
-      @NotNull Beer data);
+  CompletionStage<Void> updateBeer(
+      @PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId, @NotNull Beer data);
 
   /**
    * <p>
@@ -51,7 +51,8 @@ public interface BeersResource {
    */
   @Path("/{beerId}")
   @DELETE
-  void deleteBeer(@PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId);
+  CompletionStage<Void> deleteBeer(
+      @PathParam("beerId") @Positive(message = "The beerId must be a natural number!") int beerId);
 
   /**
    * <p>
@@ -71,5 +72,5 @@ public interface BeersResource {
    */
   @POST
   @Consumes("application/json")
-  void addBeer(@NotNull Beer data);
+  CompletionStage<Void> addBeer(@NotNull Beer data);
 }

@@ -34,7 +34,7 @@ public class CodegenJavaMethod implements Cloneable {
     private Set<String> consumes = new HashSet<>();
     private List<CodegenJavaArgument> arguments = new ArrayList<>();
     private CodegenJavaReturn _return;
-    private boolean async;
+    private Boolean async;
     
     /**
      * Constructor.
@@ -157,14 +157,14 @@ public class CodegenJavaMethod implements Cloneable {
     /**
      * @return the async
      */
-    public boolean isAsync() {
+    public Boolean getAsync() {
         return async;
     }
 
     /**
      * @param async the async to set
      */
-    public void setAsync(boolean async) {
+    public void setAsync(Boolean async) {
         this.async = async;
     }
     

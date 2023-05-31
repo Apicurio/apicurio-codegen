@@ -182,7 +182,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         method.setArguments(new ArrayList<>());
         if (node.getDescription() != null) { method.setDescription(node.getDescription()); }
 
-        boolean async = false;
+        Boolean async = null;
         JsonNode asyncExt = CodegenUtil.getExtension((Extensible) node, CodegenExtensions.ASYNC);
         if (asyncExt != null) {
             async = asyncExt.asBoolean();

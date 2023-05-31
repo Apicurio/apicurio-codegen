@@ -184,7 +184,7 @@
                     <plugin>
                         <groupId>io.quarkus</groupId>
                         <artifactId>quarkus-maven-plugin</artifactId>
-                        <version>3.0.3.Final</version>
+                        <version>${quarkus.platform.version}</version>
                         <inherited>false</inherited>
                         <executions>
                             <execution>
@@ -198,6 +198,7 @@
                             <project>
                                 <modelVersion>4.0.0</modelVersion>
                             </project>
+                            <bomVersion>${quarkus.platform.version}</bomVersion>
                             <projectGroupId>__GROUP_ID__</projectGroupId>
                             <projectArtifactId>_OpenApi2Quarkus</projectArtifactId>
                             <projectVersion>__VERSION__</projectVersion>

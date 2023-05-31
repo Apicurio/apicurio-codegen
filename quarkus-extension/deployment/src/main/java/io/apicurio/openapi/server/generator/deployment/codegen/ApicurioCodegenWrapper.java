@@ -1,7 +1,5 @@
 package io.apicurio.openapi.server.generator.deployment.codegen;
 
-import static io.apicurio.openapi.server.generator.deployment.CodegenConfig.getBasePackagePropertyName;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,9 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.microprofile.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.OpenApi2JaxRs;
@@ -24,29 +20,20 @@ import io.quarkus.bootstrap.prebuild.CodeGenException;
 
 public class ApicurioCodegenWrapper {
 
-    private static final Logger log = LoggerFactory.getLogger(ApicurioOpenApiServerCodegen.class);
-    private static final String DEFAULT_PACKAGE = "io.apicurio.api";
+    private static final Logger log = Logger.getLogger(ApicurioCodegenWrapper.class);
 
-    @SuppressWarnings("unused")
-    private final Config config;
     private final File outdir;
     private final JaxRsProjectSettings projectSettings;
 
-    public ApicurioCodegenWrapper(Config config, File outdir) {
-        this(config, outdir, defaultProjectSettings());
-    }
-
-    public ApicurioCodegenWrapper(Config config, File outdir, JaxRsProjectSettings projectSettings) {
-        this.config = config;
+    public ApicurioCodegenWrapper(File outdir, JaxRsProjectSettings projectSettings) {
         this.outdir = outdir;
         this.projectSettings = projectSettings;
-        this.projectSettings.setJavaPackage(getBasePackage(config));
     }
 
     public void generate(Path openApiResource) throws CodeGenException {
         final File openApiFile = openApiResource.toFile();
 
-        log.info("Generating JAX-RS interfaces and beans from: " + openApiResource);
+        log.infof("Generating JAX-RS interfaces and beans from: %s", openApiResource);
 
         if (outdir.isFile()) {
             throw new CodeGenException(
@@ -87,7 +74,7 @@ public class ApicurioCodegenWrapper {
     }
 
     private void unzip(File fromZipFile, File toOutputDir) throws IOException {
-        try (java.util.zip.ZipFile zipFile = new ZipFile(fromZipFile)) {
+        try (ZipFile zipFile = new ZipFile(fromZipFile)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -105,22 +92,4 @@ public class ApicurioCodegenWrapper {
         }
     }
 
-    private String getBasePackage(final Config config) {
-        return config
-                .getOptionalValue(getBasePackagePropertyName(), String.class)
-                .orElse(DEFAULT_PACKAGE);
-    }
-
-    private static JaxRsProjectSettings defaultProjectSettings() {
-        JaxRsProjectSettings projectSettings = new JaxRsProjectSettings();
-        projectSettings.setJavaPackage(DEFAULT_PACKAGE);
-
-        projectSettings.setReactive(false);
-        projectSettings.setCodeOnly(true);
-        projectSettings.setCliGenCI(false);
-        projectSettings.setMavenFileStructure(false);
-        projectSettings.setIncludeSpec(false);
-        projectSettings.setCliGenCI(false);
-        return projectSettings;
-    }
 }
