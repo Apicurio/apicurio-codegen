@@ -17,7 +17,10 @@
 package io.apicurio.hub.api.codegen;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -47,24 +50,27 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
     protected void generateAll(CodegenInfo info, StringBuilder log, ZipOutputStream zipOutput)
             throws IOException {
         super.generateAll(info, log, zipOutput);
+
         if (!this.isUpdateOnly() && !this.settings.codeOnly) {
             log.append("Generating Dockerfiles\r\n");
-            zipOutput.putNextEntry(new ZipEntry("src/main/docker/Dockerfile.jvm"));
-            zipOutput.write(generateDockerfileJvm().getBytes());
-            zipOutput.closeEntry();
-            zipOutput.putNextEntry(new ZipEntry("src/main/docker/Dockerfile.native"));
-            zipOutput.write(generateDockerfileNative().getBytes());
-            zipOutput.closeEntry();
+            Stream.of("jvm", "legacy-jar", "native", "native-micro")
+                .map("src/main/docker/Dockerfile."::concat)
+                .forEach(path -> writeEntry(zipOutput, path));
 
             log.append("Generating application.properties\r\n");
             zipOutput.putNextEntry(new ZipEntry("src/main/resources/application.properties"));
             zipOutput.write(generateApplicationProperties().getBytes());
             zipOutput.closeEntry();
 
-            log.append("Generating src/main/resources/META-INF/microprofile-config.properties\r\n");
-            zipOutput.putNextEntry(new ZipEntry("src/main/resources/META-INF/microprofile-config.properties"));
-            zipOutput.write(generateMicroprofileConfigProperties().getBytes());
-            zipOutput.closeEntry();
+            log.append("Generating project files\r\n");
+            writeEntry(zipOutput, ".mvn/wrapper/.gitignore");
+            writeEntry(zipOutput, ".mvn/wrapper/maven-wrapper.properties");
+            writeEntry(zipOutput, ".mvn/wrapper/MavenWrapperDownloader.java");
+            writeEntry(zipOutput, ".dockerignore");
+            writeEntry(zipOutput, ".gitignore");
+            writeEntry(zipOutput, "mvnw");
+            writeEntry(zipOutput, "mvnw.cmd");
+            writeEntry(zipOutput, "README.md");
         }
     }
 
@@ -77,20 +83,14 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
         return null;
     }
 
-    /**
-     * Generates Dockerfile.jvm.
-     */
-    private String generateDockerfileJvm() throws IOException {
-        String template = IOUtils.toString(getResource("src/main/docker/Dockerfile.jvm"), Charset.forName("UTF-8"));
-        return template;
-    }
-
-    /**
-     * Generates Dockerfile.native.
-     */
-    private String generateDockerfileNative() throws IOException {
-        String template = IOUtils.toString(getResource("src/main/docker/Dockerfile.native"), Charset.forName("UTF-8"));
-        return template;
+    private void writeEntry(ZipOutputStream zipOutput, String sourcePath) {
+        try {
+            zipOutput.putNextEntry(new ZipEntry(sourcePath));
+            zipOutput.write(IOUtils.toString(getResource(sourcePath), StandardCharsets.UTF_8).getBytes());
+            zipOutput.closeEntry();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
@@ -98,14 +98,7 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
      */
     private String generateApplicationProperties() throws IOException {
         String template = IOUtils.toString(getResource("src/main/resources/application.properties"), Charset.forName("UTF-8"));
-        return template;
-    }
-
-    /**
-     * Generates the microprofile-config.properties file to include in the generated project.
-     */
-    private String generateMicroprofileConfigProperties() throws IOException {
-        String template = IOUtils.toString(getResource("src/main/resources/META-INF/microprofile-config.properties"), Charset.forName("UTF-8"));
+        template += "\nmp.openapi.scan.disable=true\n";
         return template;
     }
 
