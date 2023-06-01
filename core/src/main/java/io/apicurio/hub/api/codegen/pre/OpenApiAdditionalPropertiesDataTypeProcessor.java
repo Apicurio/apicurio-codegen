@@ -35,6 +35,8 @@ public class OpenApiAdditionalPropertiesDataTypeProcessor extends TraversingOpen
         if (schema.getAdditionalProperties() != null && schema.getAdditionalProperties().isSchema()) {
             // WORKAROUND: https://github.com/joelittlejohn/jsonschema2pojo/pull/1515
             schema.setAdditionalProperties(new BooleanUnionValueImpl(Boolean.TRUE));
+        } else {
+            schema.setAdditionalProperties(new BooleanUnionValueImpl(Boolean.FALSE));
         }
     }
 }
