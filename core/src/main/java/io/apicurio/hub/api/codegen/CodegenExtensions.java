@@ -21,6 +21,8 @@ package io.apicurio.hub.api.codegen;
  */
 public class CodegenExtensions {
 
+    public static final String CODEGEN = "x-codegen";
+
     /* Custom package name used when generating a bean class from an object schema */
     public static final String PACKAGE = "x-codegen-package";
     /* Used to set a generated method to be asynchronous */
@@ -40,4 +42,7 @@ public class CodegenExtensions {
     public static final String TYPE = "x-codegen-type";
     /* Used to indicate the super class for a generated bean class */
     public static final String EXTENDS_CLASS = "x-codegen-extendsClass";
+
+    public static final String SUPPRESS_DATE_TIME_FORMAT = "suppress-date-time-formatting";
+
 }
