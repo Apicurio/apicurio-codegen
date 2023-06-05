@@ -16,7 +16,10 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import java.util.Map;
+
 import io.apicurio.datamodels.combined.visitors.CombinedVisitorAdapter;
+import io.apicurio.datamodels.core.models.Document;
 import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.core.models.common.IDefinition;
 import io.apicurio.datamodels.core.models.common.IPropertySchema;
@@ -32,13 +35,33 @@ import io.apicurio.hub.api.codegen.CodegenExtensions;
  */
 public class OpenApiDateTimeSimpleTypeProcessor extends CombinedVisitorAdapter {
 
+    private boolean skip;
+
+    @Override
+    public void visitDocument(Document node) {
+        Extension extension = node.getExtension(CodegenExtensions.CODEGEN);
+        if (extension != null && extension.value instanceof Map) {
+            Map<String, Object> codegen = (Map<String, Object>) extension.value;
+            if (codegen != null && codegen.containsKey(CodegenExtensions.SUPPRESS_DATE_TIME_FORMAT)) {
+                skip = (Boolean) codegen.get(CodegenExtensions.SUPPRESS_DATE_TIME_FORMAT);
+            } else {
+                skip = false;
+            }
+        }
+    }
+
     /**
      * @see io.apicurio.datamodels.core.visitors.VisitorAdapter#visitSchema(io.apicurio.datamodels.core.models.common.Schema)
      */
     @Override
     public void visitSchema(Schema node) {
+        if (skip) {
+            return;
+        }
+
         OasSchema schema = (OasSchema) node;
-        // Switch from int64 format to utc-millisec so that jsonschema2pojo will generate a Long instead of an Integer
+        // Set the "customDateTimePattern" appropriately for all date-time fields, causing jsonschema2pojo
+        // to generate a @JsonFormat annotation.
         if ("string".equals(schema.type) && "date-time".equals(schema.format)) {
             String formatPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
             Extension ext = schema.getExtension(CodegenExtensions.FORMAT_PATTERN);

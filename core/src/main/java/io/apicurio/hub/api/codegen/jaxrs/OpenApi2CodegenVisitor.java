@@ -125,20 +125,20 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
     @Override
     public void visitDocument(Document node) {
         // Extract some configuration from the "x-codegen" root extension property
-        processCodegenConfig(node.getExtension("x-codegen"));
+        processCodegenConfig(node.getExtension(CodegenExtensions.CODEGEN));
     }
 
     @SuppressWarnings("unchecked")
     private void processCodegenConfig(Extension extension) {
         if (extension != null && extension.value instanceof Map) {
             Map<String, Object> codegen = (Map<String, Object>) extension.value;
-            
+
             // Process 'bean-annotations'
             List<?> annotations = (List<?>) codegen.get("bean-annotations");
             if (annotations != null) {
                 this.codegenInfo.setBeanAnnotations(annotations(annotations));
             }
-            
+
             // Process 'contextRoot'
             String cr = (String) codegen.get("contextRoot");
             if (cr != null) {
@@ -323,7 +323,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
             List<CodegenJavaMethod> methods = allReturnTypes.entrySet().stream().map(entry -> {
                 CodegenJavaReturn returnType = entry.getKey();
                 Set<String> types = entry.getValue();
-                
+
                 CodegenJavaMethod clonedMethod = methodTemplate.clone();
                 clonedMethod.getConsumes().addAll(types);
 
@@ -335,16 +335,16 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
                 if (returnType.getCollection() != null) { cgArgument.setCollection(returnType.getCollection()); }
                 if (returnType.getType() != null) { cgArgument.setType(returnType.getType()); }
                 if (returnType.getFormat() != null) { cgArgument.setFormat(returnType.getFormat()); }
-                
+
                 clonedMethod.getArguments().add(cgArgument);
-                
+
                 return clonedMethod;
             }).collect(Collectors.toList());
             this._currentInterface.getMethods().remove(methodTemplate);
             this._currentInterface.getMethods().addAll(methods);
             this._currentMethods = methods;
         }
-        
+
     }
 
     /**
@@ -397,7 +397,7 @@ public class OpenApi2CodegenVisitor extends CombinedVisitorAdapter {
 
                 cgReturn = unknownReturn;
             }
-            
+
             final CodegenJavaReturn _return = cgReturn;
             this._currentMethods.forEach(_currentMethod -> _currentMethod.setReturn(_return));
         }
