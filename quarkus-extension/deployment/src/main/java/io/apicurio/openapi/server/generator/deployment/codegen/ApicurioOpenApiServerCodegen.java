@@ -5,6 +5,7 @@ import static io.apicurio.openapi.server.generator.deployment.CodegenConfig.getB
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -55,21 +56,17 @@ public class ApicurioOpenApiServerCodegen implements CodeGenProvider {
             final ApicurioCodegenWrapper apicurioCodegenWrapper =
                     new ApicurioCodegenWrapper(outDir.toFile(), projectSettings(context));
 
-            try (Stream<Path> openApiFilesPaths = Files.walk(openApiDir)) {
-                openApiFilesPaths
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(inputExtension()))
-                    .filter(path -> path.toFile().getName().endsWith(spec.get()))
-                    .forEach(openApiResource -> {
-                        try {
-                            apicurioCodegenWrapper.generate(openApiResource);
-                        } catch (CodeGenException e) {
-                            e.printStackTrace();
-                        }
-                    });
-            } catch (IOException e) {
-                throw new CodeGenException("Failed to generate java files from OpenApi file in " + openApiDir.toAbsolutePath(), e);
+            Path openApiResource = openApiDir.resolve(spec.get());
+
+            if (openApiResource.getFileName().endsWith(inputExtension())) {
+                throw new CodeGenException("The OpenApi file name doesn't ends with: " + inputExtension() + " and is an invalid input for the generator");
             }
+            if (!openApiResource.toFile().exists()) {
+                throw new CodeGenException("The OpenApi file doesn't exists in the path: " + openApiResource.toFile().getAbsolutePath());
+            }
+
+            apicurioCodegenWrapper.generate(openApiResource);
+
             return true;
         }
 

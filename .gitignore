@@ -6,6 +6,7 @@
 /quarkus-extension/deployment/target
 /quarkus-extension/runtime/target
 /quarkus-extension/integration-tests/target
+/quarkus-extension/integration-tests/**/target
 /quarkus-extension/target
 .generated
 .ts
