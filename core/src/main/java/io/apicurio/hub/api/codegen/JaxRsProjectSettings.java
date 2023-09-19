@@ -22,7 +22,7 @@ package io.apicurio.hub.api.codegen;
  * @author eric.wittmann@gmail.com
  */
 public class JaxRsProjectSettings {
-    
+
     public boolean mavenFileStructure = true;
     public boolean includeSpec = true;
     public boolean codeOnly = false;
@@ -31,45 +31,13 @@ public class JaxRsProjectSettings {
     public String groupId = "org.example";
     public String artifactId = "example-api";
     public String javaPackage = "org.example.api";
+    public String classNamePrefix = "";
+    public String classNameSuffix = "";
 
     /**
      * Constructor.
      */
     public JaxRsProjectSettings() {
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param groupId
-     * @param artifactId
-     * @param javaPackage
-     */
-    public JaxRsProjectSettings(String groupId, String artifactId, String javaPackage) {
-        this.codeOnly = false;
-        this.reactive = false;
-        this.cliGenCI = false;
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.javaPackage = javaPackage;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param codeOnly
-     * @param reactive
-     * @param groupId
-     * @param artifactId
-     * @param javaPackage
-     */
-    public JaxRsProjectSettings(boolean codeOnly, boolean reactive, String groupId, String artifactId, String javaPackage) {
-        this.codeOnly = false;
-        this.reactive = false;
-        this.cliGenCI = false;
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.javaPackage = javaPackage;
     }
 
     /**
@@ -182,5 +150,21 @@ public class JaxRsProjectSettings {
      */
     public void setIncludeSpec(boolean includeSpec) {
         this.includeSpec = includeSpec;
+    }
+
+    public String getClassNamePrefix() {
+        return classNamePrefix;
+    }
+
+    public void setClassNamePrefix(String classNamePrefix) {
+        this.classNamePrefix = classNamePrefix;
+    }
+
+    public String getClassNameSuffix() {
+        return classNameSuffix;
+    }
+
+    public void setClassNameSuffix(String classNameSuffix) {
+        this.classNameSuffix = classNameSuffix;
     }
 }

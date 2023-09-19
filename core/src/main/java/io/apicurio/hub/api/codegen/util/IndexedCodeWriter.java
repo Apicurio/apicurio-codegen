@@ -32,10 +32,10 @@ import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
  * @author eric.wittmann@gmail.com
  */
 public class IndexedCodeWriter extends CodeWriter {
-    
+
     private Map<String, ByteArrayOutputStream> contentIndex = new HashMap<>();
     private Map<String, CodegenJavaBean> beanIndex = new HashMap<>();
-    
+
     /**
      * Constructor.
      */
@@ -60,7 +60,7 @@ public class IndexedCodeWriter extends CodeWriter {
     @Override
     public void close() throws IOException {
     }
-    
+
     /**
      * Gets the content produced for a given class name.
      * @param className
@@ -83,7 +83,7 @@ public class IndexedCodeWriter extends CodeWriter {
         }
         return null;
     }
-    
+
     /**
      * Updates the index with the given content.
      * @param className

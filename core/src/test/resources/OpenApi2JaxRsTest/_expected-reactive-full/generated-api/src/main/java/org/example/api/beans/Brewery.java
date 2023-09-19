@@ -1,9 +1,12 @@
 
 package org.example.api.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
@@ -11,14 +14,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * Root Type for Brewery
  * <p>
  * The root of the Brewery type's schema.
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "id",
     "name",
     "city",
-    "state"
+    "state",
+    "sampleBeers"
 })
 @Generated("jsonschema2pojo")
 public class Brewery {
@@ -31,6 +35,12 @@ public class Brewery {
     private String city;
     @JsonProperty("state")
     private String state;
+    /**
+     *
+     */
+    @JsonProperty("sampleBeers")
+    @JsonPropertyDescription("")
+    private List<Beer> sampleBeers = new ArrayList<Beer>();
 
     @JsonProperty("id")
     public Integer getId() {
@@ -70,6 +80,22 @@ public class Brewery {
     @JsonProperty("state")
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     *
+     */
+    @JsonProperty("sampleBeers")
+    public List<Beer> getSampleBeers() {
+        return sampleBeers;
+    }
+
+    /**
+     *
+     */
+    @JsonProperty("sampleBeers")
+    public void setSampleBeers(List<Beer> sampleBeers) {
+        this.sampleBeers = sampleBeers;
     }
 
 }

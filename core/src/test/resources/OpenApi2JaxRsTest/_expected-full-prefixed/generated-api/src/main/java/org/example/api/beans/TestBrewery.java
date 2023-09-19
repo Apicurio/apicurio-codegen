@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "sampleBeers"
 })
 @Generated("jsonschema2pojo")
-public class Brewery {
+public class TestBrewery {
 
     @JsonProperty("id")
     private Integer id;
@@ -40,7 +40,7 @@ public class Brewery {
      */
     @JsonProperty("sampleBeers")
     @JsonPropertyDescription("")
-    private List<Beer> sampleBeers = new ArrayList<Beer>();
+    private List<TestBeer> sampleBeers = new ArrayList<TestBeer>();
 
     @JsonProperty("id")
     public Integer getId() {
@@ -86,7 +86,7 @@ public class Brewery {
      *
      */
     @JsonProperty("sampleBeers")
-    public List<Beer> getSampleBeers() {
+    public List<TestBeer> getSampleBeers() {
         return sampleBeers;
     }
 
@@ -94,7 +94,7 @@ public class Brewery {
      *
      */
     @JsonProperty("sampleBeers")
-    public void setSampleBeers(List<Beer> sampleBeers) {
+    public void setSampleBeers(List<TestBeer> sampleBeers) {
         this.sampleBeers = sampleBeers;
     }
 

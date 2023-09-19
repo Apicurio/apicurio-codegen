@@ -60,6 +60,7 @@ import io.apicurio.datamodels.models.openapi.v31.OpenApi31Response;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
@@ -79,7 +80,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private String packageName;
+    private JaxRsProjectSettings settings;
     private Map<String, String> interfacesIndex = new HashMap<>();
     private CodegenInfo codegenInfo = new CodegenInfo();
 
@@ -94,16 +95,18 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
     /**
      * Constructor.
-     * @param packageName
+     * @param settings
      * @param interfaces
+     * @param target
      */
-    public OpenApi2CodegenVisitor(String packageName, List<InterfaceInfo> interfaces, CodegenTarget target) {
+    public OpenApi2CodegenVisitor(JaxRsProjectSettings settings, List<InterfaceInfo> interfaces, CodegenTarget target) {
+        this.settings = settings;
+
         this.codegenInfo.setName("Generated API");
         this.codegenInfo.setVersion("1.0.0");
         this.codegenInfo.setInterfaces(new ArrayList<>());
         this.codegenInfo.setBeans(new ArrayList<>());
 
-        this.packageName = packageName;
         for (InterfaceInfo iface : interfaces) {
             for (String path : iface.paths) {
                 this.interfacesIndex.put(path, iface.name);
@@ -232,7 +235,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
          * Attempt to apply the schema from the `content` section's first media type to this
          * parameter. If no `content` section exists or the first media type's schema is not
          * present, map the schema attributes from the `schema` directly set on the parameter
-         * in the OpenAPI, if present. 
+         * in the OpenAPI, if present.
          */
         Optional.ofNullable(param.getContent())
             .map(Map::values) // gives the collection of media types
@@ -380,7 +383,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
             CodegenJavaBean bean = new CodegenJavaBean();
             bean.setName(name);
-            bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.packageName + ".beans"));
+            bean.setPackage(CodegenUtil.schemaToPackageName(schema, this.settings.getJavaPackage() + ".beans"));
             bean.set$schema(Library.writeNode(schema));
             bean.setSignature(createSignature((OpenApi31Schema) schema));
             bean.setAnnotations(annotations(CodegenUtil.getExtension((Extensible) schema, CodegenExtensions.ANNOTATIONS)));
@@ -464,7 +467,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         }
         CodegenJavaInterface cgInterface = new CodegenJavaInterface();
         cgInterface.setName(interfaceName);
-        cgInterface.setPackage(this.packageName);
+        cgInterface.setPackage(this.settings.getJavaPackage());
         cgInterface.setPath(ifacePath);
         cgInterface.setMethods(new ArrayList<>());
         this.codegenInfo.getInterfaces().add(cgInterface);
@@ -587,7 +590,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
     }
 
     private List<String> typeFromSchemaRef(Document document, String schemaRef) {
-        return List.of(CodegenUtil.schemaRefToFQCN(document, schemaRef, this.packageName + ".beans"));
+        return List.of(CodegenUtil.schemaRefToFQCN(settings, document, schemaRef, this.settings.getJavaPackage() + ".beans"));
     }
 
     private boolean isPathItem(Node node) {

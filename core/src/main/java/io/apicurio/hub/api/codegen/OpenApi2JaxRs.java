@@ -206,6 +206,7 @@ public class OpenApi2JaxRs {
             try {
                 CodegenInfo info = getInfoFromApiDoc();
                 generateAll(info, log, zos);
+                System.out.println(log.toString());
             } catch (Exception e) {
                 // If we get an error, put an PROJECT_GENERATION_ERROR file into the ZIP.
                 zos.putNextEntry(new ZipEntry("PROJECT_GENERATION_FAILED.txt"));
@@ -275,7 +276,7 @@ public class OpenApi2JaxRs {
         // Generate the java beans from data types
         IndexedCodeWriter codeWriter = new IndexedCodeWriter();
         for (CodegenJavaBean bean : info.getBeans()) {
-            log.append("Generating Bean: " + bean.getPackage() + "." + bean.getName() + "\r\n");
+            log.append("Generating Bean: " + bean.getPackage() + "." + CodegenUtil.toClassName(settings, bean.getName()) + "\r\n");
             generateJavaBean(bean, info, codeWriter);
         }
         // Post-process generated java bean classes
@@ -304,9 +305,12 @@ public class OpenApi2JaxRs {
 
         // Generate the JAX-RS interfaces
         for (CodegenJavaInterface iface : info.getInterfaces()) {
-            log.append("Generating Interface: " + iface.getPackage() + "." + iface.getName() + "\r\n");
+            String ifaceClassName = CodegenUtil.toClassName(settings, iface.getName());
+            String ifacePackageName = iface.getPackage();
+            String ifaceFQCN = ifacePackageName + "." + ifaceClassName;
+            log.append("Generating Interface: " + ifaceFQCN + "\r\n");
             String javaInterface = generateJavaInterface(info, iface);
-            String javaInterfaceFileName = javaPackageToZipPath(iface.getPackage()) + iface.getName() + ".java";
+            String javaInterfaceFileName = javaPackageToZipPath(ifacePackageName) + ifaceClassName + ".java";
             log.append("Adding to zip: " + javaInterfaceFileName + "\r\n");
             zipOutput.putNextEntry(new ZipEntry(javaInterfaceFileName));
             zipOutput.write(javaInterface.getBytes(utf8));
@@ -349,7 +353,7 @@ public class OpenApi2JaxRs {
         VisitorUtil.visitTree(document, iVisitor, TraverserDirection.down);
 
         // Then generate the CodegenInfo object.
-        OpenApi2CodegenVisitor cgVisitor = new OpenApi2CodegenVisitor(this.settings.javaPackage, iVisitor.getInterfaces(), CodegenTarget.JAX_RS);
+        OpenApi2CodegenVisitor cgVisitor = new OpenApi2CodegenVisitor(this.settings, iVisitor.getInterfaces(), CodegenTarget.JAX_RS);
         VisitorUtil.visitTree(document, cgVisitor, TraverserDirection.down);
 
         // Now resolve any inline schemas/types
@@ -469,12 +473,12 @@ public class OpenApi2JaxRs {
 
     void sortImports(Importer<?> javaSource) {
         javaSource.getImports()
-        .stream()
-        .sorted(Comparator.comparing(Import::getQualifiedName))
-        .forEach(i -> {
-            javaSource.removeImport(i);
-            javaSource.addImport(i);
-        });
+            .stream()
+            .sorted(Comparator.comparing(Import::getQualifiedName))
+            .forEach(i -> {
+                javaSource.removeImport(i);
+                javaSource.addImport(i);
+            });
     }
 
     /**
@@ -487,10 +491,13 @@ public class OpenApi2JaxRs {
         final Parser markdownParser = Parser.builder().build();
         final HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
 
+        final String iClassName = CodegenUtil.toClassName(settings, interfaceInfo.getName());
+        final String iPackageName = interfaceInfo.getPackage();
+
         JavaInterfaceSource resourceInterface = Roaster.create(JavaInterfaceSource.class)
-                .setPackage(interfaceInfo.getPackage())
+                .setPackage(iPackageName)
                 .setPublic()
-                .setName(interfaceInfo.getName())
+                .setName(iClassName)
                 .getJavaDoc()
                 .setFullText("A JAX-RS interface. An implementation of this interface must be provided.")
                 .getOrigin()
@@ -504,7 +511,7 @@ public class OpenApi2JaxRs {
 
             Optional.ofNullable(methodInfo.getDescription()).ifPresent(description -> {
                 operationMethod.getJavaDoc()
-                .setFullText(htmlRenderer.render(markdownParser.parse(description)));
+                    .setFullText(htmlRenderer.render(markdownParser.parse(description)));
             });
 
             Optional.ofNullable(methodInfo.getPath()).ifPresent(path ->
@@ -513,16 +520,16 @@ public class OpenApi2JaxRs {
             operationMethod.addAnnotation(String.format("%s.ws.rs.%s", topLevelPackage, methodInfo.getMethod().toUpperCase()));
 
             Optional.ofNullable(methodInfo.getProduces())
-            .filter(Predicate.not(Collection::isEmpty))
-            .map(OpenApi2JaxRs::toStringArrayLiteral)
-            .ifPresent(produces ->
-            operationMethod.addAnnotation(String.format("%s.ws.rs.Produces", topLevelPackage)).setLiteralValue(produces));
+                .filter(Predicate.not(Collection::isEmpty))
+                .map(OpenApi2JaxRs::toStringArrayLiteral)
+                .ifPresent(produces ->
+                    operationMethod.addAnnotation(String.format("%s.ws.rs.Produces", topLevelPackage)).setLiteralValue(produces));
 
             Optional.ofNullable(methodInfo.getConsumes())
-            .filter(Predicate.not(Collection::isEmpty))
-            .map(OpenApi2JaxRs::toStringArrayLiteral)
-            .ifPresent(consumes ->
-            operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
+                .filter(Predicate.not(Collection::isEmpty))
+                .map(OpenApi2JaxRs::toStringArrayLiteral)
+                .ifPresent(consumes ->
+                    operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
 
             final boolean reactive;
 
@@ -535,67 +542,67 @@ public class OpenApi2JaxRs {
             }
 
             Optional.ofNullable(methodInfo.getReturn())
-            .map(rt -> generateTypeName(
-                    rt,
-                    true,
-                    String.format("%s.ws.rs.core.Response", topLevelPackage)))
-            .map(rt -> reactive ? generateReactiveTypeName(rt) : rt)
-            .map(Object::toString)
-            .ifPresentOrElse(
-                    operationMethod::setReturnType,
-                    () -> setVoidReturnType(operationMethod, reactive));
+                .map(rt -> generateTypeName(
+                        rt,
+                        true,
+                        String.format("%s.ws.rs.core.Response", topLevelPackage)))
+                .map(rt -> reactive ? generateReactiveTypeName(rt) : rt)
+                .map(Object::toString)
+                .ifPresentOrElse(
+                        operationMethod::setReturnType,
+                        () -> setVoidReturnType(operationMethod, reactive));
 
             Optional.ofNullable(methodInfo.getArguments())
-            .map(Collection::stream)
-            .orElseGet(Stream::empty)
-            .forEach(arg -> {
-                String methodArgName = paramNameToJavaArgName(arg.getName());
-                String defaultParamType = Object.class.getName();
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .forEach(arg -> {
+                    String methodArgName = paramNameToJavaArgName(arg.getName());
+                    String defaultParamType = Object.class.getName();
 
-                if (arg.getIn().equals("body")) {
-                    // Swagger 2.0?
-                    defaultParamType = InputStream.class.getName();
-                }
+                    if (arg.getIn().equals("body")) {
+                        // Swagger 2.0?
+                        defaultParamType = InputStream.class.getName();
+                    }
 
-                Type<?> paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
+                    Type<?> paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
 
-                if (arg.getTypeSignature() != null) {
-                    // TODO try to find a re-usable data type that matches the type signature
-                }
+                    if (arg.getTypeSignature() != null) {
+                        // TODO try to find a re-usable data type that matches the type signature
+                    }
 
-                resourceInterface.addImport(paramType);
-                var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
-                ParameterSource<JavaInterfaceSource> param = operationMethod.addParameter(paramTypeName, methodArgName);
+                    resourceInterface.addImport(paramType);
+                    var paramTypeName = Types.toSimpleName(paramType.getQualifiedNameWithGenerics());
+                    ParameterSource<JavaInterfaceSource> param = operationMethod.addParameter(paramTypeName, methodArgName);
 
-                switch (arg.getIn()) {
-                    case "path":
-                        param.addAnnotation(String.format("%s.ws.rs.PathParam", topLevelPackage))
-                        .setStringValue(arg.getName());
-                        break;
-                    case "query":
-                        param.addAnnotation(String.format("%s.ws.rs.QueryParam", topLevelPackage))
-                        .setStringValue(arg.getName());
-                        break;
-                    case "header":
-                        param.addAnnotation(String.format("%s.ws.rs.HeaderParam", topLevelPackage))
-                        .setStringValue(arg.getName());
-                        break;
-                    case "cookie":
-                        param.addAnnotation(String.format("%s.ws.rs.CookieParam", topLevelPackage))
-                        .setStringValue(arg.getName());
-                        break;
-                    default:
-                        break;
-                }
+                    switch (arg.getIn()) {
+                        case "path":
+                            param.addAnnotation(String.format("%s.ws.rs.PathParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                            break;
+                        case "query":
+                            param.addAnnotation(String.format("%s.ws.rs.QueryParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                            break;
+                        case "header":
+                            param.addAnnotation(String.format("%s.ws.rs.HeaderParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                            break;
+                        case "cookie":
+                            param.addAnnotation(String.format("%s.ws.rs.CookieParam", topLevelPackage))
+                            .setStringValue(arg.getName());
+                            break;
+                        default:
+                            break;
+                    }
 
-                boolean forbidNotNull = 
-                        paramType.isPrimitive() ||
-                        "path".equals(arg.getIn()) ||
-                        !arg.getRequired();
+                    boolean forbidNotNull =
+                            paramType.isPrimitive() ||
+                            "path".equals(arg.getIn()) ||
+                            !arg.getRequired();
 
-                addValidationConstraints(param, arg, forbidNotNull, topLevelPackage);
+                    addValidationConstraints(param, arg, forbidNotNull, topLevelPackage);
 
-                Optional.ofNullable(arg.getAnnotations())
+                    Optional.ofNullable(arg.getAnnotations())
                     .map(Collection::stream)
                     .orElseGet(Stream::empty)
                     .map(CodegenBeanAnnotationDirective::getAnnotation)
@@ -604,8 +611,8 @@ public class OpenApi2JaxRs {
                         AnnotationSource<?> target = param.addAnnotation(source.getQualifiedName());
                         source.getValues().forEach(value -> target.setLiteralValue(value.getName(), value.getLiteralValue()));
                     });
+                });
             });
-        });
 
         sortImports(resourceInterface);
 
@@ -804,16 +811,16 @@ public class OpenApi2JaxRs {
             BigDecimal max = new BigDecimal(schemaInfo.getMaximum().toString());
             boolean inclusive = !schemaInfo.isExclusiveMaximum();
             target.addAnnotation(String.format("%s.validation.constraints.DecimalMax", topLevelPackage))
-                .setStringValue(max.toPlainString())
-                .setLiteralValue("inclusive", String.valueOf(inclusive));
+            .setStringValue(max.toPlainString())
+            .setLiteralValue("inclusive", String.valueOf(inclusive));
         }
 
         if (schemaInfo.getMinimum() != null) {
             BigDecimal min = new BigDecimal(schemaInfo.getMinimum().toString());
             boolean inclusive = !schemaInfo.isExclusiveMinimum();
             target.addAnnotation(String.format("%s.validation.constraints.DecimalMin", topLevelPackage))
-                .setStringValue(min.toPlainString())
-                .setLiteralValue("inclusive", String.valueOf(inclusive));
+            .setStringValue(min.toPlainString())
+            .setLiteralValue("inclusive", String.valueOf(inclusive));
         }
 
         addConstraint(target, schemaInfo.getMaxLength(), sizeConstraint, "max");
@@ -842,6 +849,9 @@ public class OpenApi2JaxRs {
      */
     private void generateJavaBean(CodegenJavaBean bean, CodegenInfo info, IndexedCodeWriter codeWriter) throws IOException {
         JCodeModel codeModel = new JCodeModel();
+        String generatedBeanName = CodegenUtil.toClassName(settings, bean.getName());
+        String generatedBeanPackage = bean.getPackage();
+        String generatedBeanFQCN = generatedBeanPackage + "." + generatedBeanName;
 
         SchemaMapper schemaMapper = new SchemaMapper(
                 new JaxRsRuleFactory(config, new Jackson2Annotator(config), new SchemaStore() {
@@ -849,7 +859,7 @@ public class OpenApi2JaxRs {
                     public Schema create(Schema parent, String path, String refFragmentPathDelimiters) {
                         String beanClassname = schemaRefToFQCN(path);
                         for (CodegenJavaBean cgBean : info.getBeans()) {
-                            String cgBeanFQCN = cgBean.getPackage() + "." + StringUtils.capitalize(cgBean.getName());
+                            String cgBeanFQCN = cgBean.getPackage() + "." + CodegenUtil.toClassName(settings, cgBean.getName());
                             if (beanClassname.equals(cgBeanFQCN)) {
                                 Schema schema = new Schema(classnameToUri(beanClassname), cgBean.get$schema(), null);
                                 JType jclass = codeModel._getClass(beanClassname);
@@ -866,10 +876,10 @@ public class OpenApi2JaxRs {
                 }),
                 new SchemaGenerator());
         String source = mapper.writeValueAsString(bean.get$schema());
-        schemaMapper.generate(codeModel, bean.getName(), bean.getPackage(), source);
+        schemaMapper.generate(codeModel, generatedBeanName, generatedBeanPackage, source);
         codeModel.build(codeWriter);
 
-        String fqcn = bean.getPackage() + "." + bean.getName();
+        String fqcn = generatedBeanFQCN;
         codeWriter.indexBean(fqcn, bean);
     }
 
@@ -890,7 +900,7 @@ public class OpenApi2JaxRs {
     }
 
     protected String schemaRefToFQCN(String path) {
-        return CodegenUtil.schemaRefToFQCN(document, path, this.settings.javaPackage + ".beans");
+        return CodegenUtil.schemaRefToFQCN(settings, document, path, this.settings.javaPackage + ".beans");
     }
 
     protected String javaPackageToZipPath(String javaPackage) {

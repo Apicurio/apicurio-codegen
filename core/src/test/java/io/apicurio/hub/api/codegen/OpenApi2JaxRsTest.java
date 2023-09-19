@@ -44,6 +44,24 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
      * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
      */
     @Test
+    public void testGenerateFullPrefixed() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.no, false,
+                "_expected-full-prefixed/generated-api", "Test", "", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testGenerateFullSuffixed() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.no, false,
+                "_expected-full-suffixed/generated-api", "", "Test", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
     public void testGenerateFull_GatewayApi() throws IOException {
         doFullTest("OpenApi2JaxRsTest/gateway-api.json", UpdateOnly.no, Reactive.no, "_expected-gatewayApi-full/generated-api", false);
     }
@@ -85,7 +103,8 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
      */
     @Test
     public void testGenerateWithCLIGenCI() throws IOException {
-        doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.no, true, "_expected-full-with-ci/generated-api", false);
+        doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.no, true,
+                "_expected-full-with-ci/generated-api", "", "", false);
     }
 
     /**
@@ -195,7 +214,7 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
      * @throws IOException
      */
     private void doFullTest(String apiDef, UpdateOnly updateOnly, Reactive reactive, String expectedFilesPath, boolean debug) throws IOException {
-        doFullTest(apiDef, updateOnly, reactive, false, expectedFilesPath, debug);
+        doFullTest(apiDef, updateOnly, reactive, false, expectedFilesPath, "", "", debug);
     }
 
     /**
@@ -203,11 +222,15 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
      * @param apiDef
      * @param updateOnly
      * @param reactive
+     * @param generateCLiGenCI
      * @param expectedFilesPath
+     * @param namePrefix
+     * @param nameSuffix
      * @param debug
      * @throws IOException
      */
-    private void doFullTest(String apiDef, UpdateOnly updateOnly, Reactive reactive, boolean generateCLiGenCI, String expectedFilesPath, boolean debug) throws IOException {
+    private void doFullTest(String apiDef, UpdateOnly updateOnly, Reactive reactive, boolean generateCLiGenCI,
+            String expectedFilesPath, String namePrefix, String nameSuffix, boolean debug) throws IOException {
         JaxRsProjectSettings settings = new JaxRsProjectSettings();
         settings.codeOnly = false;
         settings.reactive = reactive == Reactive.yes;
@@ -215,6 +238,8 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
         settings.artifactId = "generated-api";
         settings.groupId = "org.example.api";
         settings.javaPackage = "org.example.api";
+        settings.classNamePrefix = namePrefix;
+        settings.classNameSuffix = nameSuffix;
 
         OpenApi2JaxRs generator = new OpenApi2JaxRs();
         generator.setSettings(settings);

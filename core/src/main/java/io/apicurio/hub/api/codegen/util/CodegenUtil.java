@@ -33,6 +33,7 @@ import io.apicurio.datamodels.models.openapi.v31.OpenApi31Document;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.models.union.StringStringListUnion;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
+import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 
 public final class CodegenUtil {
 
@@ -52,7 +53,8 @@ public final class CodegenUtil {
         return pname;
     }
 
-    public static final String schemaRefToFQCN(Document document, String schemaRef, String defaultPackage) {
+    public static final String schemaRefToFQCN(JaxRsProjectSettings settings, Document document,
+            String schemaRef, String defaultPackage) {
         String cname = "GeneratedClass_" + System.currentTimeMillis();
         String pname = defaultPackage;
         if (schemaRef.startsWith("#/components/schemas/")) {
@@ -63,7 +65,12 @@ public final class CodegenUtil {
                 pname = CodegenUtil.schemaToPackageName(definition, pname);
             }
         }
+        cname = toClassName(settings, cname);
         return pname + "." + StringUtils.capitalize(cname);
+    }
+
+    public static final String toClassName(JaxRsProjectSettings settings, String name) {
+        return settings.getClassNamePrefix() + StringUtils.capitalize(name) + settings.getClassNameSuffix();
     }
 
     public static JsonNode getExtension(Extensible node, String name) {
@@ -75,9 +82,9 @@ public final class CodegenUtil {
 
     public static List<String> toStringList(StringStringListUnion union) {
         return Optional.ofNullable(union)
-            .filter(u -> Objects.nonNull(u.unionValue()))
-            .map(u -> u.isStringList() ? u.asStringList() : new ArrayList<>(List.of(u.asString())))
-            .orElse(null);
+                .filter(u -> Objects.nonNull(u.unionValue()))
+                .map(u -> u.isStringList() ? u.asStringList() : new ArrayList<>(List.of(u.asString())))
+                .orElse(null);
     }
 
     public static boolean containsValue(StringStringListUnion union, String... values) {
