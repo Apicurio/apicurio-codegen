@@ -121,6 +121,16 @@ jobs:
           git commit -m"Automated version update: ${{ github.event.inputs.snapshot-version}}"
           git push
 
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.release-version}}
+      - uses: lakto/gren-action@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          options: '--override'
+
       - name: Google Chat Notification
         if: ${{ failure() }}
         uses: Co-qn/google-chat-notification@releases/v1
