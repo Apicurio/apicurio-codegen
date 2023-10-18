@@ -25,24 +25,9 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: '11'
           cache: maven
-
-
-      - name: Check Java Version
-        run: java -version
-
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: '3.8.2'
-
-
-      - name: Check Maven Version
-        run: mvn --version
-
 
       - name: Log Metadata
         run: |
@@ -73,11 +58,11 @@ jobs:
 
 
       - name: Update Release Version ${{ github.event.inputs.release-version }}
-        run: mvn versions:set -DnewVersion=${{ github.event.inputs.release-version }} -DgenerateBackupPoms=false -DprocessAllModules=true
+        run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.release-version }} -DgenerateBackupPoms=false -DprocessAllModules=true
 
 
       - name: Verify Build
-        run: mvn clean install
+        run: ./mvnw clean install
 
 
       - name: Commit Release Version Change
@@ -97,90 +82,13 @@ jobs:
       - name: Maven Deploy
         run: |
           # Retry 3 times before the steps actually fails
-          (echo "===== Maven Deploy Attempt: 1 ====" && mvn deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
-          (echo "===== Maven Deploy Attempt 1 Failed - Sleeping for 30 minutes ====" && sleep 30m && echo "===== Maven Deploy Attempt: 2 ====" && mvn deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
-          (echo "===== Maven Deploy Attempt 2 Failed - Sleeping for 30 minutes ====" && sleep 30m && echo "===== Maven Deploy Attempt: 3 ====" && mvn deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
+          (echo "===== Maven Deploy Attempt: 1 ====" && ./mvnw deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
+          (echo "===== Maven Deploy Attempt 1 Failed - Sleeping for 30 minutes ====" && sleep 30m && echo "===== Maven Deploy Attempt: 2 ====" && ./mvnw deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
+          (echo "===== Maven Deploy Attempt 2 Failed - Sleeping for 30 minutes ====" && sleep 30m && echo "===== Maven Deploy Attempt: 3 ====" && ./mvnw deploy -Prelease --batch-mode --settings /home/runner/.m2/settings.xml -DskipTests) || \
           (echo "==== Maven Deploy Step Failed ====" && exit 1)
 
-  build-native-binary:
-    needs: release
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        gu-binary: [gu, gu.cmd]
-        exclude:
-          - os: ubuntu-latest
-            gu-binary: gu.cmd
-          - os: macos-latest
-            gu-binary: gu.cmd
-          - os: windows-latest
-            gu-binary: gu
-    continue-on-error: true
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.branch}}
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          version: '22.2.0'
-          java-version: '11'
-          components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install native-image component
-        run: |
-          ${{ matrix.gu-binary }} install native-image
-
-      - name: 'Set up Visual C Build Tools Workload for Visual Studio 2019 Build Tools'
-        if: runner.os == 'Windows'
-        run: |
-          choco upgrade -y visualstudio2019-workload-vctools
-      - name: 'Build Native Image'
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-
-      - name: Compile to native binaries
-        run: mvn package -Pnative
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: apicurio-codegen-${{ matrix.os }}
-          path: ./cli/target/apicurio-codegen-cli-*-runner*
-          if-no-files-found: error
-
-  release-native-binaries:
-    needs: build-native-binary
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-      - name: Prepare files to release
-        run: |
-          mv ./apicurio-codegen-macos-latest/apicurio-codegen-cli-*-runner apicurio-codegen-macos
-          mv ./apicurio-codegen-ubuntu-latest/apicurio-codegen-cli-*-runner apicurio-codegen-linux
-          mv ./apicurio-codegen-windows-latest/apicurio-codegen-cli-*-runner.exe apicurio-codegen-win.exe
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.event.inputs.release-version}}
-          files: |
-            apicurio-codegen-macos
-            apicurio-codegen-linux
-            apicurio-codegen-win.exe
-      - uses: lakto/gren-action@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          options: '--override'
-
   set-next-snapshot:
-    needs: release-native-binaries
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
@@ -190,23 +98,12 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: '11'
           cache: maven
 
-      - name: Check Java Version
-        run: java -version
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: '3.8.2'
-
-      - name: Check Maven Version
-        run: mvn --version
-
       - name: Update Snapshot version ${{ github.event.inputs.snapshot-version}}
-        run: mvn versions:set -DnewVersion=${{ github.event.inputs.snapshot-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
+        run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.snapshot-version}} -DgenerateBackupPoms=false -DprocessAllModules=true
 
       - name: Configure Git
         run: |

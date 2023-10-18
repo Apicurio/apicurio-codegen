@@ -37,6 +37,20 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2Quarkus#generate()}.
      */
     @Test
+    public void testGenerateFullDifferentNamespace() throws IOException {
+        OpenApi2Quarkus generator = new OpenApi2Quarkus();
+        generator.setUpdateOnly(false);
+        generator.setOpenApiDocument(getClass().getClassLoader().getResource("OpenApi2QuarkusTest/apicurio-registry.json"));
+        var settings = new JaxRsProjectSettings();
+        settings.javaPackage = "my.other.pkg";
+        generator.setSettings(settings);
+        super.doFullTest(generator, "_expected-full-different-ns/generated-api", true);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2Quarkus#generate()}.
+     */
+    @Test
     public void testGitHubApisFull() throws IOException {
         doFullTest("OpenApi2QuarkusTest/github-apis-deref.json", false, "_expected-github/generated-api", false);
     }

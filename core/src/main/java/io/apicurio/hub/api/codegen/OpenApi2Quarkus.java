@@ -43,6 +43,11 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
         super();
     }
 
+    @Override
+    protected String getResourceName(String name) {
+        return "_OpenApi2Quarkus/" + name; // simpleName fails in the tests with Java 17
+    }
+
     /**
      * @see io.apicurio.hub.api.codegen.OpenApi2JaxRs#generateAll(io.apicurio.hub.api.codegen.beans.CodegenInfo, java.lang.StringBuilder, java.util.zip.ZipOutputStream)
      */
