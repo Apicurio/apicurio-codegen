@@ -30,7 +30,21 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      */
     @Test
     public void testGenerateFull() throws IOException {
-        doFullTest("OpenApi2QuarkusTest/beer-api.json", false, "_expected-full/generated-api", false);
+        doFullTest("OpenApi2QuarkusTest/beer-api.json", false, "_expected-full/generated-api-" + Runtime.version().major(), false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2Quarkus#generate()}.
+     */
+    @Test
+    public void testGenerateFullDifferentNamespace() throws IOException {
+        OpenApi2Quarkus generator = new OpenApi2Quarkus();
+        generator.setUpdateOnly(false);
+        generator.setOpenApiDocument(getClass().getClassLoader().getResource("OpenApi2QuarkusTest/apicurio-registry.json"));
+        var settings = new JaxRsProjectSettings();
+        settings.javaPackage = "my.other.pkg";
+        generator.setSettings(settings);
+        super.doFullTest(generator, "_expected-full-different-ns/generated-api-" + Runtime.version().major(), false);
     }
 
     /**
@@ -38,7 +52,7 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      */
     @Test
     public void testGitHubApisFull() throws IOException {
-        doFullTest("OpenApi2QuarkusTest/github-apis-deref.json", false, "_expected-github/generated-api", false);
+        doFullTest("OpenApi2QuarkusTest/github-apis-deref.json", false, "_expected-github/generated-api-" + Runtime.version().major(), false);
     }
 
     /**
@@ -46,7 +60,7 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      */
     @Test
     public void testStrimziKafkaBridge() throws IOException {
-        doFullTest("OpenApi2QuarkusTest/strimzi-kafka-bridge.json", false, "_expected-strimzi-kafka-bridge/generated-api", false);
+        doFullTest("OpenApi2QuarkusTest/strimzi-kafka-bridge.json", false, "_expected-strimzi-kafka-bridge/generated-api-" + Runtime.version().major(), false);
     }
 
     /**

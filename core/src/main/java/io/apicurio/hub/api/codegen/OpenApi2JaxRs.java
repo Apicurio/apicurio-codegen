@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -241,6 +242,8 @@ public class OpenApi2JaxRs {
                 zipOutput.putNextEntry(new ZipEntry("pom.xml"));
                 zipOutput.write(pomXml.getBytes(utf8));
                 zipOutput.closeEntry();
+            } else {
+                throw new IllegalArgumentException("generated pom.xml content is null");
             }
         }
 
@@ -434,6 +437,7 @@ public class OpenApi2JaxRs {
      */
     protected String generatePomXml(CodegenInfo info) throws IOException {
         String template = IOUtils.toString(getResource("pom.xml"), Charset.forName("UTF-8"));
+
         return template.replace("__GROUP_ID__", this.settings.groupId)
                 .replace("_" + getClass().getSimpleName(), this.settings.artifactId)
                 .replace("__VERSION__", info.getVersion())
