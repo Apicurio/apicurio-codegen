@@ -3,7 +3,6 @@ package my.other.pkg.beans;
 
 import java.util.Date;
 import javax.annotation.processing.Generated;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -37,7 +36,6 @@ public class SystemInfo {
     private String description;
     @JsonProperty("version")
     private String version;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @JsonProperty("builtOn")
     private Date builtOn;
 

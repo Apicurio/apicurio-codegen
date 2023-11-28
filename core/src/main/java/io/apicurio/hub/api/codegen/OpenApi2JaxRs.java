@@ -47,6 +47,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.lang.model.SourceVersion;
 
+import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JFieldVar;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.commonmark.parser.Parser;
@@ -131,6 +133,11 @@ public class OpenApi2JaxRs {
 
         @Override
         public boolean isIncludeToString() {
+            return false;
+        }
+
+        @Override
+        public boolean isFormatDateTimes() {
             return false;
         }
     };
@@ -858,7 +865,7 @@ public class OpenApi2JaxRs {
         String generatedBeanFQCN = generatedBeanPackage + "." + generatedBeanName;
 
         SchemaMapper schemaMapper = new SchemaMapper(
-                new JaxRsRuleFactory(config, new Jackson2Annotator(config), new SchemaStore() {
+                new JaxRsRuleFactory(config, new JaxRsJackson2Annotator(info, config), new SchemaStore() {
                     @Override
                     public Schema create(Schema parent, String path, String refFragmentPathDelimiters) {
                         String beanClassname = schemaRefToFQCN(path);
@@ -993,4 +1000,23 @@ public class OpenApi2JaxRs {
         }
     }
 
+    public static class JaxRsJackson2Annotator extends Jackson2Annotator {
+
+        private CodegenInfo codegenInfo;
+
+        /**
+         * Constructor.
+         */
+        public JaxRsJackson2Annotator(CodegenInfo codegenInfo, GenerationConfig generationConfig) {
+            super(generationConfig);
+            this.codegenInfo = codegenInfo;
+        }
+
+        @Override
+        public void dateTimeField(JFieldVar field, JDefinedClass clazz, JsonNode node) {
+            if (!codegenInfo.getSuppressDateTimeFormats()) {
+                super.dateTimeField(field, clazz, node);
+            }
+        }
+    }
 }

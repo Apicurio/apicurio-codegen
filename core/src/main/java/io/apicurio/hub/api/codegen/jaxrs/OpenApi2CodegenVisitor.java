@@ -404,6 +404,12 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         if (cr != null) {
             this.codegenInfo.setContextRoot(cr);
         }
+
+        //process suppress date-time formats
+        Boolean suppressDateTimeFormat = (Boolean) codegen.get("suppress-date-time-formatting");
+        if (suppressDateTimeFormat != null) {
+            this.codegenInfo.setSuppressDateTimeFormats(suppressDateTimeFormat);
+        }
     }
 
     /**
