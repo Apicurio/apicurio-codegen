@@ -31,6 +31,7 @@ public class CodegenInfo {
     private List<CodegenJavaBean> beans = new ArrayList<>();
     private String contextRoot = "";
     private List<CodegenBeanAnnotationDirective> beanAnnotations = new ArrayList<>();
+    private Boolean suppressDateTimeFormats = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -136,4 +137,11 @@ public class CodegenInfo {
         this.beanAnnotations = beanAnnotations;
     }
 
+    public Boolean getSuppressDateTimeFormats() {
+        return suppressDateTimeFormats;
+    }
+
+    public void setSuppressDateTimeFormats(Boolean suppressDateTimeFormats) {
+        this.suppressDateTimeFormats = suppressDateTimeFormats;
+    }
 }

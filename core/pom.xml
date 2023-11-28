@@ -9,7 +9,7 @@
     <parent>
         <groupId>io.apicurio</groupId>
         <artifactId>apicurio-codegen-parent</artifactId>
-        <version>1.0.13</version>
+        <version>1.1.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -129,13 +129,6 @@
             <groupId>com.sun.codemodel</groupId>
             <artifactId>codemodel</artifactId>
             <version>${version.com.sun.codemodel}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ws.jboss-jaxrs-api_2.1_spec}
-            </version>
         </dependency>
 
         <dependency>

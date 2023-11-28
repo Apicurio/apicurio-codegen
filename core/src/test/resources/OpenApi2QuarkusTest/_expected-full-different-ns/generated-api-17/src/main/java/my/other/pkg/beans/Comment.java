@@ -3,7 +3,6 @@ package my.other.pkg.beans;
 
 import java.util.Date;
 import javax.annotation.processing.Generated;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -40,11 +39,10 @@ public class Comment {
     @JsonProperty("value")
     private String value;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     @JsonProperty("createdOn")
     private Date createdOn;
     /**
