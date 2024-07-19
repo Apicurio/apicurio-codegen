@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -552,16 +551,19 @@ public class OpenApi2JaxRs {
                 reactive = Boolean.TRUE.equals(methodInfo.getAsync());
             }
 
+            final String genericReturnType = getSettings().genericReturnType;
+
             Optional.ofNullable(methodInfo.getReturn())
                 .map(rt -> generateTypeName(
                         rt,
                         true,
                         String.format("%s.ws.rs.core.Response", topLevelPackage)))
+                .map(rt -> generateGenericReturnType(rt, genericReturnType))
                 .map(rt -> reactive ? generateReactiveTypeName(rt) : rt)
                 .map(Object::toString)
                 .ifPresentOrElse(
                         operationMethod::setReturnType,
-                        () -> setVoidReturnType(operationMethod, reactive));
+                        () -> setVoidReturnType(operationMethod, reactive, genericReturnType));
 
             Optional.ofNullable(methodInfo.getArguments())
                 .map(Collection::stream)
@@ -751,12 +753,17 @@ public class OpenApi2JaxRs {
         return parseType(defaultType);
     }
 
-    protected void setVoidReturnType(MethodSource<JavaInterfaceSource> operationMethod, boolean reactive) {
-        if (reactive) {
-            operationMethod.setReturnType(generateReactiveTypeName(VOID));
-        } else {
-            operationMethod.setReturnTypeVoid();
-        }
+    protected void setVoidReturnType(MethodSource<JavaInterfaceSource> operationMethod, boolean reactive, String genericReturnType) {
+        Optional.of(VOID)
+            .map(type -> generateGenericReturnType(type, genericReturnType))
+            .map(type -> reactive ? generateReactiveTypeName(type) : type)
+            .ifPresent(type -> {
+                if (type != VOID) {
+                    operationMethod.setReturnType(type);
+                } else {
+                    operationMethod.setReturnTypeVoid();
+                }
+            });
     }
 
     /**
@@ -767,6 +774,19 @@ public class OpenApi2JaxRs {
      */
     protected Type<?> generateReactiveTypeName(Type<?> coreType) {
         return parseType(String.format("java.util.concurrent.CompletionStage<%s>", coreType.toString()));
+    }
+
+    /**
+     * Generates the generic type wrapping response type.
+     *
+     * @param coreType
+     * @param genericReturnType
+     */
+    private Type<?> generateGenericReturnType(Type<?> coreType, String genericReturnType) {
+        if (genericReturnType == null) {
+            return coreType;
+        }
+        return parseType(String.format("%s<%s>", genericReturnType, coreType.toString()));
     }
 
     /**
