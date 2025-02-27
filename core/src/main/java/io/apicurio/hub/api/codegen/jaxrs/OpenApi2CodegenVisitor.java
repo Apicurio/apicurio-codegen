@@ -243,7 +243,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             .flatMap(Stream::findFirst)
             .map(OpenApi31MediaType::getSchema)
             .map(OpenApi31Schema.class::cast)
-            .or(() -> Optional.ofNullable((OpenApi31Schema) node.getSchema()))
+            .or(() -> Optional.ofNullable((OpenApi31Schema) ((OpenApi31Parameter) node).getSchema()))
             .ifPresent(schema -> {
                 setSchemaProperties(cgArgument, schema);
                 cgArgument.setTypeSignature(createSignature(schema));
