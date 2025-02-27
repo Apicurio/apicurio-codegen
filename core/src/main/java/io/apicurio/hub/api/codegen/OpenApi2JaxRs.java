@@ -109,6 +109,7 @@ import io.apicurio.hub.api.codegen.util.IndexedCodeWriter;
 public class OpenApi2JaxRs {
 
     static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
+    static final String OPENAPI_OPERATION_ANNOTATION = "org.eclipse.microprofile.openapi.annotations.Operation";
 
     protected static ObjectMapper mapper = new ObjectMapper();
     protected static Charset utf8 = StandardCharsets.UTF_8;
@@ -146,6 +147,7 @@ public class OpenApi2JaxRs {
     protected transient Document document;
     protected JaxRsProjectSettings settings;
     protected boolean updateOnly;
+    protected boolean generatesOpenApi = true;
 
     /**
      * Constructor.
@@ -197,6 +199,17 @@ public class OpenApi2JaxRs {
      */
     public void setOpenApiDocument(InputStream stream) throws IOException {
         this.openApiDoc = IOUtils.toString(stream, utf8);
+    }
+
+    /**
+     * Sets the generatesOpenApi property.
+     * <p>
+     * The {@code generatesOpenApi} defines if
+     * the generator generates or not Microprofile OpenAPI annotations.
+     * @param generatesOpenApi whether generates Microprofile OpenAPI annotations or not.
+     */
+    public void setGeneratesOpenApi(boolean generatesOpenApi) {
+        this.generatesOpenApi = generatesOpenApi;
     }
 
     /**
@@ -526,7 +539,36 @@ public class OpenApi2JaxRs {
             Optional.ofNullable(methodInfo.getDescription()).ifPresent(description -> {
                 operationMethod.getJavaDoc()
                     .setFullText(htmlRenderer.render(markdownParser.parse(description)));
+
+                if (generatesOpenApi) {
+                    operationMethod.addAnnotation(OPENAPI_OPERATION_ANNOTATION)
+                          .setStringValue("description", description);
+                }
+
             });
+
+            if (generatesOpenApi) {
+                Optional.ofNullable(methodInfo.getSummary()).ifPresent(summary -> {
+                    AnnotationSource<JavaInterfaceSource> annotation = operationMethod.getAnnotation(
+                          OPENAPI_OPERATION_ANNOTATION);
+                    if (annotation == null) {
+                        operationMethod.addAnnotation(OPENAPI_OPERATION_ANNOTATION).setStringValue("summary", summary);
+                    } else {
+                        annotation.setStringValue("summary", summary);
+                    }
+                });
+
+                Optional.ofNullable(methodInfo.getOperationId()).ifPresent(operationId -> {
+                    AnnotationSource<JavaInterfaceSource> annotation = operationMethod.getAnnotation(
+                          OPENAPI_OPERATION_ANNOTATION);
+                    if (annotation == null) {
+                        operationMethod.addAnnotation(OPENAPI_OPERATION_ANNOTATION).setStringValue("operationId", operationId);
+                    } else {
+                        annotation.setStringValue("operationId", operationId);
+                    }
+                });
+            }
+
 
             Optional.ofNullable(methodInfo.getPath()).ifPresent(path ->
             operationMethod.addAnnotation(String.format("%s.ws.rs.Path", topLevelPackage)).setStringValue(path));

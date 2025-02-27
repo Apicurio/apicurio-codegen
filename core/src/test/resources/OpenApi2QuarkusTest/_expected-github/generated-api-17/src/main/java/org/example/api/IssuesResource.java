@@ -7,6 +7,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import java.math.BigInteger;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -33,8 +34,9 @@ public interface IssuesResource {
    * "https://developer.github.com/v3/pulls/#list-pull-requests">List pull
    * requests</a>&quot; endpoint.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List issues assigned to the authenticated user across all visible repositories including owned repositories, member\nrepositories, and organization repositories. You can use the `filter` query parameter to fetch issues that are not\nnecessarily assigned to you. See the [Parameters table](https://developer.github.com/v3/issues/#parameters) for more\ninformation.\n\n\n**Note**: GitHub's REST API v3 considers every pull request an issue, but not every issue is a pull request. For this\nreason, \"Issues\" endpoints may return both issues and pull requests in the response. You can identify pull requests by\nthe `pull_request` key. Be aware that the `id` of a pull request returned from \"Issues\" endpoints will be an _issue id_. To find out the pull\nrequest id, use the \"[List pull requests](https://developer.github.com/v3/pulls/#list-pull-requests)\" endpoint.", summary = "List issues assigned to the authenticated user", operationId = "issues/list")
   @GET
   @Produces("application/json")
   Response issues_list(@QueryParam("filter") @DefaultValue("assigned") String filter,

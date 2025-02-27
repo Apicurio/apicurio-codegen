@@ -12,12 +12,14 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import java.math.BigInteger;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
  */
 @Path("/widget-names")
 public interface WidgetResource {
+  @Operation(operationId = "getWidgetNames")
   @GET
   @Produces("application/json")
   List<String> getWidgetNames(

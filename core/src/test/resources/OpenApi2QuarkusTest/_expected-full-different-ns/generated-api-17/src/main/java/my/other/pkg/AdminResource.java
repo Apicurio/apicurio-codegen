@@ -21,6 +21,7 @@ import my.other.pkg.beans.RoleMapping;
 import my.other.pkg.beans.Rule;
 import my.other.pkg.beans.UpdateConfigurationProperty;
 import my.other.pkg.beans.UpdateRole;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -37,8 +38,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets a list of all the configured artifact types.\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List artifact types", operationId = "listArtifactTypes")
   @Path("/artifactTypes")
   @GET
   @Produces("application/json")
@@ -54,8 +56,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets a list of all the currently configured global rules (if any).\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List global rules", operationId = "listGlobalRules")
   @Path("/rules")
   @GET
   @Produces("application/json")
@@ -73,8 +76,9 @@ public interface AdminResource {
    * <li>The rule already exists (HTTP error <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Adds a rule to the list of globally configured rules.\n\nThis operation can fail for the following reasons:\n\n* The rule type is unknown (HTTP error `400`)\n* The rule already exists (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create global rule", operationId = "createGlobalRule")
   @Path("/rules")
   @POST
   @Consumes("application/json")
@@ -90,8 +94,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes all globally configured rules.\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "Delete all global rules", operationId = "deleteAllGlobalRules")
   @Path("/rules")
   @DELETE
   void deleteAllGlobalRules();
@@ -109,8 +114,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns information about the named globally configured rule.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get global rule configuration", operationId = "getGlobalRuleConfig")
   @Path("/rules/{rule}")
   @GET
   @Produces("application/json")
@@ -129,8 +135,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the configuration for a globally configured rule.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update global rule configuration", operationId = "updateGlobalRuleConfig")
   @Path("/rules/{rule}")
   @PUT
   @Produces("application/json")
@@ -152,8 +159,9 @@ public interface AdminResource {
    * <li>Rule cannot be deleted (HTTP error <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a single global rule.  If this is the only rule configured, this is the same\nas deleting **all** rules.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* Rule cannot be deleted (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete global rule", operationId = "deleteGlobalRule")
   @Path("/rules/{rule}")
   @DELETE
   void deleteGlobalRule(@PathParam("rule") RuleType rule);
@@ -162,8 +170,9 @@ public interface AdminResource {
    * <p>
    * Exports registry data as a ZIP archive.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Exports registry data as a ZIP archive.", summary = "Export registry data", operationId = "exportData")
   @Path("/export")
   @GET
   @Produces({"application/json", "application/zip"})
@@ -174,8 +183,9 @@ public interface AdminResource {
    * Imports registry data that was previously exported using the
    * <code>/admin/export</code> operation.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Imports registry data that was previously exported using the `/admin/export` operation.", summary = "Import registry data", operationId = "importData")
   @Path("/import")
   @POST
   @Consumes("application/zip")
@@ -194,8 +204,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the details of a single role mapping (by `principalId`).\n\nThis operation can fail for the following reasons:\n\n* No role mapping for the `principalId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Return a single role mapping", operationId = "getRoleMapping")
   @Path("/roleMappings/{principalId}")
   @GET
   @Produces("application/json")
@@ -213,8 +224,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates a single role mapping for one user/principal.\n\nThis operation can fail for the following reasons:\n\n* No role mapping for the principalId exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update a role mapping", operationId = "updateRoleMapping")
   @Path("/roleMappings/{principalId}")
   @PUT
   @Consumes("application/json")
@@ -233,8 +245,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a single role mapping, effectively denying access to a user/principal.\n\nThis operation can fail for the following reasons:\n\n* No role mapping for the principalId exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete a role mapping", operationId = "deleteRoleMapping")
   @Path("/roleMappings/{principalId}")
   @DELETE
   void deleteRoleMapping(@PathParam("principalId") String principalId);
@@ -249,8 +262,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets a list of all role mappings configured in the registry (if any).\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List all role mappings", operationId = "listRoleMappings")
   @Path("/roleMappings")
   @GET
   @Produces("application/json")
@@ -266,8 +280,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new mapping between a user/principal and a role.\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n\n", summary = "Create a new role mapping", operationId = "createRoleMapping")
   @Path("/roleMappings")
   @POST
   @Consumes("application/json")
@@ -284,8 +299,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all configuration properties that have been set.  The list is not paged.\n\nThis operation may fail for one of the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List all configuration properties", operationId = "listConfigProperties")
   @Path("/config/properties")
   @GET
   @Produces("application/json")
@@ -302,8 +318,9 @@ public interface AdminResource {
    * <li>Property not found or not configured (HTTP error <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns the value of a single configuration property.\n\nThis operation may fail for one of the following reasons:\n\n* Property not found or not configured (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get configuration property value", operationId = "getConfigProperty")
   @Path("/config/properties/{propertyName}")
   @GET
   @Produces("application/json")
@@ -320,8 +337,9 @@ public interface AdminResource {
    * <li>Property not found or not configured (HTTP error <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the value of a single configuration property.\n\nThis operation may fail for one of the following reasons:\n\n* Property not found or not configured (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update a configuration property", operationId = "updateConfigProperty")
   @Path("/config/properties/{propertyName}")
   @PUT
   @Consumes("application/json")
@@ -340,8 +358,9 @@ public interface AdminResource {
    * <li>Property not found or not configured (HTTP error <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Resets the value of a single configuration property.  This will return the property to\nits default value (see external documentation for supported properties and their default\nvalues).\n\nThis operation may fail for one of the following reasons:\n\n* Property not found or not configured (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Reset a configuration property", operationId = "resetConfigProperty")
   @Path("/config/properties/{propertyName}")
   @DELETE
   void resetConfigProperty(@PathParam("propertyName") String propertyName);

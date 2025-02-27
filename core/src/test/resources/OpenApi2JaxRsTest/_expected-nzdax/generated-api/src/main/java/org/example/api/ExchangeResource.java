@@ -11,6 +11,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import java.math.BigDecimal;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.AccessToken;
 import org.example.api.beans.BalanceResponse;
 import org.example.api.beans.Exchange;
@@ -33,8 +34,9 @@ public interface ExchangeResource {
    * Retreives the current exchange connection details given the {exchangeName}
    * and access token in the header
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Retreives the current exchange connection details given the {exchangeName} and access token in the header", operationId = "getConnection")
   @Path("/{exchangeName}")
   @GET
   @Produces("application/json")
@@ -44,8 +46,9 @@ public interface ExchangeResource {
    * <p>
    * Creates a private connection to the exchange referenced in {exchangeName}
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Creates a private connection to the exchange referenced in {exchangeName}", operationId = "createPrivateConnection")
   @Path("/{exchangeName}")
   @POST
   @Produces("application/json")
@@ -56,8 +59,9 @@ public interface ExchangeResource {
    * <p>
    * Delete the exchange connection referenced by access token in the header
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Delete the exchange connection referenced by access token in the header", operationId = "deletePrivateConnection")
   @Path("/{exchangeName}")
   @DELETE
   @Produces("application/json")
@@ -72,8 +76,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the markets of the exchange referenced by the {exchangeName}.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "markets")
   @Path("/{exchangeName}/markets")
   @GET
   @Produces("application/json")
@@ -89,8 +94,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the order book of the exchange referenced by the {exchangeName} and `?symbol=`. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "orderBook")
   @Path("/{exchangeName}/orderBook")
   @GET
   @Produces("application/json")
@@ -108,8 +114,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the Level 2 Order Book of the exchange referenced by the {exchangeName} and `?symbol=`.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "l2OrderBook")
   @Path("/{exchangeName}/l2OrderBook")
   @GET
   @Produces("application/json")
@@ -127,8 +134,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the trades of the exchange referenced by the {exchangeName} and `?symbol=`.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "trades")
   @Path("/{exchangeName}/trades")
   @GET
   @Produces("application/json")
@@ -146,8 +154,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the ticker of the exchange referenced by the {exchangeName} and `?symbol=`.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "ticker")
   @Path("/{exchangeName}/ticker")
   @GET
   @Produces("application/json")
@@ -165,8 +174,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the tickers of the exchange referenced by the {exchangeName} and `?symbol=`.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "tickers")
   @Path("/{exchangeName}/tickers")
   @GET
   @Produces("application/json")
@@ -182,8 +192,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the balances of the exchange referenced by the {exchangeName}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "balances")
   @Path("/{exchangeName}/balances")
   @GET
   @Produces("application/json")
@@ -199,8 +210,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the orders of the exchange referenced by the {exchangeName}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "fetchOrders")
   @Path("/{exchangeName}/orders")
   @GET
   @Produces("application/json")
@@ -217,8 +229,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the open orders of the exchange referenced by the {exchangeName}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "fetchOpenOrders")
   @Path("/{exchangeName}/orders/open")
   @GET
   @Produces("application/json")
@@ -235,8 +248,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get the closed orders of the exchange referenced by the {exchangeName}.\n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "fetchClosedOrders")
   @Path("/{exchangeName}/orders/closed")
   @GET
   @Produces("application/json")
@@ -253,8 +267,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get my trades of the exchange referenced by the {exchangeName}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "fetchMyTrades")
   @Path("/{exchangeName}/trades/mine")
   @GET
   @Produces("application/json")
@@ -266,8 +281,9 @@ public interface ExchangeResource {
    * <p>
    * Create an order on the exchange referenced by the {exchangeName}
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Create an order on the exchange referenced by the {exchangeName}", operationId = "createOrder")
   @Path("/{exchangeName}/order")
   @POST
   @Produces("application/json")
@@ -284,8 +300,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Retrieves the information of an order on the exchange referenced by the {exchangeName} and {orderId}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "fetchOrder")
   @Path("/{exchangeName}/order/{orderId}")
   @GET
   @Produces("application/json")
@@ -302,8 +319,9 @@ public interface ExchangeResource {
    * <em>Parameters listed here are common to all exchanges. But any other
    * parameter passed would be forwarded as well into the exchange.</em>
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Cancel an open order on the exchange referenced by the {exchangeName} and {orderId}. \n\n<br/> *Parameters listed here are common to all exchanges. But any other parameter passed would be forwarded as well into the exchange.*", operationId = "cancelOrder")
   @Path("/{exchangeName}/order/{orderId}")
   @DELETE
   @Produces("application/json")

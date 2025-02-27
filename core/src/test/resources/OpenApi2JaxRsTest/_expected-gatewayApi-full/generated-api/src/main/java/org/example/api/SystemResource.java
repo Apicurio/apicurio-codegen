@@ -3,6 +3,7 @@ package org.example.api;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.SystemStatus;
 
 /**
@@ -17,8 +18,9 @@ public interface SystemResource {
    * that provided auth credentials are correct, and/or the auth server is
    * reachable (if applicable).
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Get current gateway status. Useful for determining whether a given gateway is responding correctly (routing, finished booting, error, etc) and verifying that provided auth credentials are correct, and/or the auth server is reachable (if applicable).", summary = "Get gateway status")
   @Path("/status")
   @GET
   @Produces("application/json")

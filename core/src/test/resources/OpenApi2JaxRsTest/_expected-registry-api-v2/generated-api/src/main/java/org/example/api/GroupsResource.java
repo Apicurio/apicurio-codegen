@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.ArtifactMetaData;
 import org.example.api.beans.ArtifactSearchResults;
 import org.example.api.beans.EditableMetaData;
@@ -49,8 +50,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns the latest version of the artifact in its raw form.  The `Content-Type` of the\nresponse depends on the artifact type.  In most cases, this is `application/json`, but \nfor some types it may be different (for example, `PROTOBUF`).\n\nThis operation may fail for one of the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get latest artifact", operationId = "getLatestArtifact")
   @Path("/{groupId}/artifacts/{artifactId}")
   @GET
   @Produces({"application/json", "application/graphql", "application/x-protobuf", "application/x-protobuffer"})
@@ -82,8 +84,9 @@ public interface GroupsResource {
    * When successful, this creates a new version of the artifact, making it the
    * most recent (and therefore official) version of the artifact.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Updates an artifact by uploading new content.  The body of the request should\nbe the raw content of the artifact.  This is typically in JSON format for *most*\nof the supported types, but may be in another format for a few (for example, `PROTOBUF`).\nThe type of the content should be compatible with the artifact's type (it would be\nan error to update an `AVRO` artifact with new `OPENAPI` content, for example).\n\nThe update could fail for a number of reasons including:\n\n* Provided content (request body) was empty (HTTP error `400`)\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* The new content violates one of the rules configured for the artifact (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n\nWhen successful, this creates a new version of the artifact, making it the most recent\n(and therefore official) version of the artifact.", summary = "Update artifact", operationId = "updateArtifact")
   @Path("/{groupId}/artifacts/{artifactId}")
   @PUT
   @Produces("application/json")
@@ -101,8 +104,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes an artifact completely, resulting in all versions of the artifact also being\ndeleted.  This may fail for one of the following reasons:\n\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Delete artifact", operationId = "deleteArtifact")
   @Path("/{groupId}/artifacts/{artifactId}")
   @DELETE
   void deleteArtifact(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId);
@@ -121,8 +125,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the metadata for an artifact in the registry.  The returned metadata includes\nboth generated (read-only) and editable metadata (such as name and description).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Get artifact metadata", operationId = "getArtifactMetaData")
   @Path("/{groupId}/artifacts/{artifactId}/meta")
   @GET
   @Produces("application/json")
@@ -143,8 +148,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the editable parts of the artifact's metadata.  Not all metadata fields can\nbe updated.  For example, `createdOn` and `createdBy` are both read-only properties.\n\nThis operation can fail for the following reasons:\n\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Update artifact metadata", operationId = "updateArtifactMetaData")
   @Path("/{groupId}/artifacts/{artifactId}/meta")
   @PUT
   @Consumes("*/*")
@@ -169,8 +175,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the metadata for an artifact that matches the raw content.  Searches the registry\nfor a version of the given artifact matching the content provided in the body of the\nPOST.\n\nThis operation can fail for the following reasons:\n\n* Provided content (request body) was empty (HTTP error `400`)\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* No artifact version matching the provided content exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact version metadata by content", operationId = "getArtifactVersionMetaDataByContent")
   @Path("/{groupId}/artifacts/{artifactId}/meta")
   @POST
   @Produces("application/json")
@@ -195,8 +202,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all rules configured for the artifact.  The set of rules determines\nhow the content of an artifact can evolve over time.  If no rules are configured for\nan artifact, the set of globally configured rules are used.  If no global rules \nare defined, there are no restrictions on content evolution.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "List artifact rules", operationId = "listArtifactRules")
   @Path("/{groupId}/artifacts/{artifactId}/rules")
   @GET
   @Produces("application/json")
@@ -218,8 +226,9 @@ public interface GroupsResource {
    * <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Adds a rule to the list of rules that get applied to the artifact when adding new\nversions.  All configured rules must pass to successfully add a new artifact version.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* Rule (named in the request body) is unknown (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Create artifact rule", operationId = "createArtifactRule")
   @Path("/{groupId}/artifacts/{artifactId}/rules")
   @POST
   @Consumes("application/json")
@@ -239,8 +248,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes all of the rules configured for the artifact.  After this is done, the global\nrules apply to the artifact again.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Delete artifact rules", operationId = "deleteArtifactRules")
   @Path("/{groupId}/artifacts/{artifactId}/rules")
   @DELETE
   void deleteArtifactRules(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId);
@@ -262,8 +272,9 @@ public interface GroupsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns information about a single rule configured for an artifact.  This is useful\nwhen you want to know what the current configuration settings are for a specific rule.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Get artifact rule configuration", operationId = "getArtifactRuleConfig")
   @Path("/{groupId}/artifacts/{artifactId}/rules/{rule}")
   @GET
   @Produces("application/json")
@@ -288,8 +299,9 @@ public interface GroupsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the configuration of a single rule for the artifact.  The configuration data\nis specific to each rule type, so the configuration of the `COMPATIBILITY` rule \nis in a different format from the configuration of the `VALIDITY` rule.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update artifact rule configuration", operationId = "updateArtifactRuleConfig")
   @Path("/{groupId}/artifacts/{artifactId}/rules/{rule}")
   @PUT
   @Produces("application/json")
@@ -315,8 +327,9 @@ public interface GroupsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a rule from the artifact.  This results in the rule no longer applying for\nthis artifact.  If this is the only rule configured for the artifact, this is the \nsame as deleting **all** rules, and the globally configured rules now apply to\nthis artifact.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Delete artifact rule", operationId = "deleteArtifactRule")
   @Path("/{groupId}/artifacts/{artifactId}/rules/{rule}")
   @DELETE
   void deleteArtifactRule(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
@@ -337,8 +350,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the state of the artifact.  For example, you can use this to mark the latest\nversion of an artifact as `DEPRECATED`.  The operation changes the state of the latest \nversion of the artifact.  If multiple versions exist, only the most recent is changed.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update artifact state", operationId = "updateArtifactState")
   @Path("/{groupId}/artifacts/{artifactId}/state")
   @PUT
   @Consumes("application/json")
@@ -377,8 +391,9 @@ public interface GroupsResource {
    * configured content rules for the artifact (or the global rules if no artifact
    * rules are enabled).
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Tests whether an update to the artifact's content *would* succeed for the provided content.\nUltimately, this applies any rules configured for the artifact against the given content\nto determine whether the rules would pass or fail, but without actually updating the artifact\ncontent.\n\nThe body of the request should be the raw content of the artifact.  This is typically in \nJSON format for *most* of the supported types, but may be in another format for a few \n(for example, `PROTOBUF`).\n\nThe update could fail for a number of reasons including:\n\n* Provided content (request body) was empty (HTTP error `400`)\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* The new content violates one of the rules configured for the artifact (HTTP error `409`)\n* The provided artifact type is not recognized (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n\nWhen successful, this operation simply returns a *No Content* response.  This response\nindicates that the content is valid against the configured content rules for the \nartifact (or the global rules if no artifact rules are enabled).", summary = "Test update artifact", operationId = "testUpdateArtifact")
   @Path("/{groupId}/artifacts/{artifactId}/test")
   @PUT
   @Consumes("*/*")
@@ -403,8 +418,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Retrieves a single version of the artifact content.  Both the `artifactId` and the\nunique `version` number must be provided.  The `Content-Type` of the response depends \non the artifact type.  In most cases, this is `application/json`, but for some types \nit may be different (for example, `PROTOBUF`).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact version", operationId = "getArtifactVersion")
   @Path("/{groupId}/artifacts/{artifactId}/versions/{version}")
   @GET
   @Produces({"application/json", "application/graphql", "application/x-protobuf", "application/x-protobuffer"})
@@ -428,8 +444,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Retrieves the metadata for a single version of the artifact.  The version metadata is \na subset of the artifact metadata and only includes the metadata that is specific to\nthe version (for example, this doesn't include `modifiedOn`).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact version metadata", operationId = "getArtifactVersionMetaData")
   @Path("/{groupId}/artifacts/{artifactId}/versions/{version}/meta")
   @GET
   @Produces("application/json")
@@ -452,8 +469,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the user-editable portion of the artifact version's metadata.  Only some of \nthe metadata fields are editable by the user.  For example, `description` is editable, \nbut `createdOn` is not.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update artifact version metadata", operationId = "updateArtifactVersionMetaData")
   @Path("/{groupId}/artifacts/{artifactId}/versions/{version}/meta")
   @PUT
   @Consumes("application/json")
@@ -475,8 +493,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes the user-editable metadata properties of the artifact version.  Any properties\nthat are not user-editable are preserved.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete artifact version metadata", operationId = "deleteArtifactVersionMetaData")
   @Path("/{groupId}/artifacts/{artifactId}/versions/{version}/meta")
   @DELETE
   void deleteArtifactVersionMetaData(@PathParam("groupId") String groupId, @PathParam("artifactId") String artifactId,
@@ -497,8 +516,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the state of a specific version of an artifact.  For example, you can use \nthis operation to disable a specific version.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update artifact version state", operationId = "updateArtifactVersionState")
   @Path("/{groupId}/artifacts/{artifactId}/versions/{version}/state")
   @PUT
   @Consumes("application/json")
@@ -517,8 +537,9 @@ public interface GroupsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all versions of the artifact.  The result set is paged.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "List artifact versions", operationId = "listArtifactVersions")
   @Path("/{groupId}/artifacts/{artifactId}/versions")
   @GET
   @Produces("application/json")
@@ -551,8 +572,9 @@ public interface GroupsResource {
    * (HTTP error <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new version of the artifact by uploading new content.  The configured rules for\nthe artifact are applied, and if they all pass, the new content is added as the most recent \nversion of the artifact.  If any of the rules fail, an error is returned.\n\nThe body of the request should be the raw content of the new artifact version, and the type\nof that content should match the artifact's type (for example if the artifact type is `AVRO`\nthen the content of the request should be an Apache Avro document).\n\nThis operation can fail for the following reasons:\n\n* Provided content (request body) was empty (HTTP error `400`)\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* The new content violates one of the rules configured for the artifact (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create artifact version", operationId = "createArtifactVersion")
   @Path("/{groupId}/artifacts/{artifactId}/versions")
   @POST
   @Produces("application/json")
@@ -565,8 +587,9 @@ public interface GroupsResource {
    * <p>
    * Returns a list of all artifacts in the group. This list is paged.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all artifacts in the group.  This list is paged.", summary = "List artifacts in group", operationId = "listArtifactsInGroup")
   @Path("/{groupId}/artifacts")
   @GET
   @Produces("application/json")
@@ -602,7 +625,7 @@ public interface GroupsResource {
    * <code>X-Registry-ArtifactType</code> HTTP request header, or include a hint
    * in the request's <code>Content-Type</code>. For example:
    * </p>
-   * 
+   *
    * <pre>
    * <code>Content-Type: application/json; artifactType=AVRO
   </code>
@@ -650,8 +673,9 @@ public interface GroupsResource {
    * <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new artifact by posting the artifact content.  The body of the request should\nbe the raw content of the artifact.  This is typically in JSON format for *most* of the \nsupported types, but may be in another format for a few (for example, `PROTOBUF`).\n\nThe registry attempts to figure out what kind of artifact is being added from the\nfollowing supported list:\n\n* Avro (`AVRO`)\n* Protobuf (`PROTOBUF`)\n* Protobuf File Descriptor (`PROTOBUF_FD`)\n* JSON Schema (`JSON`)\n* Kafka Connect (`KCONNECT`)\n* OpenAPI (`OPENAPI`)\n* AsyncAPI (`ASYNCAPI`)\n* GraphQL (`GRAPHQL`)\n* Web Services Description Language (`WSDL`)\n* XML Schema (`XSD`)\n\nAlternatively, you can specify the artifact type using the `X-Registry-ArtifactType` \nHTTP request header, or include a hint in the request's `Content-Type`.  For example:\n\n```\nContent-Type: application/json; artifactType=AVRO\n```\n\nAn artifact is created using the content provided in the body of the request.  This\ncontent is created under a unique artifact ID that can be provided in the request\nusing the `X-Registry-ArtifactId` request header.  If not provided in the request,\nthe server generates a unique ID for the artifact.  It is typically recommended\nthat callers provide the ID, because this is typically a meaningful identifier, \nand for most use cases should be supplied by the caller.\n\nIf an artifact with the provided artifact ID already exists, the default behavior\nis for the server to reject the content with a 409 error.  However, the caller can\nsupply the `ifExists` query parameter to alter this default behavior. The `ifExists`\nquery parameter can have one of the following values:\n\n* `FAIL` (*default*) - server rejects the content with a 409 error\n* `UPDATE` - server updates the existing artifact and returns the new metadata\n* `RETURN` - server does not create or add content to the server, but instead \nreturns the metadata for the existing artifact\n* `RETURN_OR_UPDATE` - server returns an existing **version** that matches the \nprovided content if such a version exists, otherwise a new version is created\n\nThis operation may fail for one of the following reasons:\n\n* An invalid `ArtifactType` was indicated (HTTP error `400`)\n* No `ArtifactType` was indicated and the server could not determine one from the content (HTTP error `400`)\n* Provided content (request body) was empty (HTTP error `400`)\n* An artifact with the provided ID already exists (HTTP error `409`)\n* The content violates one of the configured global rules (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create artifact", operationId = "createArtifact")
   @Path("/{groupId}/artifacts")
   @POST
   @Produces("application/json")
@@ -666,8 +690,9 @@ public interface GroupsResource {
    * <p>
    * Deletes all of the artifacts that exist in a given group.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Deletes all of the artifacts that exist in a given group.", summary = "Deletes all artifacts in a group", operationId = "deleteArtifactsInGroup")
   @Path("/{groupId}/artifacts")
   @DELETE
   void deleteArtifactsInGroup(@PathParam("groupId") String groupId);

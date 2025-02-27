@@ -35,6 +35,8 @@ public class CodegenJavaMethod implements Cloneable {
     private List<CodegenJavaArgument> arguments = new ArrayList<>();
     private CodegenJavaReturn _return;
     private Boolean async;
+    private String summary;
+    private String operationId;
     
     /**
      * Constructor.
@@ -167,7 +169,35 @@ public class CodegenJavaMethod implements Cloneable {
     public void setAsync(Boolean async) {
         this.async = async;
     }
-    
+
+    /**
+     * @return the summary
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    /**
+     * @param summary the summary to set
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    /**
+     * @return the operation ID
+     */
+    public String getOperationId() {
+        return operationId;
+    }
+
+    /**
+     * @param operationId the OpenAPI operation ID to set
+     */
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
+    }
+
     @Override
     public CodegenJavaMethod clone() {
         try {
