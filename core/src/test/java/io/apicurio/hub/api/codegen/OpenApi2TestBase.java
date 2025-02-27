@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -43,14 +44,14 @@ class OpenApi2TestBase {
 
                     URL expectedFile = getClass().getClassLoader().getResource(getClass().getSimpleName() + "/" + expectedFilesPath + "/" + name);
                     if (expectedFile == null && "PROJECT_GENERATION_FAILED.txt".equals(name)) {
-                        String errorLog = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));
+                        String errorLog = IOUtils.toString(zipInputStream, StandardCharsets.UTF_8);
                         System.out.println("----- UNEXPECTED ERROR LOG -----");
                         System.out.println(errorLog);
                         System.out.println("----- UNEXPECTED ERROR LOG -----");
                     }
                     Assert.assertNotNull("Could not find expected file for entry: " + name, expectedFile);
-                    String expected = IOUtils.toString(expectedFile, Charset.forName("UTF-8"));
-                    String actual = IOUtils.toString(zipInputStream, Charset.forName("UTF-8"));
+                    String expected = IOUtils.toString(expectedFile, StandardCharsets.UTF_8);
+                    String actual = IOUtils.toString(zipInputStream, StandardCharsets.UTF_8);
 
                     if (debug) {
                         System.out.println("-----");

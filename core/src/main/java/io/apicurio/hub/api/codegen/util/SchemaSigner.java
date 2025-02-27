@@ -44,9 +44,6 @@ public class SchemaSigner extends TraversingOpenApi31VisitorAdapter {
         return DigestUtils.sha256Hex(this.sigSource.toString());
     }
 
-    /**
-     * @see io.apicurio.datamodels.combined.visitors.CombinedAllNodeVisitor#visitSchema(io.apicurio.datamodels.core.models.common.Schema)
-     */
     @Override
     public void visitSchema(Schema node) {
         OpenApi31Schema schema = (OpenApi31Schema) node;

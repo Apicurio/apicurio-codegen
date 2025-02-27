@@ -169,7 +169,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <file>
-                    <missing>target/classes/io/apicurio/hub/api/codegen/_OpenApi2Quarkus/pom.xml</missing>
+                    <missing>target/classes/io/apicurio/hub/api/codegen/quarkus/pom.xml</missing>
                 </file>
             </activation>
             <build>
@@ -193,7 +193,7 @@
                             </project>
                             <bomVersion>${quarkus.platform.version}</bomVersion>
                             <projectGroupId>__GROUP_ID__</projectGroupId>
-                            <projectArtifactId>_OpenApi2Quarkus</projectArtifactId>
+                            <projectArtifactId>quarkus</projectArtifactId>
                             <projectVersion>__VERSION__</projectVersion>
                             <projectName>__NAME__</projectName>
                             <projectDescription>__DESCRIPTION__</projectDescription>

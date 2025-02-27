@@ -18,6 +18,7 @@ package io.apicurio.hub.api.codegen;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
@@ -41,11 +42,6 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
      */
     public OpenApi2Quarkus() {
         super();
-    }
-
-    @Override
-    protected String getResourceName(String name) {
-        return "_OpenApi2Quarkus/" + name; // simpleName fails in the tests with Java 17
     }
 
     /**
@@ -88,10 +84,21 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
         return null;
     }
 
+    @Override
+    protected URL getPomXmlResource() {
+        return getResource("quarkus/pom.xml");
+    }
+
+    @Override
+    protected String generatePomXml(CodegenInfo info) throws IOException {
+        return super.generatePomXml(info).replace("<artifactId>quarkus</artifactId>",
+                "<artifactId>" + this.settings.artifactId + "</artifactId>");
+    }
+
     private void writeEntry(ZipOutputStream zipOutput, String sourcePath) {
         try {
             zipOutput.putNextEntry(new ZipEntry(sourcePath));
-            zipOutput.write(IOUtils.toString(getResource(sourcePath), StandardCharsets.UTF_8).getBytes());
+            zipOutput.write(IOUtils.toString(getQuarkusResource(sourcePath), StandardCharsets.UTF_8).getBytes());
             zipOutput.closeEntry();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -102,9 +109,13 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
      * Generates the openshift-template.yml file.
      */
     private String generateApplicationProperties() throws IOException {
-        String template = IOUtils.toString(getResource("src/main/resources/application.properties"), Charset.forName("UTF-8"));
+        String template = IOUtils.toString(getQuarkusResource("src/main/resources/application.properties"), StandardCharsets.UTF_8);
         template += "\nmp.openapi.scan.disable=true\n";
         return template;
+    }
+
+    protected URL getQuarkusResource(String name) {
+        return getClass().getResource("quarkus/" + name);
     }
 
 }

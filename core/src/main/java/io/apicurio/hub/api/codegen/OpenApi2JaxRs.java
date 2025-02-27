@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -257,7 +256,7 @@ public class OpenApi2JaxRs {
         if (this.settings.cliGenCI) {
             log.append("Generating .github/workflows/release_cli.yaml\r\n");
             zipOutput.putNextEntry(new ZipEntry(".github/workflows/release_cli.yaml"));
-            zipOutput.write(IOUtils.toString(getCommonResource("release_cli.yaml"), Charset.forName("UTF-8")).getBytes(utf8));
+            zipOutput.write(IOUtils.toString(getCommonResource("release_cli.yaml"), StandardCharsets.UTF_8).getBytes(utf8));
             zipOutput.closeEntry();
         }
 
@@ -437,13 +436,17 @@ public class OpenApi2JaxRs {
         return null;
     }
 
+    protected URL getPomXmlResource() {
+        return getResource("pom.xml");
+    }
+
     /**
      * Generates the pom.xml file.
      *
      * @param info
      */
     protected String generatePomXml(CodegenInfo info) throws IOException {
-        String template = IOUtils.toString(getResource("pom.xml"), Charset.forName("UTF-8"));
+        String template = IOUtils.toString(getPomXmlResource(), StandardCharsets.UTF_8);
 
         return template.replace("__GROUP_ID__", this.settings.groupId)
                 .replace("_" + getClass().getSimpleName(), this.settings.artifactId)
@@ -668,9 +671,7 @@ public class OpenApi2JaxRs {
      * Generates the java type name for a collection (optional) and type.  Examples include list/string,
      * null/org.example.Bean, list/org.example.OtherBean, etc.
      *
-     * @param collection
-     * @param type
-     * @param format
+     * @param schema
      * @param required
      * @param defaultType
      */
@@ -899,11 +900,7 @@ public class OpenApi2JaxRs {
     }
 
     protected URL getResource(String name) {
-        return getClass().getResource(getResourceName(name));
-    }
-
-    protected String getResourceName(String name) {
-        return "_" + getClass().getSimpleName() + "/" + name;
+        return getClass().getResource(name);
     }
 
     protected URI classnameToUri(String path) {
