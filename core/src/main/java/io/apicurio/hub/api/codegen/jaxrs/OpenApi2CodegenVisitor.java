@@ -189,8 +189,9 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         if (node.getSummary() != null) {
             method.setSummary(node.getSummary());
         }
-        if (node.getOperationId() != null) {
-            method.setOperationId(node.getOperationId());
+
+        if (((OpenApiOperation) node).getOperationId() != null) {
+            method.setOperationId(((OpenApiOperation) node).getOperationId());
         }
 
         Boolean async = null;

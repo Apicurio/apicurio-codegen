@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import my.other.pkg.beans.ArtifactReference;
 import my.other.pkg.beans.HandleReferencesType;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -29,8 +30,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using its globally unique\nidentifier.\n\nThis operation may fail for one of the following reasons:\n\n* No artifact version with this `globalId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact by global ID", operationId = "getContentByGlobalId")
   @Path("/globalIds/{globalId}")
   @GET
   @Produces("*/*")
@@ -48,8 +50,9 @@ public interface IdsResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list containing all the artifact references using the artifact content hash.\n\nThis operation may fail for one of the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List artifact references by hash", operationId = "referencesByContentHash")
   @Path("/contentHashes/{contentHash}/references")
   @GET
   @Produces("application/json")
@@ -66,8 +69,9 @@ public interface IdsResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list containing all the artifact references using the artifact content ID.\n\nThis operation may fail for one of the following reasons:\n\n* A server error occurred (HTTP error `500`)", summary = "List artifact references by content ID", operationId = "referencesByContentId")
   @Path("/contentIds/{contentId}/references")
   @GET
   @Produces("application/json")
@@ -84,8 +88,9 @@ public interface IdsResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list containing all the artifact references using the artifact global ID.\n\nThis operation may fail for one of the following reasons:\n\n* A server error occurred (HTTP error `500`)", summary = "List artifact references by global ID", operationId = "referencesByGlobalId")
   @Path("/globalIds/{globalId}/references")
   @GET
   @Produces("application/json")
@@ -107,8 +112,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using the unique content\nidentifier for that content.  This content ID may be shared by multiple artifact\nversions in the case where the artifact versions are identical.\n\nThis operation may fail for one of the following reasons:\n\n* No content with this `contentId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact content by ID", operationId = "getContentById")
   @Path("/contentIds/{contentId}/")
   @GET
   @Produces("*/*")
@@ -128,8 +134,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using the \nSHA-256 hash of the content.  This content hash may be shared by multiple artifact\nversions in the case where the artifact versions have identical content.\n\nThis operation may fail for one of the following reasons:\n\n* No content with this `contentHash` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact content by SHA-256 hash", operationId = "getContentByHash")
   @Path("/contentHashes/{contentHash}/")
   @GET
   @Produces("*/*")
