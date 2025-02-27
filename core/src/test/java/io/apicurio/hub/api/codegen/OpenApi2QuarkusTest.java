@@ -30,7 +30,7 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      */
     @Test
     public void testGenerateFull() throws IOException {
-        doFullTest("OpenApi2QuarkusTest/beer-api.json", false, "_expected-full/generated-api-" + Runtime.version().major(), false);
+        doFullTest("OpenApi2QuarkusTest/beer-api.json", false, "_expected-full/generated-api-" + Runtime.version().feature(), false);
     }
 
     /**
