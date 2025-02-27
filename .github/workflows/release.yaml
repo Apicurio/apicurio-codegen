@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: maven
 
       - name: Log Metadata
@@ -117,7 +117,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: maven
 
       - name: Update Snapshot version ${{ github.event.inputs.snapshot-version}}
