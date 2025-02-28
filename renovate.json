@@ -53,6 +53,48 @@
       ]
     },
     {
+      "groupName": "Dependencies: Jackson",
+      "matchFileNames": [
+        "**/pom.xml"
+      ],
+      "matchPackageNames": [
+        "com.fasterxml.jackson*:*"
+      ],
+      "enabled": true,
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ]
+    },
+    {
+      "groupName": "Dependencies: Commons",
+      "matchFileNames": [
+        "**/pom.xml"
+      ],
+      "matchPackageNames": [
+        "*commons*:*"
+      ],
+      "enabled": true,
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ]
+    },
+    {
+      "groupName": "Dependencies: Quarkus",
+      "matchFileNames": [
+        "**/pom.xml"
+      ],
+      "matchPackageNames": [
+        "*quarkus*:*"
+      ],
+      "enabled": true,
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ]
+    },
+    {
       "groupName": "Dependencies: Apicurio Data Models",
       "matchFileNames": [
         "**/pom.xml"
