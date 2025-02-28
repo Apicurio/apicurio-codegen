@@ -10,7 +10,8 @@
   "rangeStrategy": "bump",
   "ignorePaths": [
     "maven-plugin-tests/src/it/**",
-    "maven-plugin-tests/target/**"
+    "maven-plugin-tests/target/**",
+    "core/src/main/resources/**"
   ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 5,
