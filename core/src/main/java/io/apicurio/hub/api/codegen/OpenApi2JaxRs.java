@@ -767,13 +767,8 @@ public class OpenApi2JaxRs {
      * @param coreType
      */
     protected Type<?> generateReactiveTypeName(Type<?> coreType) {
-        Type<?> currentType;
-        if (Types.isPrimitive(coreType.toString())) {
-            currentType = getType(coreType);
-        } else {
-            currentType = coreType;
-        }
-        return parseType(String.format("java.util.concurrent.CompletionStage<%s>", currentType.toString()));
+        Type<?> currentType = Types.isPrimitive(coreType.toString()) ? getType(coreType) : coreType;
+        return parseType("java.util.concurrent.CompletionStage<" + currentType + ">");
     }
 
     public Type<?> getType(final Type<?> coreType) {
