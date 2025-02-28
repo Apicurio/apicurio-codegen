@@ -11,6 +11,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.LogConfiguration;
 import org.example.api.beans.NamedLogConfiguration;
 import org.example.api.beans.Rule;
@@ -30,8 +31,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets a list of all the currently configured global rules (if any).\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "List global rules", operationId = "listGlobalRules")
   @Path("/rules")
   @GET
   @Produces("application/json")
@@ -49,8 +51,9 @@ public interface AdminResource {
    * <li>The rule already exists (HTTP error <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Adds a rule to the list of globally configured rules.\n\nThis operation can fail for the following reasons:\n\n* The rule type is unknown (HTTP error `400`)\n* The rule already exists (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create global rule", operationId = "createGlobalRule")
   @Path("/rules")
   @POST
   @Consumes("application/json")
@@ -66,8 +69,9 @@ public interface AdminResource {
    * <ul>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes all globally configured rules.\n\nThis operation can fail for the following reasons:\n\n* A server error occurred (HTTP error `500`)\n", summary = "Delete all global rules", operationId = "deleteAllGlobalRules")
   @Path("/rules")
   @DELETE
   void deleteAllGlobalRules();
@@ -85,8 +89,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns information about the named globally configured rule.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get global rule configuration", operationId = "getGlobalRuleConfig")
   @Path("/rules/{rule}")
   @GET
   @Produces("application/json")
@@ -105,8 +110,9 @@ public interface AdminResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the configuration for a globally configured rule.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update global rule configuration", operationId = "updateGlobalRuleConfig")
   @Path("/rules/{rule}")
   @PUT
   @Produces("application/json")
@@ -128,8 +134,9 @@ public interface AdminResource {
    * <li>Rule cannot be deleted (HTTP error <code>409</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a single global rule.  If this is the only rule configured, this is the same\nas deleting **all** rules.\n\nThis operation can fail for the following reasons:\n\n* Invalid rule name/type (HTTP error `400`)\n* No rule with name/type `rule` exists (HTTP error `404`)\n* Rule cannot be deleted (HTTP error `409`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete global rule", operationId = "deleteGlobalRule")
   @Path("/rules/{rule}")
   @DELETE
   void deleteGlobalRule(@PathParam("rule") RuleType rule);
@@ -139,8 +146,9 @@ public interface AdminResource {
    * List all of the configured logging levels. These override the default logging
    * configuration.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List all of the configured logging levels.  These override the default\nlogging configuration.", summary = "List logging configurations", operationId = "listLogConfigurations")
   @Path("/loggers")
   @GET
   @Produces("application/json")
@@ -152,8 +160,9 @@ public interface AdminResource {
    * no logger configuration is persisted it will return the current default log
    * configuration in the system.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns the configured logger configuration for the provided logger name, if no logger configuration is persisted it will return the current default log configuration in the system.", summary = "Get a single logger configuration", operationId = "getLogConfiguration")
   @Path("/loggers/{logger}")
   @GET
   @Produces("application/json")
@@ -164,8 +173,9 @@ public interface AdminResource {
    * Configures the logger referenced by the provided logger name with the given
    * configuration.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Configures the logger referenced by the provided logger name with the given configuration.", summary = "Set a logger's configuration", operationId = "setLogConfiguration")
   @Path("/loggers/{logger}")
   @PUT
   @Produces("application/json")
@@ -176,8 +186,9 @@ public interface AdminResource {
    * <p>
    * Removes the configured logger configuration (if any) for the given logger.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Removes the configured logger configuration (if any) for the given logger.", summary = "Removes logger configuration", operationId = "removeLogConfiguration")
   @Path("/loggers/{logger}")
   @DELETE
   @Produces("application/json")

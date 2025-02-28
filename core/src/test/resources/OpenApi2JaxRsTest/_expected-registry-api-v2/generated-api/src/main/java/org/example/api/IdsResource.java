@@ -6,6 +6,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -27,8 +28,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using the unique content\nidentifier for that content.  This content ID may be shared by multiple artifact\nversions in the case where the artifact versions are identical.\n\nThis operation may fail for one of the following reasons:\n\n* No content with this `contentId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact content by ID", operationId = "getContentById")
   @Path("/contentIds/{contentId}/")
   @GET
   @Produces({"application/json", "application/x-protobuf", "application/x-protobuffer"})
@@ -47,8 +49,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using its globally unique\nidentifier.\n\nThis operation may fail for one of the following reasons:\n\n* No artifact version with this `globalId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact by global ID", operationId = "getContentByGlobalId")
   @Path("/globalIds/{globalId}")
   @GET
   @Produces({"application/json", "application/x-protobuf", "application/x-protobuffer"})
@@ -69,8 +72,9 @@ public interface IdsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the content for an artifact version in the registry using the unique content\nidentifier for that content.  This content ID may be shared by multiple artifact\nversions in the case where the artifact versions are identical.\n\nThis operation may fail for one of the following reasons:\n\n* No content with this `contentId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get artifact content by SHA-256 hash", operationId = "getContentByHash")
   @Path("/contentHashes/{contentHash}/")
   @GET
   @Produces("*/*")

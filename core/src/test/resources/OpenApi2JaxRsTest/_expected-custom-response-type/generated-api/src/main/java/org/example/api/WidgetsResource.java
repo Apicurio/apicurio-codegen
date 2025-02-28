@@ -11,6 +11,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.Widget;
 
 /**
@@ -22,8 +23,9 @@ public interface WidgetsResource {
    * <p>
    * Gets a list of all <code>Widget</code> entities.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Gets a list of all `Widget` entities.", summary = "List All Widgets", operationId = "getWidgets")
   @GET
   @Produces("application/json")
   List<Widget> getWidgets();
@@ -32,8 +34,9 @@ public interface WidgetsResource {
    * <p>
    * Creates a new instance of a <code>Widget</code>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Creates a new instance of a `Widget`.", summary = "Create a Widget", operationId = "createWidget")
   @POST
   @Consumes("application/json")
   void createWidget(@NotNull Widget data);
@@ -42,8 +45,9 @@ public interface WidgetsResource {
    * <p>
    * Gets the details of a single instance of a <code>Widget</code>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Gets the details of a single instance of a `Widget`.", summary = "Get a Widget", operationId = "getWidget")
   @Path("/{widgetId}")
   @GET
   @Produces("application/json")
@@ -53,8 +57,9 @@ public interface WidgetsResource {
    * <p>
    * Updates an existing <code>Widget</code>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Updates an existing `Widget`.", summary = "Update a Widget", operationId = "updateWidget")
   @Path("/{widgetId}")
   @PUT
   @Consumes("application/json")
@@ -64,8 +69,9 @@ public interface WidgetsResource {
    * <p>
    * Deletes an existing <code>Widget</code>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Deletes an existing `Widget`.", summary = "Delete a Widget", operationId = "deleteWidget")
   @Path("/{widgetId}")
   @DELETE
   void deleteWidget(@PathParam("widgetId") String widgetId);

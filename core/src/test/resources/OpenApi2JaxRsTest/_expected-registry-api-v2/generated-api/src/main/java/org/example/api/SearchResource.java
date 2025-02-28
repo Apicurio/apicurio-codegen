@@ -11,6 +11,7 @@ import jakarta.ws.rs.QueryParam;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.ArtifactSearchResults;
 import org.example.api.beans.SortBy;
 import org.example.api.beans.SortOrder;
@@ -25,8 +26,9 @@ public interface SearchResource {
    * Returns a paginated list of all artifacts that match the provided filter
    * criteria.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns a paginated list of all artifacts that match the provided filter criteria.\n", summary = "Search for artifacts", operationId = "searchArtifacts")
   @Path("/artifacts")
   @GET
   @Produces("application/json")
@@ -42,8 +44,9 @@ public interface SearchResource {
    * Returns a paginated list of all artifacts with at least one version that
    * matches the posted content.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns a paginated list of all artifacts with at least one version that matches the\nposted content.\n", summary = "Search for artifacts by content", operationId = "searchArtifactsByContent")
   @Path("/artifacts")
   @POST
   @Produces("application/json")

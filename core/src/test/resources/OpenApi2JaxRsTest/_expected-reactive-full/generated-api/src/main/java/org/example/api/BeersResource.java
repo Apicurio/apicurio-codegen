@@ -12,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.Beer;
 
 /**
@@ -23,8 +24,9 @@ public interface BeersResource {
    * <p>
    * Returns full information about a single beer.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns full information about a single beer.", summary = "Get Info About a Beer", operationId = "getBeer")
   @Path("/{beerId}")
   @GET
   @Produces("application/json")
@@ -35,8 +37,9 @@ public interface BeersResource {
    * <p>
    * Updates information about a single beer.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Updates information about a single beer.", summary = "Update a Beer", operationId = "updateBeer")
   @Path("/{beerId}")
   @PUT
   @Consumes("application/json")
@@ -47,8 +50,9 @@ public interface BeersResource {
    * <p>
    * Removes a single beer from the data set.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Removes a single beer from the data set.", summary = "Delete a Beer", operationId = "deleteBeer")
   @Path("/{beerId}")
   @DELETE
   CompletionStage<Void> deleteBeer(
@@ -58,8 +62,9 @@ public interface BeersResource {
    * <p>
    * Returns all of the beers in the database.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Returns all of the beers in the database.", summary = "Get All Beers", operationId = "listAllBeers")
   @GET
   @Produces("application/json")
   CompletionStage<List<Beer>> listAllBeers();
@@ -68,8 +73,9 @@ public interface BeersResource {
    * <p>
    * Adds a single beer to the dataset.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Adds a single beer to the dataset.", summary = "Add a Beer", operationId = "addBeer")
   @POST
   @Consumes("application/json")
   CompletionStage<Void> addBeer(@NotNull Beer data);

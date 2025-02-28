@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.example.api.beans.ArtifactMetaData;
 import org.example.api.beans.EditableMetaData;
 import org.example.api.beans.Rule;
@@ -51,7 +52,7 @@ public interface ArtifactsResource {
    * Header or by including a hint in the Request's <code>Content-Type</code>. For
    * example:
    * </p>
-   * 
+   *
    * <pre>
    * <code>Content-Type: application/json; artifactType=AVRO
   </code>
@@ -64,8 +65,9 @@ public interface ArtifactsResource {
    * <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new artifact by POSTing the artifact content.  The body of the request should\nbe the raw content of the artifact.  This will typically be in JSON format for *most*\nof the supported types, but may be in another format for a few (e.g. Protobuff).\n\nThe registry will attempt to figure out what kind of artifact is being added from the\nfollowing supported list:\n\n* Avro (AVRO)\n* Protobuff (PROTOBUFF)\n* JSON Schema (JSON)\n* OpenAPI (OPENAPI)\n* AsyncAPI (ASYNCAPI)\n\nAlternatively, the artifact type can be indicated by either explicitly specifying the \ntype via the `X-Registry-ArtifactType` HTTP Request Header or by including a hint in the \nRequest's `Content-Type`.  For example:\n\n```\nContent-Type: application/json; artifactType=AVRO\n```\n\nThis operation may fail for one of the following reasons:\n\n* An invalid `ArtifactType` was indicated (HTTP error `400`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create Artifact", operationId = "createArtifact")
   @POST
   @Produces("application/json")
   @Consumes({"application/json", "application/x-yaml"})
@@ -88,8 +90,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns the latest version of the artifact in its raw form.  The `Content-Type` of the\nresponse will depend on what type of artifact it is.  In most cases this will be\n`application/json` but for some types it may be different (e.g. *protobuff*).\n\nThis operation may fail for one of the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get Latest Artifact", operationId = "getLatestArtifact")
   @Path("/{artifactId}")
   @GET
   @Produces({"application/json", "application/x-yaml"})
@@ -119,7 +122,7 @@ public interface ArtifactsResource {
    * Header or by including a hint in the Request's <code>Content-Type</code>. For
    * example:
    * </p>
-   * 
+   *
    * <pre>
    * <code>Content-Type: application/json; artifactType=AVRO
   </code>
@@ -140,8 +143,9 @@ public interface ArtifactsResource {
    * When successful, this creates a new version of the artifact, making it the
    * most recent (and therefore official) version of the artifact.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Updates an artifact by uploading new content.  The body of the request should\nbe the raw content of the artifact.  This will typically be in JSON format for *most*\nof the supported types, but may be in another format for a few (e.g. Protobuff).\n\nThe registry will attempt to figure out what kind of artifact is being added from the\nfollowing supported list:\n\n* Avro (AVRO)\n* Protobuff (PROTOBUFF)\n* JSON Schema (JSON)\n* OpenAPI (OPENAPI)\n* AsyncAPI (ASYNCAPI)\n\nAlternatively, the artifact type can be indicated by either explicitly specifying the \ntype via the `X-Registry-ArtifactType` HTTP Request Header or by including a hint in the \nRequest's `Content-Type`.  For example:\n\n```\nContent-Type: application/json; artifactType=AVRO\n```\n\nThe update could fail for a number of reasons including:\n\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* The new content violates one of the rules configured for the artifact (HTTP error `400`)\n* The provided Artifact Type is not recognized (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n\nWhen successful, this creates a new version of the artifact, making it the most recent\n(and therefore official) version of the artifact.", summary = "Update Artifact", operationId = "updateArtifact")
   @Path("/{artifactId}")
   @PUT
   @Produces("application/json")
@@ -159,8 +163,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes an artifact completely, resulting in all versions of the artifact also being\ndeleted.  This may fail for one of the following reasons:\n\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Delete Artifact", operationId = "deleteArtifact")
   @Path("/{artifactId}")
   @DELETE
   void deleteArtifact(@PathParam("artifactId") String artifactId);
@@ -179,8 +184,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Gets the meta-data for an artifact in the registry.  The returned meta-data will include\nboth generated (read-only) and editable meta-data (such as name and description).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Get Artifact Meta-Data", operationId = "getArtifactMetaData")
   @Path("/{artifactId}/meta")
   @GET
   @Produces("application/json")
@@ -200,8 +206,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the editable parts of the artifact's meta-data.  Not all meta-data fields can\nbe updated.  For example `createdOn` and `createdBy` are both read-only properties.\n\nThis operation can fail for the following reasons:\n\n* No artifact with the `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Update Artifact Meta-Data", operationId = "updateArtifactMetaData")
   @Path("/{artifactId}/meta")
   @PUT
   @Consumes("application/json")
@@ -224,8 +231,9 @@ public interface ArtifactsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns information about a single rule configured for an artifact.  This is useful\nwhen you want to know what the current configuration settings are for a specific rule.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Get Artifact Rule Config", operationId = "getArtifactRuleConfig")
   @Path("/{artifactId}/rules/{rule}")
   @GET
   @Produces("application/json")
@@ -249,8 +257,9 @@ public interface ArtifactsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the configuration of a single rule for the artifact.  The configuration data\nis specific to each rule type, so the configuration of the **Compatibility** rule \nwill be of a different format than the configuration of the **Validation** rule.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update Artifact Rule Config", operationId = "updateArtifactRuleConfig")
   @Path("/{artifactId}/rules/{rule}")
   @PUT
   @Produces("application/json")
@@ -276,8 +285,9 @@ public interface ArtifactsResource {
    * <li>Invalid rule type (HTTP error <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a rule from the artifact.  This results in the rule no longer applying for\nthis artifact.  If this is the only rule configured for the artifact, then this is\nthe same as deleting **all** rules:  the globally configured rules will now apply to\nthis artifact.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No rule with this name/type is configured for this artifact (HTTP error `404`)\n* Invalid rule type (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Delete Artifact Rule", operationId = "deleteArtifactRule")
   @Path("/{artifactId}/rules/{rule}")
   @DELETE
   void deleteArtifactRule(@PathParam("rule") String rule, @PathParam("artifactId") String artifactId);
@@ -294,8 +304,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all version numbers for the artifact.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "List Artifact Versions", operationId = "listArtifactVersions")
   @Path("/{artifactId}/versions")
   @GET
   @Produces("application/json")
@@ -332,7 +343,7 @@ public interface ArtifactsResource {
    * <p>
    * For example:
    * </p>
-   * 
+   *
    * <pre>
    * <code>Content-Type: application/json; artifactType=AVRO
   </code>
@@ -345,8 +356,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new version of the artifact by uploading new content.  The configured rules for\nthe artifact will be applied, and if they all pass then the new content will be added\nas the most recent version of the artifact.  If any of the rules fail then an error \nwill be returned.\n\nThe body of the request should be the raw content of the new artifact version.  This \nwill typically be in JSON format for *most* of the supported types, but may be in another \nformat for a few (e.g. Protobuff).\n\nThe registry will attempt to figure out what kind of artifact is being added from the\nfollowing supported list:\n\n* Avro (AVRO)\n* Protobuff (PROTOBUFF)\n* JSON Schema (JSON)\n* OpenAPI (OPENAPI)\n* AsyncAPI (ASYNCAPI)\n\nAlternatively, the artifact type can be indicated by either explicitly specifying the \ntype via the `X-Registry-ArtifactType` HTTP Request Header or by including a hint in the \nRequest's `Content-Type`.\n\nFor example:\n\n```\nContent-Type: application/json; artifactType=AVRO\n```\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Create Artifact Version", operationId = "createArtifactVersion")
   @Path("/{artifactId}/versions")
   @POST
   @Produces("application/json")
@@ -373,8 +385,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Retrieves a single version of the artifact content.  Both the `artifactId` and the\nunique `version` number must be provided.  The `Content-Type` of the\nresponse will depend on what type of artifact it is.  In most cases this will be\n`application/json` but for some types it may be different (e.g. *protobuff*).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get Artifact Version", operationId = "getArtifactVersion")
   @Path("/{artifactId}/versions/{version}")
   @GET
   @Produces({"application/json", "application/x-yaml"})
@@ -397,8 +410,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes a single version of the artifact.  Both the `artifactId` and the unique `version`\nare needed.  If this is the only version of the artifact, then this operation is the same\nas deleting the entire artifact.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete Artifact Version", operationId = "deleteArtifactVersion")
   @Path("/{artifactId}/versions/{version}")
   @DELETE
   void deleteArtifactVersion(@PathParam("version") BigInteger version, @PathParam("artifactId") String artifactId);
@@ -420,8 +434,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Retrieves the meta-data for a single version of the artifact.  The version meta-data\nis a subset of the artifact meta-data - it is only the meta-data that is specific to\nthe version (and so doesn't include e.g. `modifiedOn`).\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Get Artifact Version Meta-Data", operationId = "getArtifactVersionMetaData")
   @Path("/{artifactId}/versions/{version}/meta")
   @GET
   @Produces("application/json")
@@ -444,8 +459,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Updates the user-editable portion of the artifact version's meta-data.  Only some of \nthe meta-data fields are editable by the user.  For example the `description` is editable\nbut the `createdOn` is not.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Update Artifact Version Meta-Data", operationId = "updateArtifactVersionMetaData")
   @Path("/{artifactId}/versions/{version}/meta")
   @PUT
   @Consumes("application/json")
@@ -467,8 +483,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes the user-editable meta-data properties of the artifact version.  Any properties\nthat are not user-editable will be preserved.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* No version with this `version` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)\n", summary = "Delete Artifact Version Meta-Data", operationId = "deleteArtifactVersionMetaData")
   @Path("/{artifactId}/versions/{version}/meta")
   @DELETE
   void deleteArtifactVersionMetaData(@PathParam("version") BigInteger version,
@@ -490,8 +507,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Returns a list of all rules configured for the artifact.  The set of rules determines\nhow the content of an artifact can evolve over time.  If no rules are configured for\nan artifact, then the set of globally configured rules will be used.  If no global\nrules are defined then there are no restrictions on content evolution.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "List Artifact Rules", operationId = "listArtifactRules")
   @Path("/{artifactId}/rules")
   @GET
   @Produces("application/json")
@@ -513,8 +531,9 @@ public interface ArtifactsResource {
    * <code>400</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Adds a rule to the list of rules that get applied to the artifact when adding new\nversions.  All configured rules must pass in order to successfully add a new artifact\nversion.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* Rule (named in the request body) is unknown (HTTP error `400`)\n* A server error occurred (HTTP error `500`)", summary = "Create Artifact Rule", operationId = "createArtifactRule")
   @Path("/{artifactId}/rules")
   @POST
   @Consumes("application/json")
@@ -533,8 +552,9 @@ public interface ArtifactsResource {
    * <code>404</code>)</li>
    * <li>A server error occurred (HTTP error <code>500</code>)</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Deletes all of the rules configured for the artifact.  After this is done, the global\nrules will once again apply to the artifact.\n\nThis operation can fail for the following reasons:\n\n* No artifact with this `artifactId` exists (HTTP error `404`)\n* A server error occurred (HTTP error `500`)", summary = "Delete Artifact Rules", operationId = "deleteArtifactRules")
   @Path("/{artifactId}/rules")
   @DELETE
   void deleteArtifactRules(@PathParam("artifactId") String artifactId);

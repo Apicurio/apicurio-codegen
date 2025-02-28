@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
  * A JAX-RS interface. An implementation of this interface must be provided.
@@ -27,8 +28,9 @@ public interface UserResource {
    * When authenticating as a user, this endpoint will list all currently open
    * repository invitations for that user.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "When authenticating as a user, this endpoint will list all currently open repository invitations for that user.", summary = "List repository invitations for the authenticated user", operationId = "repos/list-invitations-for-authenticated-user")
   @Path("/repository_invitations")
   @GET
   @Produces("application/json")
@@ -36,15 +38,17 @@ public interface UserResource {
       @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Decline a repository invitation", operationId = "repos/decline-invitation")
   @Path("/repository_invitations/{invitation_id}")
   @DELETE
   void repos_decline_invitation(@PathParam("invitation_id") BigInteger invitationId);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Accept a repository invitation", operationId = "repos/accept-invitation")
   @Path("/repository_invitations/{invitation_id}")
   @PATCH
   void repos_accept_invitation(@PathParam("invitation_id") BigInteger invitationId);
@@ -59,8 +63,9 @@ public interface UserResource {
    * own, repositories where they are a collaborator, and repositories that they
    * can access through an organization membership.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists repositories that the authenticated user has explicit permission (`:read`, `:write`, or `:admin`) to access.\n\nThe authenticated user has explicit permission to access repositories they own, repositories where they are a collaborator, and repositories that they can access through an organization membership.", summary = "List repositories for the authenticated user", operationId = "repos/list-for-authenticated-user")
   @Path("/repos")
   @GET
   @Produces("application/json")
@@ -88,8 +93,9 @@ public interface UserResource {
    * public repository</li>
    * <li><code>repo</code> scope to create a private repository</li>
    * </ul>
-   * 
+   *
    */
+  @Operation(description = "Creates a new repository for the authenticated user.\n\n**OAuth scope requirements**\n\nWhen using [OAuth](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/), authorizations must include:\n\n*   `public_repo` scope or `repo` scope to create a public repository\n*   `repo` scope to create a private repository", summary = "Create a repository for the authenticated user", operationId = "repos/create-for-authenticated-user")
   @Path("/repos")
   @POST
   @Produces("application/json")
@@ -112,8 +118,9 @@ public interface UserResource {
    * "https://developer.github.com/v3/migrations/users/#download-a-user-migration-archive">download
    * the migration archive</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Fetches a single user migration. The response includes the `state` of the migration, which can be one of the following values:\n\n*   `pending` - the migration hasn't started yet.\n*   `exporting` - the migration is in progress.\n*   `exported` - the migration finished successfully.\n*   `failed` - the migration failed.\n\nOnce the migration has been `exported` you can [download the migration archive](https://developer.github.com/v3/migrations/users/#download-a-user-migration-archive).", summary = "Get a user migration status", operationId = "migrations/get-status-for-authenticated-user")
   @Path("/migrations/{migration_id}")
   @GET
   @Produces("application/json")
@@ -130,8 +137,9 @@ public interface UserResource {
    * the repository</a> if you no longer need the source data. Returns a status of
    * <code>404 Not Found</code> if the repository is not locked.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Unlocks a repository. You can lock repositories when you [start a user migration](https://developer.github.com/v3/migrations/users/#start-a-user-migration). Once the migration is complete you can unlock each repository to begin using it again or [delete the repository](https://developer.github.com/v3/repos/#delete-a-repository) if you no longer need the source data. Returns a status of `404 Not Found` if the repository is not locked.", summary = "Unlock a user repository", operationId = "migrations/unlock-repo-for-authenticated-user")
   @Path("/migrations/{migration_id}/repos/{repo_name}/lock")
   @DELETE
   void migrations_unlock_repo_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId,
@@ -141,8 +149,9 @@ public interface UserResource {
    * <p>
    * Lists all the repositories for this user migration.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists all the repositories for this user migration.", summary = "List repositories for a user migration", operationId = "migrations/list-repos-for-user")
   @Path("/migrations/{migration_id}/repositories")
   @GET
   @Produces("application/json")
@@ -154,8 +163,9 @@ public interface UserResource {
    * <p>
    * Lists all migrations a user has started.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists all migrations a user has started.", summary = "List user migrations", operationId = "migrations/list-for-authenticated-user")
   @Path("/migrations")
   @GET
   @Produces("application/json")
@@ -166,8 +176,9 @@ public interface UserResource {
    * <p>
    * Initiates the generation of a user migration archive.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Initiates the generation of a user migration archive.", summary = "Start a user migration", operationId = "migrations/start-for-authenticated-user")
   @Path("/migrations")
   @POST
   @Produces("application/json")
@@ -204,8 +215,9 @@ public interface UserResource {
    * includes all attachment files uploaded to GitHub.com and a
    * <code>repositories</code> directory that contains the repository's Git data.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Fetches the URL to download the migration archive as a `tar.gz` file. Depending on the resources your repository uses, the migration archive can contain JSON files with data for these objects:\n\n*   attachments\n*   bases\n*   commit\\_comments\n*   issue\\_comments\n*   issue\\_events\n*   issues\n*   milestones\n*   organizations\n*   projects\n*   protected\\_branches\n*   pull\\_request\\_reviews\n*   pull\\_requests\n*   releases\n*   repositories\n*   review\\_comments\n*   schema\n*   users\n\nThe archive will also contain an `attachments` directory that includes all attachment files uploaded to GitHub.com and a `repositories` directory that contains the repository's Git data.", summary = "Download a user migration archive", operationId = "migrations/get-archive-for-authenticated-user")
   @Path("/migrations/{migration_id}/archive")
   @GET
   void migrations_get_archive_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId);
@@ -221,15 +233,17 @@ public interface UserResource {
    * a user migration status</a> endpoints, will continue to be available even
    * after an archive is deleted.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Deletes a previous migration archive. Downloadable migration archives are automatically deleted after seven days. Migration metadata, which is returned in the [List user migrations](https://developer.github.com/v3/migrations/users/#list-user-migrations) and [Get a user migration status](https://developer.github.com/v3/migrations/users/#get-a-user-migration-status) endpoints, will continue to be available even after an archive is deleted.", summary = "Delete a user migration archive", operationId = "migrations/delete-archive-for-authenticated-user")
   @Path("/migrations/{migration_id}/archive")
   @DELETE
   void migrations_delete_archive_for_authenticated_user(@PathParam("migration_id") BigInteger migrationId);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Check if a repository is starred by the authenticated user", operationId = "activity/check-repo-is-starred-by-authenticated-user")
   @Path("/starred/{owner}/{repo}")
   @GET
   void activity_check_repo_is_starred_by_authenticated_user(@PathParam("owner") String owner,
@@ -242,15 +256,17 @@ public interface UserResource {
    * &quot;<a href="https://developer.github.com/v3/#http-verbs">HTTP
    * verbs</a>.&quot;
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Note that you'll need to set `Content-Length` to zero when calling out to this endpoint. For more information, see \"[HTTP verbs](https://developer.github.com/v3/#http-verbs).\"", summary = "Star a repository for the authenticated user", operationId = "activity/star-repo-for-authenticated-user")
   @Path("/starred/{owner}/{repo}")
   @PUT
   void activity_star_repo_for_authenticated_user(@PathParam("owner") String owner, @PathParam("repo") String repo);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Unstar a repository for the authenticated user", operationId = "activity/unstar-repo-for-authenticated-user")
   @Path("/starred/{owner}/{repo}")
   @DELETE
   void activity_unstar_repo_for_authenticated_user(@PathParam("owner") String owner, @PathParam("repo") String repo);
@@ -259,8 +275,9 @@ public interface UserResource {
    * <p>
    * Lists repositories the authenticated user is watching.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists repositories the authenticated user is watching.", summary = "List repositories watched by the authenticated user", operationId = "activity/list-watched-repos-for-authenticated-user")
   @Path("/subscriptions")
   @GET
   @Produces("application/json")
@@ -277,8 +294,9 @@ public interface UserResource {
    * following custom <a href="https://developer.github.com/v3/media/">media
    * type</a> via the <code>Accept</code> header:
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists repositories the authenticated user has starred.\n\nYou can also find out _when_ stars were created by passing the following custom [media type](https://developer.github.com/v3/media/) via the `Accept` header:", summary = "List repositories starred by the authenticated user", operationId = "activity/list-repos-starred-by-authenticated-user")
   @Path("/starred")
   @GET
   @Produces({"application/json", "application/vnd.github.v3.star+json"})
@@ -288,8 +306,9 @@ public interface UserResource {
       @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Create a user project", operationId = "projects/create-for-authenticated-user")
   @Path("/projects")
   @POST
   @Produces("application/json")
@@ -297,8 +316,9 @@ public interface UserResource {
   Response projects_create_for_authenticated_user(@NotNull InputStream data);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "List organization memberships for the authenticated user", operationId = "orgs/list-memberships-for-authenticated-user")
   @Path("/memberships/orgs")
   @GET
   @Produces("application/json")
@@ -307,16 +327,18 @@ public interface UserResource {
       @QueryParam("page") @DefaultValue("1") BigInteger page);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Get an organization membership for the authenticated user", operationId = "orgs/get-membership-for-authenticated-user")
   @Path("/memberships/orgs/{org}")
   @GET
   @Produces("application/json")
   Response orgs_get_membership_for_authenticated_user(@PathParam("org") String org);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Update an organization membership for the authenticated user", operationId = "orgs/update-membership-for-authenticated-user")
   @Path("/memberships/orgs/{org}")
   @PATCH
   @Produces("application/json")
@@ -338,8 +360,9 @@ public interface UserResource {
    * <code>read:org</code> scope. OAuth requests with insufficient scope receive a
    * <code>403 Forbidden</code> response.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List organizations for the authenticated user.\n\n**OAuth scope requirements**\n\nThis only lists organizations that your authorization allows you to operate on in some way (e.g., you can list teams with `read:org` scope, you can publicize your organization membership with `user` scope, etc.). Therefore, this API requires at least `user` or `read:org` scope. OAuth requests with insufficient scope receive a `403 Forbidden` response.", summary = "List organizations for the authenticated user", operationId = "orgs/list-for-authenticated-user")
   @Path("/orgs")
   @GET
   @Produces("application/json")
@@ -350,8 +373,9 @@ public interface UserResource {
    * <p>
    * Lists the people following the authenticated user.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the people following the authenticated user.", summary = "List followers of the authenticated user", operationId = "users/list-followers-for-authenticated-user")
   @Path("/followers")
   @GET
   @Produces("application/json")
@@ -362,8 +386,9 @@ public interface UserResource {
    * <p>
    * Lists the people who the authenticated user follows.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the people who the authenticated user follows.", summary = "List the people the authenticated user follows", operationId = "users/list-followed-by-authenticated")
   @Path("/following")
   @GET
   @Produces("application/json")
@@ -376,8 +401,9 @@ public interface UserResource {
    * Basic Auth or via OAuth with at least <code>read:gpg_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the current user's GPG keys. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:gpg_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "List GPG keys for the authenticated user", operationId = "users/list-gpg-keys-for-authenticated")
   @Path("/gpg_keys")
   @GET
   @Produces("application/json")
@@ -391,8 +417,9 @@ public interface UserResource {
    * <code>write:gpg_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Adds a GPG key to the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth, or OAuth with at least `write:gpg_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Create a GPG key for the authenticated user", operationId = "users/create-gpg-key-for-authenticated")
   @Path("/gpg_keys")
   @POST
   @Produces("application/json")
@@ -406,8 +433,9 @@ public interface UserResource {
    * <code>read:public_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "View extended details for a single public SSH key. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:public_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Get a public SSH key for the authenticated user", operationId = "users/get-public-ssh-key-for-authenticated")
   @Path("/keys/{key_id}")
   @GET
   @Produces("application/json")
@@ -420,8 +448,9 @@ public interface UserResource {
    * <code>admin:public_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Removes a public SSH key from the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth or via OAuth with at least `admin:public_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Delete a public SSH key for the authenticated user", operationId = "users/delete-public-ssh-key-for-authenticated")
   @Path("/keys/{key_id}")
   @DELETE
   void users_delete_public_ssh_key_for_authenticated(@PathParam("key_id") BigInteger keyId);
@@ -433,8 +462,9 @@ public interface UserResource {
    * <code>read:gpg_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "View extended details for a single GPG key. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:gpg_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Get a GPG key for the authenticated user", operationId = "users/get-gpg-key-for-authenticated")
   @Path("/gpg_keys/{gpg_key_id}")
   @GET
   @Produces("application/json")
@@ -447,8 +477,9 @@ public interface UserResource {
    * <code>admin:gpg_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Removes a GPG key from the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth or via OAuth with at least `admin:gpg_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Delete a GPG key for the authenticated user", operationId = "users/delete-gpg-key-for-authenticated")
   @Path("/gpg_keys/{gpg_key_id}")
   @DELETE
   void users_delete_gpg_key_for_authenticated(@PathParam("gpg_key_id") BigInteger gpgKeyId);
@@ -458,8 +489,9 @@ public interface UserResource {
    * Lists all of your email addresses, and specifies which one is visible to the
    * public. This endpoint is accessible with the <code>user:email</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists all of your email addresses, and specifies which one is visible to the public. This endpoint is accessible with the `user:email` scope.", summary = "List email addresses for the authenticated user", operationId = "users/list-emails-for-authenticated")
   @Path("/emails")
   @GET
   @Produces("application/json")
@@ -470,8 +502,9 @@ public interface UserResource {
    * <p>
    * This endpoint is accessible with the <code>user</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "This endpoint is accessible with the `user` scope.", summary = "Add an email address for the authenticated user", operationId = "users/add-email-for-authenticated")
   @Path("/emails")
   @POST
   @Produces("application/json")
@@ -482,16 +515,18 @@ public interface UserResource {
    * <p>
    * This endpoint is accessible with the <code>user</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "This endpoint is accessible with the `user` scope.", summary = "Delete an email address for the authenticated user", operationId = "users/delete-email-for-authenticated")
   @Path("/emails")
   @DELETE
   @Consumes("application/json")
   void users_delete_email_for_authenticated(@NotNull InputStream data);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Check if a person is followed by the authenticated user", operationId = "users/check-person-is-followed-by-authenticated")
   @Path("/following/{username}")
   @GET
   void users_check_person_is_followed_by_authenticated(@PathParam("username") String username);
@@ -507,8 +542,9 @@ public interface UserResource {
    * Following a user requires the user to be logged in and authenticated with
    * basic auth or OAuth with the <code>user:follow</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Note that you'll need to set `Content-Length` to zero when calling out to this endpoint. For more information, see \"[HTTP verbs](https://developer.github.com/v3/#http-verbs).\"\n\nFollowing a user requires the user to be logged in and authenticated with basic auth or OAuth with the `user:follow` scope.", summary = "Follow a user", operationId = "users/follow")
   @Path("/following/{username}")
   @PUT
   void users_follow(@PathParam("username") String username);
@@ -518,8 +554,9 @@ public interface UserResource {
    * Unfollowing a user requires the user to be logged in and authenticated with
    * basic auth or OAuth with the <code>user:follow</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Unfollowing a user requires the user to be logged in and authenticated with basic auth or OAuth with the `user:follow` scope.", summary = "Unfollow a user", operationId = "users/unfollow")
   @Path("/following/{username}")
   @DELETE
   void users_unfollow(@PathParam("username") String username);
@@ -531,22 +568,25 @@ public interface UserResource {
    * <p>
    * If the user is not blocked:
    * </p>
-   * 
+   *
    */
+  @Operation(description = "If the user is blocked:\n\nIf the user is not blocked:", summary = "Check if a user is blocked by the authenticated user", operationId = "users/check-blocked")
   @Path("/blocks/{username}")
   @GET
   void users_check_blocked(@PathParam("username") String username);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Block a user", operationId = "users/block")
   @Path("/blocks/{username}")
   @PUT
   void users_block(@PathParam("username") String username);
 
   /**
-   * 
+   *
    */
+  @Operation(description = "", summary = "Unblock a user", operationId = "users/unblock")
   @Path("/blocks/{username}")
   @DELETE
   void users_unblock(@PathParam("username") String username);
@@ -559,8 +599,9 @@ public interface UserResource {
    * primary email visibility for the authenticated user</a> endpoint. This
    * endpoint is accessible with the <code>user:email</code> scope.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists your publicly visible email address, which you can set with the [Set primary email visibility for the authenticated user](https://developer.github.com/v3/users/emails/#set-primary-email-visibility-for-the-authenticated-user) endpoint. This endpoint is accessible with the `user:email` scope.", summary = "List public email addresses for the authenticated user", operationId = "users/list-public-emails-for-authenticated")
   @Path("/public_emails")
   @GET
   @Produces("application/json")
@@ -571,8 +612,9 @@ public interface UserResource {
    * <p>
    * List the users you've blocked on your personal account.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List the users you've blocked on your personal account.", summary = "List users blocked by the authenticated user", operationId = "users/list-blocked-by-authenticated")
   @Path("/blocks")
   @GET
   @Produces("application/json")
@@ -585,8 +627,9 @@ public interface UserResource {
    * <code>read:public_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the public SSH keys for the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:public_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "List public SSH keys for the authenticated user", operationId = "users/list-public-ssh-keys-for-authenticated")
   @Path("/keys")
   @GET
   @Produces("application/json")
@@ -600,8 +643,9 @@ public interface UserResource {
    * <code>write:public_key</code> <a href=
    * "https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">scope</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Adds a public SSH key to the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth, or OAuth with at least `write:public_key` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).", summary = "Create a public SSH key for the authenticated user", operationId = "users/create-public-ssh-key-for-authenticated")
   @Path("/keys")
   @POST
   @Produces("application/json")
@@ -619,8 +663,9 @@ public interface UserResource {
    * <code>user</code> scope, then the response lists only public profile
    * information.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "If the authenticated user is authenticated through basic authentication or OAuth with the `user` scope, then the response lists public and private profile information.\n\nIf the authenticated user is authenticated through OAuth without the `user` scope, then the response lists only public profile information.", summary = "Get the authenticated user", operationId = "users/get-authenticated")
   @GET
   @Produces("application/json")
   Response users_get_authenticated();
@@ -632,8 +677,9 @@ public interface UserResource {
    * your privacy settings are still enforced: the email address will not be
    * displayed on your public profile or via the API.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "**Note:** If your email is set to private and you send an `email` parameter as part of this request to update your profile, your privacy settings are still enforced: the email address will not be displayed on your public profile or via the API.", summary = "Update the authenticated user", operationId = "users/update-authenticated")
   @PATCH
   @Produces("application/json")
   @Consumes("application/json")
@@ -643,8 +689,9 @@ public interface UserResource {
    * <p>
    * Sets the visibility for your primary email addresses.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Sets the visibility for your primary email addresses.", summary = "Set primary email visibility for the authenticated user", operationId = "users/set-primary-email-visibility-for-authenticated")
   @Path("/email/visibility")
   @PATCH
   @Produces("application/json")
@@ -660,8 +707,9 @@ public interface UserResource {
    * when authenticating via
    * <a href="https://developer.github.com/apps/building-oauth-apps/">OAuth</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List all of the teams across all of the organizations to which the authenticated user belongs. This method requires `user`, `repo`, or `read:org` [scope](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/) when authenticating via [OAuth](https://developer.github.com/apps/building-oauth-apps/).", summary = "List teams for the authenticated user", operationId = "teams/list-for-authenticated-user")
   @Path("/teams")
   @GET
   @Produces("application/json")
@@ -684,8 +732,9 @@ public interface UserResource {
    * "https://developer.github.com/v3/pulls/#list-pull-requests">List pull
    * requests</a>&quot; endpoint.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List issues across owned and member repositories assigned to the authenticated user.\n\n**Note**: GitHub's REST API v3 considers every pull request an issue, but not every issue is a pull request. For this\nreason, \"Issues\" endpoints may return both issues and pull requests in the response. You can identify pull requests by\nthe `pull_request` key. Be aware that the `id` of a pull request returned from \"Issues\" endpoints will be an _issue id_. To find out the pull\nrequest id, use the \"[List pull requests](https://developer.github.com/v3/pulls/#list-pull-requests)\" endpoint.", summary = "List user account issues assigned to the authenticated user", operationId = "issues/list-for-authenticated-user")
   @Path("/issues")
   @GET
   @Produces("application/json")
@@ -717,8 +766,9 @@ public interface UserResource {
    * You can find the permissions for the installation under the
    * <code>permissions</code> key.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists installations of your GitHub App that the authenticated user has explicit permission (`:read`, `:write`, or `:admin`) to access.\n\nYou must use a [user-to-server OAuth access token](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint.\n\nThe authenticated user has explicit permission to access repositories they own, repositories where they are a collaborator, and repositories that they can access through an organization membership.\n\nYou can find the permissions for the installation under the `permissions` key.", summary = "List app installations accessible to the user access token", operationId = "apps/list-installations-for-authenticated-user")
   @Path("/installations")
   @GET
   @Produces("application/json")
@@ -747,8 +797,9 @@ public interface UserResource {
    * The access the user has to each repository is included in the hash under the
    * <code>permissions</code> key.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "List repositories that the authenticated user has explicit permission (`:read`, `:write`, or `:admin`) to access for an installation.\n\nThe authenticated user has explicit permission to access repositories they own, repositories where they are a collaborator, and repositories that they can access through an organization membership.\n\nYou must use a [user-to-server OAuth access token](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint.\n\nThe access the user has to each repository is included in the hash under the `permissions` key.", summary = "List repositories accessible to the user access token", operationId = "apps/list-installation-repos-for-authenticated-user")
   @Path("/installations/{installation_id}/repositories")
   @GET
   @Produces("application/json")
@@ -767,8 +818,9 @@ public interface UserResource {
    * "https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/">OAuth
    * token</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the active subscriptions for the authenticated user. You must use a [user-to-server OAuth access token](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint. . OAuth Apps must authenticate using an [OAuth token](https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/).", summary = "List subscriptions for the authenticated user", operationId = "apps/list-subscriptions-for-authenticated-user")
   @Path("/marketplace_purchases")
   @GET
   @Produces("application/json")
@@ -790,8 +842,9 @@ public interface UserResource {
    * <a href="https://developer.github.com/v3/auth/#basic-authentication">Basic
    * Authentication</a> to access this endpoint.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Add a single repository to an installation. The authenticated user must have admin access to the repository.\n\nYou must use a personal access token (which you can create via the [command line](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) or the [OAuth Authorizations API](https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization)) or [Basic Authentication](https://developer.github.com/v3/auth/#basic-authentication) to access this endpoint.", summary = "Add a repository to an app installation", operationId = "apps/add-repo-to-installation")
   @Path("/installations/{installation_id}/repositories/{repository_id}")
   @PUT
   void apps_add_repo_to_installation(@PathParam("installation_id") BigInteger installationId,
@@ -811,8 +864,9 @@ public interface UserResource {
    * <a href="https://developer.github.com/v3/auth/#basic-authentication">Basic
    * Authentication</a> to access this endpoint.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Remove a single repository from an installation. The authenticated user must have admin access to the repository.\n\nYou must use a personal access token (which you can create via the [command line](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) or the [OAuth Authorizations API](https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization)) or [Basic Authentication](https://developer.github.com/v3/auth/#basic-authentication) to access this endpoint.", summary = "Remove a repository from an app installation", operationId = "apps/remove-repo-from-installation")
   @Path("/installations/{installation_id}/repositories/{repository_id}")
   @DELETE
   void apps_remove_repo_from_installation(@PathParam("installation_id") BigInteger installationId,
@@ -829,8 +883,9 @@ public interface UserResource {
    * "https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/">OAuth
    * token</a>.
    * </p>
-   * 
+   *
    */
+  @Operation(description = "Lists the active subscriptions for the authenticated user. You must use a [user-to-server OAuth access token](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint. . OAuth Apps must authenticate using an [OAuth token](https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/).", summary = "List subscriptions for the authenticated user (stubbed)", operationId = "apps/list-subscriptions-for-authenticated-user-stubbed")
   @Path("/marketplace_purchases/stubbed")
   @GET
   @Produces("application/json")
