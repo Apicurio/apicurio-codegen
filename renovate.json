@@ -38,6 +38,20 @@
       "schedule": [ "* 0 1 * *" ]
     },
     {
+      "groupName": "Dependencies: Maven Plugins",
+      "matchFileNames": [
+        "**/pom.xml"
+      ],
+      "matchPackageNames": [
+        "org.apache.maven*:*"
+      ],
+      "enabled": true,
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ]
+    },
+    {
       "groupName": "Dependencies: Apicurio Data Models",
       "matchFileNames": [
         "**/pom.xml"
