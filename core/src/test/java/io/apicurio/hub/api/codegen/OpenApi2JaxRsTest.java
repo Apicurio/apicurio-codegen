@@ -204,6 +204,11 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
         doFullTest("OpenApi2JaxRsTest/constrained-parameters.json", UpdateOnly.no, Reactive.no, "_expected-constrained-parameters/generated-api", false);
     }
 
+        @Test
+    public void testConstraintParameters_allOfSelfRef() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/allof-self-ref.json", UpdateOnly.no, Reactive.no, "_expected-constrained-parameters/generated-api", false);
+    }
+
     /**
      * Shared test method.
      * @param apiDef
