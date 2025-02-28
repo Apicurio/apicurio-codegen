@@ -488,7 +488,7 @@ public class OpenApi2JaxRs {
 
         sortImports(jaxRsApp);
 
-        return jaxRsApp.toString() + "\n";
+        return jaxRsApp + "\n";
     }
 
     /**
@@ -809,7 +809,42 @@ public class OpenApi2JaxRs {
      * @param coreType
      */
     protected Type<?> generateReactiveTypeName(Type<?> coreType) {
-        return parseType(String.format("java.util.concurrent.CompletionStage<%s>", coreType.toString()));
+        Type<?> currentType = Types.isPrimitive(coreType.toString()) ? getType(coreType) : coreType;
+        return parseType("java.util.concurrent.CompletionStage<" + currentType + ">");
+    }
+
+    public Type<?> getType(final Type<?> coreType) {
+        Type<?> currentType;
+        switch (coreType.toString()) {
+            case "byte":
+                currentType = parseType("java.lang.Byte");
+                break;
+            case "short":
+                currentType = parseType("java.lang.Short");
+                break;
+            case "int":
+                currentType = parseType("java.lang.Integer");
+                break;
+            case "long":
+                currentType = parseType("java.lang.Long");
+                break;
+            case "float":
+                currentType = parseType("java.lang.Float");
+                break;
+            case "double":
+                currentType = parseType("java.lang.Double");
+                break;
+            case "char":
+                currentType = parseType("java.lang.Character");
+                break;
+            case "boolean":
+                currentType = parseType("java.lang.Boolean");
+                break;
+            default:
+                currentType = coreType;
+        }
+
+        return currentType;
     }
 
     /**
@@ -1041,7 +1076,7 @@ public class OpenApi2JaxRs {
 
     public static class JaxRsJackson2Annotator extends Jackson2Annotator {
 
-        private CodegenInfo codegenInfo;
+        private final CodegenInfo codegenInfo;
 
         /**
          * Constructor.

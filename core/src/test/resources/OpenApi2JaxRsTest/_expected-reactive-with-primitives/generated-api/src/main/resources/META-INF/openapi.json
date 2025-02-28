@@ -1,0 +1,780 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "contact": {
+      "email": "team-sosa@anon.com",
+      "name": "Anon",
+      "url": "https://anon.com"
+    },
+    "description": "API for managing inventory sources and related metadata.\n\nInventory is comprised of a collection of sources, which are used to generate a list of instances.",
+    "title": "Inventory",
+    "version": "1.0",
+    "termsOfService": "https://anon.com/legal"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9996/api/inventory"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Inventory"
+    }
+  ],
+  "paths": {
+    "/v1/{org_id}/sources": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        }
+      ],
+      "get": {
+        "summary": "Get sources",
+        "operationId": "list-sources",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Sources"
+          }
+        },
+        "description": "Return a list of all sources.",
+        "tags": [
+          "Inventory"
+        ],
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      }
+    },
+    "/v1/{org_id}/sources/gcp": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        }
+      ],
+      "post": {
+        "summary": "Create or update source",
+        "operationId": "create-gcp-source",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          }
+        },
+        "description": "Create or update the source identified by a unique ID in the body, parsed by its source type (currently only accepts a service account key for GCP).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGCPSourceRequest"
+              }
+            }
+          },
+          "description": "Upload JSON source credentials."
+        },
+        "parameters": [],
+        "tags": [
+          "Inventory"
+        ],
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      }
+    },
+    "/v1/{org_id}/sources/gcp/{source_id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        },
+        {
+          "$ref": "#/components/parameters/SourceIdPathParam"
+        }
+      ],
+      "put": {
+        "summary": "Put GCP Source",
+        "operationId": "put-gcp-source",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGCPSourceRequest"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/v1/{org_id}/sources/{source_id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        },
+        {
+          "$ref": "#/components/parameters/SourceIdPathParam"
+        }
+      ],
+      "delete": {
+        "summary": "Delete source",
+        "operationId": "delete-source",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Inventory"
+        ],
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get Source",
+        "operationId": "getSource",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Auth0": []
+          }
+        ],
+        "tags": [
+          "Inventory"
+        ]
+      }
+    },
+    "/v1/{org_id}/sources/{source_id}:sync": {
+      "post": {
+        "operationId": "sync-source",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "summary": "Sync a source",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Synchronize available instances from the given source.",
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        },
+        {
+          "$ref": "#/components/parameters/SourceIdPathParam"
+        }
+      ]
+    },
+    "/v1/{org_id}/search": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        }
+      ],
+      "post": {
+        "summary": "Search instances",
+        "operationId": "search-instances",
+        "description": "Search for instances based on a set of filters. Supports pagination based on instance ID cursor. Results are ordered by creation timestamp.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageOffsetQueryParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeQueryParam"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaginatedSearchInstancesRequest"
+              },
+              "examples": {
+                "match all": {
+                  "value": {
+                    "filters": []
+                  }
+                }
+              }
+            }
+          },
+          "description": "Filter criteria."
+        },
+        "tags": [
+          "Inventory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedSearchInstancesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      }
+    },
+    "/v1/{org_id}/instance/{instance_id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/OrgIdPathParam"
+        },
+        {
+          "$ref": "#/components/parameters/InstanceIdPathParam"
+        }
+      ],
+      "get": {
+        "summary": "Get instance details",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instance"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-instance",
+        "description": "Get instance details.",
+        "tags": [
+          "Inventory"
+        ],
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      }
+    },
+    "/v1/{org_id}/instances/count": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "org_id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get Org Instance Count",
+        "tags": [
+          "Inventory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-org-instance-count",
+        "description": "Get the total number of instances in an organization",
+        "security": [
+          {
+            "Auth0": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "OrgIdPathParam": {
+        "name": "org_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "The tenant ID the resource belongs to"
+      },
+      "PageOffsetQueryParam": {
+        "name": "page_offset",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "Token for the next page"
+      },
+      "PageSizeQueryParam": {
+        "name": "page_size",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "Page size"
+      },
+      "SourceIdPathParam": {
+        "name": "source_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "id of the source"
+      },
+      "InstanceIdPathParam": {
+        "name": "instance_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "ID of the instance to retrieve"
+      }
+    },
+    "requestBodies": {},
+    "schemas": {
+      "Source": {
+        "title": "",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "last_synced": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "instance_count": {
+            "type": "integer"
+          },
+          "credentials_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/SourceType"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "last_synced",
+          "instance_count",
+          "credentials_id",
+          "type"
+        ]
+      },
+      "SearchFilter": {
+        "title": "",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "lt",
+              "eq",
+              "gt",
+              "contains",
+              "not_contains"
+            ]
+          },
+          "value": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "GCP_METADATA",
+              "FACTS",
+              "SOURCE",
+              "ASSIGNED_POLICY",
+              "NODE"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "operator",
+          "value",
+          "type"
+        ]
+      },
+      "CuratedInstance": {
+        "description": "",
+        "type": "object",
+        "title": "",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "creation_time": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "internal_ip": {
+            "type": "string"
+          },
+          "external_ip": {
+            "type": "string"
+          },
+          "operating_system": {
+            "type": "string"
+          },
+          "machine_type": {
+            "type": "string"
+          },
+          "node_status": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "zone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "source",
+          "creation_time",
+          "internal_ip",
+          "external_ip",
+          "operating_system",
+          "machine_type",
+          "node_status",
+          "uptime",
+          "zone"
+        ]
+      },
+      "Instance": {
+        "title": "",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "facts": {
+            "type": "object"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "facts",
+          "metadata"
+        ]
+      },
+      "GCPServiceAccount": {
+        "title": "GCPServiceAccount",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "private_key_id": {
+            "type": "string"
+          },
+          "private_key": {
+            "type": "string"
+          },
+          "client_email": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "auth_uri": {
+            "type": "string"
+          },
+          "token_uri": {
+            "type": "string"
+          },
+          "auth_provider_x509_cert_url": {
+            "type": "string"
+          },
+          "client_x509_cert_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "project_id",
+          "private_key_id",
+          "private_key",
+          "client_email",
+          "client_id",
+          "auth_uri",
+          "token_uri",
+          "auth_provider_x509_cert_url",
+          "client_x509_cert_url"
+        ]
+      },
+      "CreateGCPSourceRequest": {
+        "title": "CreateGCPSourceRequest",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "gather_facts_on_ingest": {
+            "type": "boolean",
+            "default": true
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/GCPCredential"
+          }
+        },
+        "required": [
+          "name",
+          "gather_facts_on_ingest",
+          "credentials"
+        ]
+      },
+      "PatchGCPSourceRequest": {
+        "title": "PatchGCPSourceRequest",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "gather_facts_on_ingest": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PaginatedSearchInstancesRequest": {
+        "title": "PaginatedSearchInstancesRequest",
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchFilter"
+            }
+          }
+        }
+      },
+      "PaginatedSearchInstancesResponse": {
+        "title": "PaginatedSearchInstancesResponse",
+        "type": "object",
+        "properties": {
+          "next_page_offset": {
+            "type": "integer"
+          },
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CuratedInstance"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "next_page_offset",
+          "instances",
+          "total_count"
+        ]
+      },
+      "GCPCredential": {
+        "title": "GCPCredential",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "private_key_id": {
+            "type": "string"
+          },
+          "private_key": {
+            "type": "string"
+          },
+          "client_email": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "auth_uri": {
+            "type": "string"
+          },
+          "token_uri": {
+            "type": "string"
+          },
+          "auth_provider_x509_cert_url": {
+            "type": "string"
+          },
+          "client_x509_cert_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "project_id",
+          "private_key_id",
+          "private_key",
+          "client_email",
+          "client_id",
+          "auth_uri",
+          "token_uri",
+          "auth_provider_x509_cert_url",
+          "client_x509_cert_url"
+        ]
+      },
+      "SourceType": {
+        "type": "string",
+        "title": "SourceType",
+        "enum": [
+          "GCP"
+        ]
+      }
+    },
+    "responses": {
+      "Sources": {
+        "description": "A list of sources",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Source"
+              }
+            }
+          }
+        }
+      },
+      "Search": {
+        "description": "A list of curated instance details matching the search criteria, with a next cursor if there are more results.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "next_cursor": {
+                  "type": "string"
+                },
+                "instances": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CuratedInstance"
+                  }
+                }
+              },
+              "required": [
+                "instances"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Auth0": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "jwt",
+        "description": "Auth0 token"
+      }
+    }
+  }
+}
