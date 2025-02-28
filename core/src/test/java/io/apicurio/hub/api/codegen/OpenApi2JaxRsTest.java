@@ -98,6 +98,11 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
         doFullTest("OpenApi2JaxRsTest/beer-api.json", UpdateOnly.no, Reactive.yes, "_expected-reactive-full/generated-api", false);
     }
 
+    @Test
+    public void testGenerateFullReactiveWithPrimitives() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/reactive-with-primitives.json", UpdateOnly.no, Reactive.yes, "_expected-reactive-with-primitives/generated-api", false);
+    }
+
     /**
      * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
      */
