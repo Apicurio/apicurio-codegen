@@ -37,7 +37,7 @@ import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 
 public final class CodegenUtil {
 
-    public static final String schemaToPackageName(OpenApiSchema schema, String defaultPackage) {
+    public static String schemaToPackageName(OpenApiSchema schema, String defaultPackage) {
         String pname = defaultPackage;
 
         if (schema != null) {
@@ -53,8 +53,8 @@ public final class CodegenUtil {
         return pname;
     }
 
-    public static final String schemaRefToFQCN(JaxRsProjectSettings settings, Document document,
-            String schemaRef, String defaultPackage) {
+    public static String schemaRefToFQCN(JaxRsProjectSettings settings, Document document, String schemaRef,
+          String defaultPackage) {
         String cname = "GeneratedClass_" + System.currentTimeMillis();
         String pname = defaultPackage;
         if (schemaRef.startsWith("#/components/schemas/")) {
@@ -69,8 +69,12 @@ public final class CodegenUtil {
         return pname + "." + StringUtils.capitalize(cname);
     }
 
-    public static final String toClassName(JaxRsProjectSettings settings, String name) {
-        return settings.getClassNamePrefix() + StringUtils.capitalize(name) + settings.getClassNameSuffix();
+    public static String toClassName(JaxRsProjectSettings settings, String name) {
+        return settings.getClassNamePrefix() + StringUtils.capitalize(sanitizeClassName(name)) + settings.getClassNameSuffix();
+    }
+
+    public static String sanitizeClassName(final String name) {
+        return name.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     public static JsonNode getExtension(Extensible node, String name) {

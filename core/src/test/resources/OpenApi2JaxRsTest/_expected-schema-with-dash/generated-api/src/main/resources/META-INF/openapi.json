@@ -1,0 +1,31 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Example API",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "SomeObject": {
+        "type": "object",
+        "properties": {
+          "someList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Some-Other-Object"
+            }
+          }
+        }
+      },
+      "Some-Other-Object": {
+        "type": "object",
+        "properties": {
+          "exampleProperty": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
