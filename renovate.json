@@ -11,8 +11,7 @@
   "ignorePaths": [
     "maven-plugin-tests/src/it/**",
     "maven-plugin-tests/target/**",
-    "core/src/main/resources/**",
-    "core/src/test/resources/**"
+    "core/src/**"
   ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 5,
