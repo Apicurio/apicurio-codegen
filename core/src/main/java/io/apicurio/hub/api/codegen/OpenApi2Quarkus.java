@@ -19,7 +19,6 @@ package io.apicurio.hub.api.codegen;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -28,6 +27,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 
 /**
@@ -75,13 +76,20 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
         }
     }
 
-    /**
-     * @see io.apicurio.hub.api.codegen.OpenApi2JaxRs#generateJaxRsApplication()
-     */
     @Override
-    protected String generateJaxRsApplication() {
-        // Don't need one of these for Quarkus.
-        return null;
+    protected JavaClassSource generateApplicationClassSource(String topLevelPackage, CodegenInfo info) {
+
+       return Roaster.create(JavaClassSource.class)
+             .setName(getMainClassName())
+             .getJavaDoc()
+             .setFullText(info.getName() + " " + info.getVersion())
+             .getOrigin()
+             .setSuperType("jakarta.ws.rs.core.Application")
+             .setPackage(this.settings.javaPackage)
+             .setPublic()
+             .addAnnotation("org.eclipse.microprofile.openapi.annotations.OpenApiDefinition")
+             .setLiteralValue("info", String.format("@org.eclipse.microprofile.openapi.annotations.info.Info(title = \"%s\", version = \"%s\")", info.getName(), info.getVersion()))
+             .getOrigin();
     }
 
     @Override
@@ -118,4 +126,8 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
         return getClass().getResource("quarkus/" + name);
     }
 
+    @Override
+    protected String getMainClassName() {
+        return "Application";
+    }
 }
