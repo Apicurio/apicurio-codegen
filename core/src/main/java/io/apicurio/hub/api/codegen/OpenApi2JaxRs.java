@@ -285,8 +285,8 @@ public class OpenApi2JaxRs {
         }
 
         if (!this.updateOnly) {
-            String appFileName = javaPackageToZipPath(this.settings.javaPackage) + "JaxRsApplication.java";
-            String jaxRsApp = generateJaxRsApplication();
+            String appFileName = javaPackageToZipPath(this.settings.javaPackage) + getMainClassName() + ".java";
+            String jaxRsApp = generateJaxRsApplication(info);
             if (jaxRsApp != null) {
                 log.append("Generating " + appFileName + "\r\n");
                 zipOutput.putNextEntry(new ZipEntry(appFileName));
@@ -409,6 +409,25 @@ public class OpenApi2JaxRs {
         return null;
     }
 
+    protected String getMainClassName() {
+        return "JaxRsApplication";
+    }
+    protected JavaClassSource generateApplicationClassSource(String topLevelPackage, CodegenInfo info) {
+      return Roaster.create(JavaClassSource.class)
+                      .setPackage(this.settings.javaPackage)
+                      .setPublic()
+                      .setName(getMainClassName())
+                      .setSuperType(String.format("%s.ws.rs.core.Application", topLevelPackage))
+                      .getJavaDoc()
+                      .setFullText("The JAX-RS application.")
+                      .getOrigin()
+                      .addAnnotation(String.format("%s.enterprise.context.ApplicationScoped", topLevelPackage))
+                      .getOrigin()
+                      .addAnnotation(String.format("%s.ws.rs.ApplicationPath", topLevelPackage))
+                      .setStringValue("/")
+                      .getOrigin();
+    }
+
     /**
      * Pre-process the document to modify it in the following ways:
      *
@@ -471,20 +490,8 @@ public class OpenApi2JaxRs {
     /**
      * Generates the JaxRsApplication Java class.
      */
-    protected String generateJaxRsApplication(String topLevelPackage) {
-        JavaClassSource jaxRsApp = Roaster.create(JavaClassSource.class)
-                .setPackage(this.settings.javaPackage)
-                .setPublic()
-                .setName("JaxRsApplication")
-                .setSuperType(String.format("%s.ws.rs.core.Application", topLevelPackage))
-                .getJavaDoc()
-                .setFullText("The JAX-RS application.")
-                .getOrigin()
-                .addAnnotation(String.format("%s.enterprise.context.ApplicationScoped", topLevelPackage))
-                .getOrigin()
-                .addAnnotation(String.format("%s.ws.rs.ApplicationPath", topLevelPackage))
-                .setStringValue("/")
-                .getOrigin();
+    protected String generateJaxRsApplication(String topLevelPackage, CodegenInfo info) {
+        JavaClassSource jaxRsApp = generateApplicationClassSource(topLevelPackage, info);
 
         sortImports(jaxRsApp);
 
@@ -494,8 +501,8 @@ public class OpenApi2JaxRs {
     /**
      * Generates the JaxRsApplication java class.
      */
-    protected String generateJaxRsApplication() {
-        return generateJaxRsApplication("jakarta");
+    protected String generateJaxRsApplication(CodegenInfo info) {
+        return generateJaxRsApplication("jakarta", info);
     }
 
     void sortImports(Importer<?> javaSource) {
