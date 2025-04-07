@@ -364,8 +364,10 @@ public class OpenApi2JaxRs {
     protected CodegenInfo getInfoFromApiDoc() throws IOException {
         document = Library.readDocumentFromJSONString(openApiDoc);
 
-        // If the document is OpenAPI 2.0 or 3.0, upgrade/transform it to 3.1
-        document = Library.transformDocument(document, ModelType.OPENAPI31);
+        if (!document.root().modelType().equals(ModelType.OPENAPI31)) {
+            // If the document is OpenAPI 2.0 or 3.0, upgrade/transform it to 3.1
+            document = Library.transformDocument(document, ModelType.OPENAPI31);
+        }
 
         // Pre-process the document
         document = preProcess(document);
