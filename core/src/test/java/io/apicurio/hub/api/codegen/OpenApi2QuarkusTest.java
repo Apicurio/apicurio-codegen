@@ -63,6 +63,11 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
         doFullTest("OpenApi2QuarkusTest/strimzi-kafka-bridge.json", false, "_expected-strimzi-kafka-bridge/generated-api-" + Runtime.version().major(), false);
     }
 
+    @Test
+    public void testIssue() throws IOException {
+        doFullTest("OpenApi2QuarkusTest/issue-330.json", false, "_expected-issues/issue-330", true);
+    }
+
     /**
      * Shared test method.
      * @param apiDef

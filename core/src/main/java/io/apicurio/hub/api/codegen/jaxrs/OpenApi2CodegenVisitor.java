@@ -50,6 +50,7 @@ import io.apicurio.datamodels.models.Schema;
 import io.apicurio.datamodels.models.openapi.OpenApiMediaType;
 import io.apicurio.datamodels.models.openapi.OpenApiOperation;
 import io.apicurio.datamodels.models.openapi.OpenApiParameter;
+import io.apicurio.datamodels.models.openapi.OpenApiParametersParent;
 import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import io.apicurio.datamodels.models.openapi.OpenApiRequestBody;
 import io.apicurio.datamodels.models.openapi.OpenApiResponse;
@@ -207,7 +208,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
         // Be sure to process path and query parameters found on the parent!
         this._processPathItemParams = true;
-        List<OpenApiParameter> parentParams = ((OpenApiPathItem) node.parent()).getParameters();
+        List<OpenApiParameter> parentParams = ((OpenApiParametersParent) node.parent()).getParameters();
         if (parentParams != null && parentParams.size() > 0) {
             for (OpenApiParameter parentParam : parentParams) {
                 parentParam.accept(this);
