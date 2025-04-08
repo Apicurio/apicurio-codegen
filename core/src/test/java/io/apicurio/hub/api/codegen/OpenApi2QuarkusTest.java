@@ -68,6 +68,17 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
         doFullTest("OpenApi2QuarkusTest/issue-330.json", false, "_expected-issues/issue-330", true);
     }
 
+    @Test
+    public void testReactive() throws IOException {
+        OpenApi2Quarkus generator = new OpenApi2Quarkus();
+        generator.setUpdateOnly(false);
+        generator.setOpenApiDocument(getClass().getClassLoader().getResource("OpenApi2QuarkusTest/issue-330.json"));
+        var settings = new JaxRsProjectSettings();
+        settings.setReactive(true);
+        generator.setSettings(settings);
+        super.doFullTest(generator, "_expected-reactive/mutiny", false);
+    }
+
     /**
      * Shared test method.
      * @param apiDef
