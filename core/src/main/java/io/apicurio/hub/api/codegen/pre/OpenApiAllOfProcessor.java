@@ -42,10 +42,10 @@ public class OpenApiAllOfProcessor extends TraversingOpenApi31VisitorAdapter {
             List<String> required = new ArrayList<>();
             schema.getAllOf().forEach(allOfSchema -> {
                 OpenApi31Schema allOf = (OpenApi31Schema) allOfSchema;
-                if (allOf.get$ref() != null) {
-                    LocalReferenceResolver resolver = new LocalReferenceResolver();
-                    allOf = (OpenApi31Schema) resolver.resolveRef(allOf.get$ref(), allOf);
-                }
+//                if (allOf.get$ref() != null) {
+//                    LocalReferenceResolver resolver = new LocalReferenceResolver();
+//                    allOf = (OpenApi31Schema) resolver.resolveRef(allOf.get$ref(), allOf);
+//                }
                 if (allOf != null) {
                     if (allOf.getRequired() != null) {
                         required.addAll(allOf.getRequired());

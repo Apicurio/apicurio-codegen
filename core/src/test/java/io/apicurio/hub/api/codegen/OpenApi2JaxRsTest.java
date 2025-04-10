@@ -210,6 +210,11 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     }
 
     @Test
+    public void testConstraintParameters_allOfSelfRef() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/allof-self-ref.json", UpdateOnly.no, Reactive.no, "_expected-constrained-parameters/generated-api", true);
+    }
+
+    @Test
     public void testSchemaWithDash() throws IOException {
         doFullTest("OpenApi2JaxRsTest/schema-with-dash.json", UpdateOnly.no, Reactive.no, "_expected-schema-with-dash/generated-api", false);
     }
