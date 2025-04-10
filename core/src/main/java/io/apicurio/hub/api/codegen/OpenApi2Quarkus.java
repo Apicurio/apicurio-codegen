@@ -28,7 +28,9 @@ import org.apache.commons.io.IOUtils;
 
 import io.apicurio.hub.api.codegen.beans.CodegenInfo;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.util.Types;
 
 
 /**
@@ -129,5 +131,11 @@ public class OpenApi2Quarkus extends OpenApi2JaxRs {
     @Override
     protected String getMainClassName() {
         return "Application";
+    }
+
+    @Override
+    protected Type<?> generateReactiveTypeName(Type<?> coreType) {
+        Type<?> currentType = Types.isPrimitive(coreType.toString()) ? getType(coreType) : coreType;
+        return parseType("io.smallrye.mutiny.Uni<" + currentType + ">");
     }
 }
