@@ -974,20 +974,6 @@ public class OpenApi2JaxRs {
         String generatedBeanPackage = bean.getPackage();
         String generatedBeanFQCN = generatedBeanPackage + "." + generatedBeanName;
 
-        boolean useJsr303 = settings.isUseJsr303();
-
-        DefaultGenerationConfig defaultGenerationConfig = new DefaultGenerationConfig() {
-            @Override
-            public boolean isIncludeJsr303Annotations() {
-                return settings.useJsr303;
-            }
-
-            @Override
-            public boolean isUseJakartaValidation() {
-                return isIncludeJsr303Annotations();
-            }
-        };
-
         SchemaMapper schemaMapper = new SchemaMapper(
                 new JaxRsRuleFactory(config, new JaxRsJackson2Annotator(info, config), new SchemaStore() {
                     @Override
