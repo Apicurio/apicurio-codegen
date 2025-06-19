@@ -33,6 +33,7 @@ public class JaxRsProjectSettings {
     public String javaPackage = "org.example.api";
     public String classNamePrefix = "";
     public String classNameSuffix = "";
+    protected boolean useJsr303 = false;
 
     /**
      * Constructor.
@@ -166,5 +167,13 @@ public class JaxRsProjectSettings {
 
     public void setClassNameSuffix(String classNameSuffix) {
         this.classNameSuffix = classNameSuffix;
+    }
+
+    public boolean isUseJsr303() {
+        return useJsr303;
+    }
+
+    public void setUseJsr303(boolean useJsr303) {
+        this.useJsr303 = useJsr303;
     }
 }
