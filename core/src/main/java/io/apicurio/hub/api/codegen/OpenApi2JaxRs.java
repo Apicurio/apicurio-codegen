@@ -909,7 +909,7 @@ public class OpenApi2JaxRs {
         final String sizeConstraint = String.format("%s.Size", constraintPkg);
 
         if (settings.isUseJsr303() && !((Parameter) target).getType().isPrimitive()) {
-            target.addAnnotation(String.format("%s.validation.Valid", constraintPkg));
+            target.addAnnotation(String.format("%s.validation.Valid", topLevelPackage));
         }
 
         if (!forbidNotNull && !schemaInfo.isNullable()) {
