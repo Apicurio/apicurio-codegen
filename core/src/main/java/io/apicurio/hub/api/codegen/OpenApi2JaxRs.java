@@ -908,7 +908,7 @@ public class OpenApi2JaxRs {
         final String constraintPkg = String.format("%s.validation.constraints", topLevelPackage);
         final String sizeConstraint = String.format("%s.Size", constraintPkg);
 
-        if (settings.isUseJsr303() && !((Parameter) target).getType().isPrimitive()) {
+        if (settings.isUseJsr303() && isUserBean(target)) {
             target.addAnnotation(String.format("%s.validation.Valid", topLevelPackage));
         }
 
@@ -948,6 +948,10 @@ public class OpenApi2JaxRs {
         addConstraint(target, schemaInfo.getMinLength(), sizeConstraint, "min");
         addConstraint(target, schemaInfo.getPattern(), String.format("%s.Pattern", constraintPkg), "regexp");
         addConstraint(target, schemaInfo.getDefaultValue(), String.format("%s.ws.rs.DefaultValue", topLevelPackage), "value");
+    }
+
+    private boolean isUserBean(AnnotationTargetSource<?, ?> target) {
+        return !((Parameter) target).getType().isPrimitive() && !((Parameter) target).getType().isArray() && !((Parameter<?>) target).getType().isParameterized();
     }
 
     <C> void addConstraint(AnnotationTargetSource<?, ?> target, C constraintValue, String annotationName, String annotationProperty) {

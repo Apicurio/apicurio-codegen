@@ -5,9 +5,49 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/car": {
+      "post": {
+        "tags": [
+          "car"
+        ],
+        "summary": "Returns a list of cars.",
+        "description": "This endpoint returns a list of cars with their details.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "required": true
+                },
+                "required": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of cars returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user": {
       "post": {
-        "tags": ["user"],
+        "tags": [
+          "user"
+        ],
         "summary": "Creates a new user.",
         "description": "Accepts a user object and validates its fields like Bean Validation",
         "requestBody": {
@@ -63,7 +103,11 @@
             "description": "User's age (must be between 0 and 150)"
           }
         },
-        "required": ["name", "email", "age"]
+        "required": [
+          "name",
+          "email",
+          "age"
+        ]
       }
     }
   }
