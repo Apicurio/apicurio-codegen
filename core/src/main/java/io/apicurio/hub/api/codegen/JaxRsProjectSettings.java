@@ -33,6 +33,7 @@ public class JaxRsProjectSettings {
     public String javaPackage = "org.example.api";
     public String classNamePrefix = "";
     public String classNameSuffix = "";
+    public String genericReturnType = null;
 
     /**
      * Constructor.
@@ -166,5 +167,13 @@ public class JaxRsProjectSettings {
 
     public void setClassNameSuffix(String classNameSuffix) {
         this.classNameSuffix = classNameSuffix;
+    }
+
+    public String getGenericReturnType() {
+        return genericReturnType;
+    }
+
+    public void setGenericReturnType(String genericReturnType) {
+        this.genericReturnType = genericReturnType;
     }
 }
