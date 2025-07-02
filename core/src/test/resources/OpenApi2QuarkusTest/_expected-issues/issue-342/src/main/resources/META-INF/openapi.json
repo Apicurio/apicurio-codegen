@@ -1,0 +1,93 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pet Store API",
+    "version": "1.0.0",
+    "description": "API para gerenciar pets"
+  },
+  "paths": {
+    "/pets": {
+      "post": {
+        "summary": "Add a new pet",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PetBody"
+        },
+        "responses": {
+          "201": {
+            "description": "Pet created successfully"
+          },
+          "400": {
+            "description": "Invalid request body"
+          }
+        }
+      }
+    },
+    "/pets/{petId}": {
+      "put": {
+        "summary": "Update a pet",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "description": "ID do pet a ser atualizado",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PetBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/schemas/Pet"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "requestBodies": {
+      "PetBody": {
+        "description": "A JSON object containing pet information",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Pet"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "required": [
+          "name",
+          "species"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Unique identifier for the pet"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pet's name"
+          },
+          "species": {
+            "type": "string",
+            "description": "Pet's species"
+          },
+          "age": {
+            "type": "integer",
+            "description": "Pet's age in years"
+          }
+        }
+      }
+    }
+  }
+}
