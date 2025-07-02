@@ -64,8 +64,13 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
     }
 
     @Test
-    public void testIssue() throws IOException {
+    public void testIssue330() throws IOException {
         doFullTest("OpenApi2QuarkusTest/issue-330.json", false, "_expected-issues/issue-330", true);
+    }
+
+    @Test
+    public void testIssue342() throws IOException {
+        doFullTest("OpenApi2QuarkusTest/issue-342.json", false, "_expected-issues/issue-342", true);
     }
 
     @Test

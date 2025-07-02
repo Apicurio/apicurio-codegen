@@ -40,7 +40,8 @@ public class DocumentPreProcessor {
             new OpenApiInlinedParameterRemover(),
             new OpenApiResponseInliner(),
             new OpenApiAllOfProcessor(),
-            new OpenApiBeanClassExtendsProcessor()
+            new OpenApiBeanClassExtendsProcessor(),
+            new OpenApiRequestBodyInliner()
     };
 
     /**
