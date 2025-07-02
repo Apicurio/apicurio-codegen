@@ -69,6 +69,16 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
     }
 
     @Test
+    public void testIssue344() throws IOException {
+        JaxRsProjectSettings jaxRsProjectSettings = new JaxRsProjectSettings();
+        jaxRsProjectSettings.artifactId = "generated-api";
+        jaxRsProjectSettings.groupId = "org.example.api";
+        jaxRsProjectSettings.javaPackage = "org.example.api";
+        jaxRsProjectSettings.useJsr303 = true;
+        doFullTest("OpenApi2QuarkusTest/issue-344.json", false, "_expected-issues/issue-344", true, jaxRsProjectSettings);
+    }
+
+    @Test
     public void testIssue342() throws IOException {
         doFullTest("OpenApi2QuarkusTest/issue-342.json", false, "_expected-issues/issue-342", true);
     }
@@ -94,6 +104,22 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
      */
     private void doFullTest(String apiDef, boolean updateOnly, String expectedFilesPath, boolean debug) throws IOException {
         OpenApi2Quarkus generator = new OpenApi2Quarkus();
+        generator.setUpdateOnly(updateOnly);
+        generator.setOpenApiDocument(getClass().getClassLoader().getResource(apiDef));
+        super.doFullTest(generator, expectedFilesPath, debug);
+    }
+
+    /**
+     * Shared test method.
+     * @param apiDef
+     * @param updateOnly
+     * @param expectedFilesPath
+     * @param debug
+     * @throws IOException
+     */
+    private void doFullTest(String apiDef, boolean updateOnly, String expectedFilesPath, boolean debug, JaxRsProjectSettings settings) throws IOException {
+        OpenApi2Quarkus generator = new OpenApi2Quarkus();
+        generator.setSettings(settings);
         generator.setUpdateOnly(updateOnly);
         generator.setOpenApiDocument(getClass().getClassLoader().getResource(apiDef));
         super.doFullTest(generator, expectedFilesPath, debug);

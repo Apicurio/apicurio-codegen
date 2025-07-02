@@ -17,6 +17,7 @@ public class ProjectSettings extends JaxRsProjectSettings {
 	    groupId = "org.example";
 	    artifactId = "example-api";
 	    javaPackage = "org.example.api";
+		useJsr303 = false;
 	}
 
 }

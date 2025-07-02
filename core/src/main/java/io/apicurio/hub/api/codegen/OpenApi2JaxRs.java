@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Parameter;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
@@ -115,32 +116,6 @@ public class OpenApi2JaxRs {
     protected static Charset utf8 = StandardCharsets.UTF_8;
     protected static final Type<?> VOID = parseType("java.lang.Void");
 
-    protected static GenerationConfig config = new DefaultGenerationConfig() {
-        @Override
-        public boolean isUsePrimitives() {
-            return false;
-        }
-
-        @Override
-        public boolean isIncludeHashcodeAndEquals() {
-            return false;
-        }
-
-        @Override
-        public boolean isIncludeAdditionalProperties() {
-            return true;
-        }
-
-        @Override
-        public boolean isIncludeToString() {
-            return false;
-        }
-
-        @Override
-        public boolean isFormatDateTimes() {
-            return false;
-        }
-    };
     protected static JavaBeanPostProcessor postProcessor = new JavaBeanPostProcessor();
 
     protected String openApiDoc;
@@ -148,6 +123,8 @@ public class OpenApi2JaxRs {
     protected JaxRsProjectSettings settings;
     protected boolean updateOnly;
     protected boolean generatesOpenApi = true;
+
+    private GenerationConfig config;
 
     /**
      * Constructor.
@@ -212,6 +189,47 @@ public class OpenApi2JaxRs {
         this.generatesOpenApi = generatesOpenApi;
     }
 
+
+    protected GenerationConfig buildGenerationConfig() {
+        return new DefaultGenerationConfig() {
+            @Override
+            public boolean isUsePrimitives() {
+                return false;
+            }
+
+            @Override
+            public boolean isIncludeHashcodeAndEquals() {
+                return false;
+            }
+
+            @Override
+            public boolean isIncludeAdditionalProperties() {
+                return true;
+            }
+
+            @Override
+            public boolean isIncludeToString() {
+                return false;
+            }
+
+            @Override
+            public boolean isFormatDateTimes() {
+                return false;
+            }
+
+            @Override
+            public boolean isIncludeJsr303Annotations() {
+                return settings.useJsr303;
+            }
+
+            @Override
+            public boolean isUseJakartaValidation() {
+                // only allow if the settings say to use JSR-303 annotations
+                return isIncludeJsr303Annotations();
+            }
+        };
+    }
+
     /**
      * Generates a JaxRs project and streams the generated ZIP to the given
      * output stream.
@@ -222,11 +240,13 @@ public class OpenApi2JaxRs {
     public final void generate(OutputStream output) throws IOException {
         StringBuilder log = new StringBuilder();
 
+        config = buildGenerationConfig();
+
         try (ZipOutputStream zos = new ZipOutputStream(output)) {
             try {
                 CodegenInfo info = getInfoFromApiDoc();
                 generateAll(info, log, zos);
-                System.out.println(log.toString());
+                System.out.println(log);
             } catch (Exception e) {
                 // If we get an error, put an PROJECT_GENERATION_ERROR file into the ZIP.
                 zos.putNextEntry(new ZipEntry("PROJECT_GENERATION_FAILED.txt"));
@@ -412,6 +432,7 @@ public class OpenApi2JaxRs {
     protected String getMainClassName() {
         return "JaxRsApplication";
     }
+
     protected JavaClassSource generateApplicationClassSource(String topLevelPackage, CodegenInfo info) {
       return Roaster.create(JavaClassSource.class)
                       .setPackage(this.settings.javaPackage)
@@ -887,6 +908,10 @@ public class OpenApi2JaxRs {
         final String constraintPkg = String.format("%s.validation.constraints", topLevelPackage);
         final String sizeConstraint = String.format("%s.Size", constraintPkg);
 
+        if (settings.isUseJsr303() && isUserBean(target)) {
+            target.addAnnotation(String.format("%s.validation.Valid", topLevelPackage));
+        }
+
         if (!forbidNotNull && !schemaInfo.isNullable()) {
             // nullable is false by default
             target.addAnnotation(String.format("%s.validation.constraints.NotNull", topLevelPackage));
@@ -923,6 +948,10 @@ public class OpenApi2JaxRs {
         addConstraint(target, schemaInfo.getMinLength(), sizeConstraint, "min");
         addConstraint(target, schemaInfo.getPattern(), String.format("%s.Pattern", constraintPkg), "regexp");
         addConstraint(target, schemaInfo.getDefaultValue(), String.format("%s.ws.rs.DefaultValue", topLevelPackage), "value");
+    }
+
+    private boolean isUserBean(AnnotationTargetSource<?, ?> target) {
+        return !((Parameter) target).getType().isPrimitive() && !((Parameter) target).getType().isArray() && !((Parameter<?>) target).getType().isParameterized();
     }
 
     <C> void addConstraint(AnnotationTargetSource<?, ?> target, C constraintValue, String annotationName, String annotationProperty) {

@@ -17,7 +17,6 @@
 package io.apicurio.hub.api.codegen.pre;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Extensible;
 import io.apicurio.datamodels.models.Node;
