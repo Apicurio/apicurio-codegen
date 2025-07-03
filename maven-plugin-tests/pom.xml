@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>apicurio-codegen-maven-plugin-tests</artifactId>
+    <name>apicurio-codegen-maven-plugin-tests</name>
     <packaging>pom</packaging>
 
     <build>
