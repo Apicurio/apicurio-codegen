@@ -227,6 +227,11 @@ public class OpenApi2JaxRs {
                 // only allow if the settings say to use JSR-303 annotations
                 return isIncludeJsr303Annotations();
             }
+
+            @Override
+            public boolean isGenerateBuilders() {
+                return settings.generateBuilders;
+            }
         };
     }
 

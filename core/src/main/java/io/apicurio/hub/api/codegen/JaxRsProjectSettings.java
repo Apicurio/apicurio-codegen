@@ -34,6 +34,7 @@ public class JaxRsProjectSettings {
     public String classNamePrefix = "";
     public String classNameSuffix = "";
     protected boolean useJsr303 = false;
+    protected boolean generateBuilders = false;
 
     /**
      * Constructor.
@@ -175,5 +176,13 @@ public class JaxRsProjectSettings {
 
     public void setUseJsr303(boolean useJsr303) {
         this.useJsr303 = useJsr303;
+    }
+
+    public boolean isGenerateBuilders() {
+        return generateBuilders;
+    }
+
+    public void setGenerateBuilders(boolean generateBuilders) {
+        this.generateBuilders = generateBuilders;
     }
 }
