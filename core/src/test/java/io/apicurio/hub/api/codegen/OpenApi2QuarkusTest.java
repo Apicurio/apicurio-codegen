@@ -84,6 +84,17 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
     }
 
     @Test
+    public void testBuilders() throws IOException {
+        JaxRsProjectSettings jaxRsProjectSettings = new JaxRsProjectSettings();
+        jaxRsProjectSettings.artifactId = "generated-api";
+        jaxRsProjectSettings.groupId = "org.example.api";
+        jaxRsProjectSettings.javaPackage = "org.example.api";
+        jaxRsProjectSettings.useJsr303 = true;
+        jaxRsProjectSettings.generateBuilders = true;
+        doFullTest("OpenApi2QuarkusTest/generate-builders.json", false, "_expected-issues/generate-builders", true, jaxRsProjectSettings);
+    }
+
+    @Test
     public void testReactive() throws IOException {
         OpenApi2Quarkus generator = new OpenApi2Quarkus();
         generator.setUpdateOnly(false);
