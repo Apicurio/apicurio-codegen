@@ -122,7 +122,6 @@ public class OpenApi2JaxRs {
     protected transient Document document;
     protected JaxRsProjectSettings settings;
     protected boolean updateOnly;
-    protected boolean generatesOpenApi = true;
 
     private GenerationConfig config;
 
@@ -177,18 +176,6 @@ public class OpenApi2JaxRs {
     public void setOpenApiDocument(InputStream stream) throws IOException {
         this.openApiDoc = IOUtils.toString(stream, utf8);
     }
-
-    /**
-     * Sets the generatesOpenApi property.
-     * <p>
-     * The {@code generatesOpenApi} defines if
-     * the generator generates or not Microprofile OpenAPI annotations.
-     * @param generatesOpenApi whether generates Microprofile OpenAPI annotations or not.
-     */
-    public void setGeneratesOpenApi(boolean generatesOpenApi) {
-        this.generatesOpenApi = generatesOpenApi;
-    }
-
 
     protected GenerationConfig buildGenerationConfig() {
         return new DefaultGenerationConfig() {
@@ -573,14 +560,14 @@ public class OpenApi2JaxRs {
                 operationMethod.getJavaDoc()
                     .setFullText(htmlRenderer.render(markdownParser.parse(description)));
 
-                if (generatesOpenApi) {
+                if (settings.generatesOpenApi) {
                     operationMethod.addAnnotation(OPENAPI_OPERATION_ANNOTATION)
                           .setStringValue("description", description);
                 }
 
             });
 
-            if (generatesOpenApi) {
+            if (settings.generatesOpenApi) {
                 Optional.ofNullable(methodInfo.getSummary()).ifPresent(summary -> {
                     AnnotationSource<JavaInterfaceSource> annotation = operationMethod.getAnnotation(
                           OPENAPI_OPERATION_ANNOTATION);

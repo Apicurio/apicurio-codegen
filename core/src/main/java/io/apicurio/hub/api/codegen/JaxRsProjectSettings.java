@@ -35,6 +35,7 @@ public class JaxRsProjectSettings {
     public String classNameSuffix = "";
     protected boolean useJsr303 = false;
     protected boolean generateBuilders = false;
+    protected boolean generatesOpenApi = true;
 
     /**
      * Constructor.
