@@ -1,0 +1,55 @@
+site_name: Apicurio Codegen
+site_description: Open Source API Design Code Generator
+site_author: Red Hat
+site_url: https://apicurio.github.io/apicurio-codegen
+
+repo_name: apicurio/apicurio-codegen
+repo_url: https://github.com/apicurio/apicurio-codegen
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: red
+      accent: red
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - search.share
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide:
+    - user-guide/index.md
+
+docs_dir: ./docs
+site_dir: ./target/site
+
+plugins:
+  - search
+  - mkdocstrings
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/apicurio/apicurio-codegen
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/apicurio
