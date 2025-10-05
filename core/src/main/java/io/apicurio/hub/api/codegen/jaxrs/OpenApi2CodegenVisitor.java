@@ -138,8 +138,8 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
      */
     @Override
     public void visitDocument(Document node) {
+        JsonNode codegen = CodegenUtil.getExtension((Extensible) node, CodegenExtensions.CODEGEN);
         try {
-            JsonNode codegen = CodegenUtil.getExtension((Extensible) node, "x-codegen");
             if (codegen != null) {
                 // Extract some configuration from the "x-codegen" root extension property
                 processCodegenConfig(mapper.readerFor(Map.class).readValue(codegen));
