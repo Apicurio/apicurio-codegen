@@ -21,6 +21,8 @@ package io.apicurio.hub.api.codegen;
  */
 public class CodegenExtensions {
 
+    /* Serves as the main configuration key under which all global x-codegen settings are defined. */
+    public static final String CODEGEN = "x-codegen";
     /* Custom package name used when generating a bean class from an object schema */
     public static final String PACKAGE = "x-codegen-package";
     /* Used to set a generated method to be asynchronous */
