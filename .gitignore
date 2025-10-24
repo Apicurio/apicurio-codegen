@@ -18,3 +18,6 @@ website
 # Intellij project files
 /.idea/
 *.iml
+
+# MkDocs generated site
+/site/

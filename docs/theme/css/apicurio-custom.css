@@ -1,0 +1,288 @@
+/**
+ * Apicurio Custom Theme for MkDocs
+ * Matches the apicur.io website branding
+ */
+
+:root {
+    /* Apicurio Color Palette */
+    --apicurio-navy: #22252C;
+    --apicurio-red: #CC0000;
+    --apicurio-accent: #FFCC00;
+    --apicurio-codegen: #5FBAA7;  /* Teal/green accent for Codegen */
+    --apicurio-grey-light: #EAE8E8;
+    --apicurio-grey-medium: #AFB1B2;
+    --apicurio-grey-dark: #646464;
+
+    /* Material Design overrides */
+    --md-primary-fg-color: var(--apicurio-navy);
+    --md-primary-fg-color--light: #3a3d45;
+    --md-primary-fg-color--dark: #151618;
+    --md-accent-fg-color: var(--apicurio-codegen);
+    --md-accent-fg-color--transparent: rgba(95, 186, 167, 0.1);
+
+    /* Typography */
+    --md-text-font: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --md-code-font: "Roboto Mono", "Courier New", monospace;
+}
+
+/* Header customization */
+.md-header {
+    background-color: var(--apicurio-navy);
+}
+
+.md-header__title {
+    font-weight: 500;
+    visibility: hidden;
+}
+
+/* Navigation tabs */
+.md-tabs {
+    background-color: var(--apicurio-navy);
+}
+
+.md-tabs__link--active {
+    color: var(--apicurio-accent);
+}
+
+/* Primary navigation */
+.md-nav--primary .md-nav__title {
+    background-color: var(--apicurio-navy);
+}
+
+/* Links */
+.md-typeset a {
+    color: var(--apicurio-codegen);
+}
+
+.md-typeset a:hover {
+    color: var(--apicurio-red);
+}
+
+/* Code blocks */
+.md-typeset code {
+    background-color: rgba(95, 186, 167, 0.1);
+    border-radius: 3px;
+}
+
+.md-typeset pre code {
+    color: #ccc;
+}
+
+.md-typeset pre > code {
+    background-color: var(--apicurio-navy);
+}
+
+/* Admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+    border-left: 4px solid var(--apicurio-codegen);
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+    background-color: rgba(95, 186, 167, 0.1);
+}
+
+/* Tables */
+.md-typeset table:not([class]) th {
+    background-color: var(--apicurio-navy);
+    color: white;
+}
+
+.md-typeset table:not([class]) tr:hover {
+    background-color: rgba(95, 186, 167, 0.05);
+}
+
+/* Buttons */
+.md-button {
+    color: var(--apicurio-codegen);
+    border-color: var(--apicurio-codegen);
+}
+
+.md-button--primary {
+    background-color: var(--apicurio-codegen);
+    border-color: var(--apicurio-codegen);
+    color: white;
+}
+
+.md-button--primary:hover {
+    background-color: #4ea896;
+}
+
+/* Search */
+.md-search__input {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.md-search__input:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Footer */
+.md-footer {
+    background-color: var(--apicurio-navy);
+}
+
+.md-footer-meta {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar navigation */
+.md-nav__link--active {
+    color: var(--apicurio-codegen);
+    font-weight: 500;
+}
+
+.md-nav__link:hover {
+    color: var(--apicurio-codegen);
+}
+
+/* Custom branding for homepage hero */
+.md-typeset h1 {
+    color: var(--apicurio-navy);
+    font-weight: 500;
+}
+
+.md-typeset h2 {
+    color: var(--apicurio-navy);
+    border-bottom: 2px solid var(--apicurio-codegen);
+    padding-bottom: 0.3em;
+}
+
+/* Code highlighting adjustments */
+.highlight .hll { background-color: rgba(95, 186, 167, 0.2); }
+.highlight .c { color: var(--apicurio-grey-medium); }
+.highlight .s { color: var(--apicurio-accent); }
+.highlight .p { color: #ccc; }
+.highlight .o { color: #ccc; }
+.highlight .na { color: var(--apicurio-codegen); }
+.highlight .n { color: #00b0ff; }
+.highlight .kc { color: #00c753; }
+.highlight .k { color: #00c753; }
+.highlight .c1 { color: #8d9298; }
+
+/* Custom content blocks */
+.md-typeset .tabbed-set > input:checked + label {
+    border-color: var(--apicurio-codegen);
+    color: var(--apicurio-codegen);
+}
+
+/* Scrollbar customization */
+.md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
+    background-color: var(--apicurio-codegen);
+}
+
+/* Navigation icons */
+.md-nav__icon {
+    color: var(--apicurio-codegen);
+}
+
+/* Back to top button */
+.md-top {
+    background-color: var(--apicurio-codegen);
+}
+
+.md-top:hover {
+    background-color: var(--apicurio-red);
+}
+
+/* ============================================================================
+   Apicurio Masthead
+   ============================================================================ */
+
+.md-banner {
+    all: unset;           /* resets almost everything */
+    display: block;       /* set sensible default */
+    box-sizing: border-box; /* makes width/padding predictable */
+
+    /* optional sane defaults */
+    font: inherit;        /* inherit font from nearest parent */
+    color: inherit;       /* inherit text color */
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    text-decoration: none;
+}
+
+.md-banner, .md-banner > div {
+    width: 100%;
+    height: 96px;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.masthead-container {
+
+    width: 100%;
+    background-color: rgb(35, 31, 32);
+    height: 96px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+
+    .masthead {
+
+        width: 1180px;
+        height: 96px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        @media screen and (max-width: 1024px) {
+        }
+
+        .logo {
+            width: 294px;
+            flex-shrink: 0;
+            margin-right: 20px;
+
+            img {
+                margin-top: 8px;
+            }
+        }
+
+        .main-nav {
+            flex: 1;
+
+            .menu {
+                display: flex;
+                justify-content: flex-end;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                gap: 10px;
+
+                li {
+                    margin: 0 0 0 8px;
+
+                    a {
+                        font-family: "Open Sans", Helvetica, Arial, sans-serif;
+                        font-feature-settings: unset;
+                        font-size: 15px;
+                        text-transform: uppercase;
+                        color: white !important;
+                        font-weight: 500;
+                        text-decoration: none;
+                        cursor: pointer;
+                    }
+                    a.active {
+                        font-weight: 800;
+                        color: rgb(242, 131, 107) !important;
+                        letter-spacing: -0.25px;
+                    }
+                }
+
+                li.nav-divider {
+                    border-left: 1px solid #ccc;
+                }
+
+            }
+
+        }
+
+    }
+
+}

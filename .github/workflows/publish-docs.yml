@@ -1,0 +1,59 @@
+name: Publish Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+  workflow_dispatch:
+
+jobs:
+  publish-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout apicurio-codegen
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs>=1.5.0
+          pip install mkdocs-material>=9.0.0
+          pip install pymdown-extensions
+          pip install mkdocstrings
+
+      - name: Build documentation
+        run: mkdocs build --strict
+
+      - name: Checkout website repository
+        uses: actions/checkout@v4
+        with:
+          repository: Apicurio/apicurio.github.io
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: website
+
+      - name: Copy generated docs to website
+        run: |
+          rm -rf website/codegen/docs
+          mkdir -p website/codegen
+          cp -r site website/codegen/docs
+
+      - name: Commit and push to website
+        run: |
+          cd website
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add codegen/docs
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update Codegen documentation (automated)"
+            git push
+          fi

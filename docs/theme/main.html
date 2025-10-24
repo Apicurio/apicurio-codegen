@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block announce %}
+<!-- Apicurio Custom Masthead -->
+<div class="masthead-container">
+    <div class="masthead">
+        <div class="logo">
+            <a href="https://www.apicur.io/"><img src="https://www.apicur.io/images/apicurio_headerlogo.png" class="project-logo" title="Apicurio"></a>
+        </div>
+
+        <nav id="main-nav" class="main-nav">
+            <ul id="menu" class="menu">
+                <li>
+                    <a href="/registry/">Registry</a>
+                </li>
+                <li>
+                    <a href="/studio/">Studio<sup>*</sup></a>
+                </li>
+                <li>
+                    <a href="/datamodels/">Data Models</a>
+                </li>
+                <li>
+                    <a href="/codegen/" class="active">Codegen</a>
+                </li>
+                <li>
+                    <a href="/apicurito/">Apicurito</a>
+                </li>
+                <li class="nav-divider"></li>
+                <li>
+                    <a href="/blog/">Blog</a>
+                </li>
+                <li>
+                    <a href="/contact/">Contact</a>
+                </li>
+                <li>
+                    <a href="https://github.com/apicurio">Fork</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+{% endblock %}
