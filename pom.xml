@@ -86,7 +86,7 @@
         <version.apicurio-data-models>2.2.4</version.apicurio-data-models>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.19.0</version.commons-lang3>
-        <version.commons-codec>1.19.0</version.commons-codec>
+        <version.commons-codec>1.20.0</version.commons-codec>
         <version.commons-io>2.20.0</version.commons-io>
         <version.org.apache.commons.commons-pool2>2.12.1</version.org.apache.commons.commons-pool2>
         <version.com.fasterxml.jackson>2.19.2</version.com.fasterxml.jackson>
