@@ -5,6 +5,7 @@ site_url: https://www.apicur.io/codegen/docs/
 
 repo_name: apicurio/apicurio-codegen
 repo_url: https://github.com/apicurio/apicurio-codegen
+use_directory_urls: false
 
 theme:
   name: material
