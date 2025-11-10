@@ -215,6 +215,15 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     }
 
     /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     * Tests that enum values with special characters are properly sanitized.
+     */
+    @Test
+    public void testEnumWithSpecialChars() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/enum-with-special-chars.json", UpdateOnly.no, Reactive.no, "_expected-enum-with-special-chars/generated-api", false);
+    }
+
+    /**
      * Shared test method.
      * @param apiDef
      * @param updateOnly

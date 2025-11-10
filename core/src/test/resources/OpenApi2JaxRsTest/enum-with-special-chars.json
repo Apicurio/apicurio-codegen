@@ -1,0 +1,54 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Enum Special Characters API",
+    "description": "Test API for enum values with special characters",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/test": {
+      "get": {
+        "summary": "Test endpoint",
+        "operationId": "getTest",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestObject": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/StatusType"
+          }
+        }
+      },
+      "StatusType": {
+        "type": "string",
+        "enum": [
+          "ACTIVE",
+          "IN-PROGRESS",
+          "NOT-STARTED",
+          "RE-OPENED",
+          "MULTI--DASH",
+          "WITH SPACE",
+          "WITH.DOT",
+          "WITH@SYMBOL",
+          "123-STARTS-WITH-DIGIT"
+        ]
+      }
+    }
+  }
+}
