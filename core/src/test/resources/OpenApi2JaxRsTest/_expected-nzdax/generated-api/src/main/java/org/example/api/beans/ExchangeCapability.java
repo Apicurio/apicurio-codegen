@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ExchangeCapability {
 
-    true("true"),
-    false("false"),
-    emulated("emulated");
+    TRUE("true"),
+    FALSE("false"),
+    EMULATED("emulated");
     private final String value;
     private final static Map<String, ExchangeCapability> CONSTANTS = new HashMap<String, ExchangeCapability>();
 

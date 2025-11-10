@@ -305,16 +305,44 @@ public class JaxRsEnumRule implements Rule<JClassContainer, JType> {
 
     protected String getConstantName(String nodeName, String customName) {
         if (isNotBlank(customName)) {
-            return customName;
-        }       
+            return sanitizeEnumConstantName(customName);
+        }
 
         if (isEmpty(nodeName)) {
             nodeName = "__EMPTY__";
-        } else if (Character.isDigit(nodeName.charAt(0))) {
-            nodeName = "_" + nodeName;
+        } else {
+            nodeName = sanitizeEnumConstantName(nodeName);
         }
 
         return nodeName;
+    }
+
+    /**
+     * Sanitizes an enum constant name to be a valid Java identifier.
+     * - Replaces dashes with underscores
+     * - Removes other illegal characters
+     * - Converts to uppercase
+     * - Prepends underscore if name starts with a digit
+     *
+     * @param name the original enum value
+     * @return a valid Java enum constant name
+     */
+    private String sanitizeEnumConstantName(String name) {
+        // Replace dashes with underscores
+        name = name.replace("-", "_");
+
+        // Remove all characters that are not valid in Java identifiers (except underscore)
+        name = name.replaceAll("[^a-zA-Z0-9_]", "");
+
+        // Convert to uppercase to follow Java enum constant conventions
+        name = name.toUpperCase();
+
+        // Prepend underscore if name starts with a digit
+        if (!name.isEmpty() && Character.isDigit(name.charAt(0))) {
+            name = "_" + name;
+        }
+
+        return name;
     }
 
     private void addInterfaces(JDefinedClass jclass, JsonNode javaInterfaces) {

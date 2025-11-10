@@ -138,11 +138,11 @@ public class SearchFilter {
 
     public enum Operator {
 
-        lt("lt"),
-        eq("eq"),
-        gt("gt"),
-        contains("contains"),
-        not_contains("not_contains");
+        LT("lt"),
+        EQ("eq"),
+        GT("gt"),
+        CONTAINS("contains"),
+        NOT_CONTAINS("not_contains");
         private final String value;
         private final static Map<String, SearchFilter.Operator> CONSTANTS = new HashMap<String, SearchFilter.Operator>();
 

@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Side {
 
-    buy("buy"),
-    sell("sell");
+    BUY("buy"),
+    SELL("sell");
     private final String value;
     private final static Map<String, Side> CONSTANTS = new HashMap<String, Side>();
 

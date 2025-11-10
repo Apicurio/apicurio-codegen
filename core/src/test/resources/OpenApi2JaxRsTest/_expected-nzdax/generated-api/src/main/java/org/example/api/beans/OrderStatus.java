@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum OrderStatus {
 
-    open("open"),
-    closed("closed"),
-    canceled("canceled"),
-    canceling("canceling");
+    OPEN("open"),
+    CLOSED("closed"),
+    CANCELED("canceled"),
+    CANCELING("canceling");
     private final String value;
     private final static Map<String, OrderStatus> CONSTANTS = new HashMap<String, OrderStatus>();
 

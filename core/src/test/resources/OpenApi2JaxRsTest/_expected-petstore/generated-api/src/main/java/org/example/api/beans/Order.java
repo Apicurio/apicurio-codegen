@@ -114,9 +114,9 @@ public class Order {
 
     public enum Status {
 
-        placed("placed"),
-        approved("approved"),
-        delivered("delivered");
+        PLACED("placed"),
+        APPROVED("approved"),
+        DELIVERED("delivered");
         private final String value;
         private final static Map<String, Order.Status> CONSTANTS = new HashMap<String, Order.Status>();
 

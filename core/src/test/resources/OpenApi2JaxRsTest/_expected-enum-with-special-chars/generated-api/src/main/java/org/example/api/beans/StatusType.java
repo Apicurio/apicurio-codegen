@@ -6,20 +6,27 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum SortOrder {
+public enum StatusType {
 
-    ASC("asc"),
-    DESC("desc");
+    ACTIVE("ACTIVE"),
+    IN_PROGRESS("IN-PROGRESS"),
+    NOT_STARTED("NOT-STARTED"),
+    RE_OPENED("RE-OPENED"),
+    MULTI__DASH("MULTI--DASH"),
+    WITHSPACE("WITH SPACE"),
+    WITHDOT("WITH.DOT"),
+    WITHSYMBOL("WITH@SYMBOL"),
+    _123_STARTS_WITH_DIGIT("123-STARTS-WITH-DIGIT");
     private final String value;
-    private final static Map<String, SortOrder> CONSTANTS = new HashMap<String, SortOrder>();
+    private final static Map<String, StatusType> CONSTANTS = new HashMap<String, StatusType>();
 
     static {
-        for (SortOrder c: values()) {
+        for (StatusType c: values()) {
             CONSTANTS.put(c.value, c);
         }
     }
 
-    private SortOrder(String value) {
+    private StatusType(String value) {
         this.value = value;
     }
 
@@ -34,8 +41,8 @@ public enum SortOrder {
     }
 
     @JsonCreator
-    public static SortOrder fromValue(String value) {
-        SortOrder constant = CONSTANTS.get(value);
+    public static StatusType fromValue(String value) {
+        StatusType constant = CONSTANTS.get(value);
         if (constant == null) {
             throw new IllegalArgumentException(value);
         } else {

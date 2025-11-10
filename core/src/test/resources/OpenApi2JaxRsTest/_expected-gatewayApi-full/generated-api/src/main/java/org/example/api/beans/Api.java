@@ -323,8 +323,8 @@ public class Api {
 
     public enum EndpointContentType {
 
-        json("json"),
-        xml("xml");
+        JSON("json"),
+        XML("xml");
         private final String value;
         private final static Map<String, Api.EndpointContentType> CONSTANTS = new HashMap<String, Api.EndpointContentType>();
 
@@ -362,8 +362,8 @@ public class Api {
 
     public enum EndpointType {
 
-        rest("rest"),
-        soap("soap");
+        REST("rest"),
+        SOAP("soap");
         private final String value;
         private final static Map<String, Api.EndpointType> CONSTANTS = new HashMap<String, Api.EndpointType>();
 
