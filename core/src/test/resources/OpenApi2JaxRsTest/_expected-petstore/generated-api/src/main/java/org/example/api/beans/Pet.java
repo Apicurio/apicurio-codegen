@@ -143,9 +143,9 @@ public class Pet {
 
     public enum Status {
 
-        available("available"),
-        pending("pending"),
-        sold("sold");
+        AVAILABLE("available"),
+        PENDING("pending"),
+        SOLD("sold");
         private final String value;
         private final static Map<String, Pet.Status> CONSTANTS = new HashMap<String, Pet.Status>();
 

@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @io.quarkus.runtime.annotations.RegisterForReflection
 public enum SortBy {
 
-    name("name"),
-    createdOn("createdOn");
+    NAME("name"),
+    CREATEDON("createdOn");
     private final String value;
     private final static Map<String, SortBy> CONSTANTS = new HashMap<String, SortBy>();
 

@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SortOrder {
 
-    asc("asc"),
-    desc("desc");
+    ASC("asc"),
+    DESC("desc");
     private final String value;
     private final static Map<String, SortOrder> CONSTANTS = new HashMap<String, SortOrder>();
 

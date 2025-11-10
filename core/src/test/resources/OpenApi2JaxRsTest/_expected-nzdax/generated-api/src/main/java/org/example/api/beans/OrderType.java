@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum OrderType {
 
-    market("market"),
-    limit("limit");
+    MARKET("market"),
+    LIMIT("limit");
     private final String value;
     private final static Map<String, OrderType> CONSTANTS = new HashMap<String, OrderType>();
 
