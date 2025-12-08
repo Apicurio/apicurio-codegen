@@ -48,7 +48,8 @@ public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapt
             OpenApi31Schema schema = (OpenApi31Schema) node;
             if (isMapType(schema)) {
                 schema.setAdditionalProperties(null);
-                schema.addExtraProperty("existingJavaType", factory.textNode("java.util.Map<String,String>"));
+                String javaType = EXTENSION_NAMES.get(CodegenUtil.getExtension(schema, CodegenExtensions.TYPE).asText());
+                schema.addExtraProperty("existingJavaType", factory.textNode(javaType));
             }
         }
     }

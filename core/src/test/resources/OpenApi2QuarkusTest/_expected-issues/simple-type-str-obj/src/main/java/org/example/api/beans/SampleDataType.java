@@ -39,7 +39,7 @@ public class SampleDataType {
     @JsonProperty("mydate")
     private Date mydate;
     @JsonProperty("mymap")
-    private Map<String, String> mymap;
+    private Map<String, Object> mymap;
     /**
      *
      */
@@ -94,12 +94,12 @@ public class SampleDataType {
     }
 
     @JsonProperty("mymap")
-    public Map<String, String> getMymap() {
+    public Map<String, Object> getMymap() {
         return mymap;
     }
 
     @JsonProperty("mymap")
-    public void setMymap(Map<String, String> mymap) {
+    public void setMymap(Map<String, Object> mymap) {
         this.mymap = mymap;
     }
 
