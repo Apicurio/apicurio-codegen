@@ -25,10 +25,19 @@ import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
+import java.util.Map;
+
 /**
  * @author eric.wittmann@gmail.com
  */
 public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapter {
+
+    private static final Map<String, String> EXTENSION_NAMES = Map.of(
+            "StringMap",
+            "java.util.Map<String,String>",
+            "StringObjectMap",
+            "java.util.Map<String,Object>"
+    );
 
     /**
      * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
@@ -39,7 +48,8 @@ public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapt
             OpenApi31Schema schema = (OpenApi31Schema) node;
             if (isMapType(schema)) {
                 schema.setAdditionalProperties(null);
-                schema.addExtraProperty("existingJavaType", factory.textNode("java.util.Map<String,String>"));
+                String javaType = EXTENSION_NAMES.get(CodegenUtil.getExtension(schema, CodegenExtensions.TYPE).asText());
+                schema.addExtraProperty("existingJavaType", factory.textNode(javaType));
             }
         }
     }
@@ -49,7 +59,7 @@ public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapt
         if (extension == null || !extension.isTextual()) {
             return false;
         }
-        return "StringMap".equals(extension.asText());
+        return EXTENSION_NAMES.get(extension.asText()) != null;
     }
 
 }

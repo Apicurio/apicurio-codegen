@@ -84,6 +84,13 @@ public class OpenApi2QuarkusTest extends OpenApi2TestBase {
     }
 
     @Test
+    public void testStringObjectMap() throws IOException {
+        doFullTest("OpenApi2QuarkusTest/simple-type-str-obj.json", false, "_expected-issues/simple-type-str-obj", false);
+    }
+
+
+
+    @Test
     public void testBuilders() throws IOException {
         JaxRsProjectSettings jaxRsProjectSettings = new JaxRsProjectSettings();
         jaxRsProjectSettings.artifactId = "generated-api";
