@@ -36,6 +36,7 @@ public class JaxRsProjectSettings {
     protected boolean useJsr303 = false;
     protected boolean generateBuilders = false;
     protected boolean generatesOpenApi = true;
+    protected boolean capitalizeEnumValues = true;
 
     /**
      * Constructor.
@@ -185,5 +186,19 @@ public class JaxRsProjectSettings {
 
     public void setGenerateBuilders(boolean generateBuilders) {
         this.generateBuilders = generateBuilders;
+    }
+
+    /**
+     * @return the capitalizeEnumValues
+     */
+    public boolean isCapitalizeEnumValues() {
+        return capitalizeEnumValues;
+    }
+
+    /**
+     * @param capitalizeEnumValues the capitalizeEnumValues to set
+     */
+    public void setCapitalizeEnumValues(boolean capitalizeEnumValues) {
+        this.capitalizeEnumValues = capitalizeEnumValues;
     }
 }
