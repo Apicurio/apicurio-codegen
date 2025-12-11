@@ -990,7 +990,7 @@ public class OpenApi2JaxRs {
                         // TODO if we get here, we probably want to return an empty schema
                         return super.create(parent, path, refFragmentPathDelimiters);
                     }
-                }),
+                }, settings),
                 new SchemaGenerator());
         String source = mapper.writeValueAsString(bean.get$schema());
         schemaMapper.generate(codeModel, generatedBeanName, generatedBeanPackage, source);
@@ -1086,11 +1086,14 @@ public class OpenApi2JaxRs {
 
     public static class JaxRsRuleFactory extends RuleFactory {
 
+        private final JaxRsProjectSettings settings;
+
         /**
          * Constructor.
          */
-        public JaxRsRuleFactory(GenerationConfig generationConfig, Annotator annotator, SchemaStore schemaStore) {
+        public JaxRsRuleFactory(GenerationConfig generationConfig, Annotator annotator, SchemaStore schemaStore, JaxRsProjectSettings settings) {
             super(generationConfig, annotator, schemaStore);
+            this.settings = settings;
         }
 
         /**
@@ -1098,7 +1101,7 @@ public class OpenApi2JaxRs {
          */
         @Override
         public Rule<JClassContainer, JType> getEnumRule() {
-            return new JaxRsEnumRule(this);
+            return new JaxRsEnumRule(this, settings);
         }
     }
 

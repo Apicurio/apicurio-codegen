@@ -63,9 +63,11 @@ public class JaxRsEnumRule implements Rule<JClassContainer, JType> {
     private static final String VALUE_FIELD_NAME = "value";
 
     private final RuleFactory ruleFactory;
-    
-    protected JaxRsEnumRule(RuleFactory ruleFactory) {
+    private final JaxRsProjectSettings settings;
+
+    protected JaxRsEnumRule(RuleFactory ruleFactory, JaxRsProjectSettings settings) {
         this.ruleFactory = ruleFactory;
+        this.settings = settings;
     }
 
     /**
@@ -321,7 +323,7 @@ public class JaxRsEnumRule implements Rule<JClassContainer, JType> {
      * Sanitizes an enum constant name to be a valid Java identifier.
      * - Replaces dashes with underscores
      * - Removes other illegal characters
-     * - Converts to uppercase
+     * - Optionally converts to uppercase (based on settings)
      * - Prepends underscore if name starts with a digit
      *
      * @param name the original enum value
@@ -334,8 +336,10 @@ public class JaxRsEnumRule implements Rule<JClassContainer, JType> {
         // Remove all characters that are not valid in Java identifiers (except underscore)
         name = name.replaceAll("[^a-zA-Z0-9_]", "");
 
-        // Convert to uppercase to follow Java enum constant conventions
-        name = name.toUpperCase();
+        // Conditionally convert to uppercase based on settings
+        if (settings.isCapitalizeEnumValues()) {
+            name = name.toUpperCase();
+        }
 
         // Prepend underscore if name starts with a digit
         if (!name.isEmpty() && Character.isDigit(name.charAt(0))) {
