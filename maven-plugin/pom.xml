@@ -15,7 +15,7 @@
     <name>apicurio-codegen-cli</name>
     
     <properties>
-    	<maven.version>3.9.11</maven.version>
+    	<maven.version>3.9.12</maven.version>
     	<maven-annotations.version>3.15.2</maven-annotations.version>
     </properties>
 
