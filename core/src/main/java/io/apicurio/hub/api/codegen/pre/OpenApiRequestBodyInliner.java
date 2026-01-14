@@ -36,7 +36,8 @@ public class OpenApiRequestBodyInliner extends TraversingOpenApi31VisitorAdapter
         OpenApi31RequestBody requestBody = (OpenApi31RequestBody) node;
         LocalReferenceResolver localReferenceResolver = new LocalReferenceResolver();
         if (requestBody.get$ref() != null) {
-            Node referencedRequestBodyDefNode = localReferenceResolver.resolveRef(requestBody.get$ref(), requestBody);
+            var resolvedRef = localReferenceResolver.resolveRef(requestBody.get$ref(), requestBody);
+            Node referencedRequestBodyDefNode = (resolvedRef != null && resolvedRef.isNode()) ? resolvedRef.asNode() : null;
             if (referencedRequestBodyDefNode != null) {
                 inlineRequestBody(requestBody, referencedRequestBodyDefNode);
             }

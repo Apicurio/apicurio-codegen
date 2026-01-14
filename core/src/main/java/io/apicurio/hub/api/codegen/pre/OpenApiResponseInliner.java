@@ -38,7 +38,8 @@ public class OpenApiResponseInliner extends TraversingOpenApi31VisitorAdapter {
         OpenApi31Response response = (OpenApi31Response) node;
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (response.get$ref() != null) {
-            Node referencedResponseDefNode = resolver.resolveRef(response.get$ref(), response);
+            var resolvedRef = resolver.resolveRef(response.get$ref(), response);
+            Node referencedResponseDefNode = (resolvedRef != null && resolvedRef.isNode()) ? resolvedRef.asNode() : null;
             if (referencedResponseDefNode != null) {
                 inlineResponse(response, referencedResponseDefNode);
             }
