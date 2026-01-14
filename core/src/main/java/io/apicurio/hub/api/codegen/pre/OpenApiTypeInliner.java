@@ -42,7 +42,8 @@ public class OpenApiTypeInliner extends TraversingOpenApi31VisitorAdapter {
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (schema.get$ref() != null) {
-            Node referencedSchemaDefNode = resolver.resolveRef(schema.get$ref(), schema);
+            var resolvedRef = resolver.resolveRef(schema.get$ref(), schema);
+            Node referencedSchemaDefNode = (resolvedRef != null && resolvedRef.isNode()) ? resolvedRef.asNode() : null;
             if (referencedSchemaDefNode != null) {
                 OpenApi31Schema referencedSchema = (OpenApi31Schema) referencedSchemaDefNode;
                 if (isSimpleType(referencedSchema)) {

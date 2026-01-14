@@ -40,7 +40,8 @@ public class OpenApiParameterInliner extends TraversingOpenApi31VisitorAdapter {
 
         LocalReferenceResolver resolver = new LocalReferenceResolver();
         if (param.get$ref() != null) {
-            Node referencedParameterDefNode = resolver.resolveRef(param.get$ref(), param);
+            var resolvedRef = resolver.resolveRef(param.get$ref(), param);
+            Node referencedParameterDefNode = (resolvedRef != null && resolvedRef.isNode()) ? resolvedRef.asNode() : null;
             if (referencedParameterDefNode != null) {
                 inlineParameter(param, referencedParameterDefNode);
                 markForRemoval((Extensible) referencedParameterDefNode);

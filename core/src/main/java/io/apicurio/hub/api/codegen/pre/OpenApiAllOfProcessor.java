@@ -25,6 +25,7 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Schema;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.refs.LocalReferenceResolver;
+import io.apicurio.datamodels.refs.ResolvedReference;
 import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 
 /**
@@ -44,7 +45,10 @@ public class OpenApiAllOfProcessor extends TraversingOpenApi31VisitorAdapter {
                 OpenApi31Schema allOf = (OpenApi31Schema) allOfSchema;
                 if (allOf.get$ref() != null) {
                     LocalReferenceResolver resolver = new LocalReferenceResolver();
-                    allOf = (OpenApi31Schema) resolver.resolveRef(allOf.get$ref(), allOf);
+                    ResolvedReference resolvedReference = resolver.resolveRef(allOf.get$ref(), allOf);
+                    if (resolvedReference != null && resolvedReference.isNode()) {
+                        allOf = (OpenApi31Schema) resolvedReference.asNode();
+                    }
                 }
                 if (allOf != null) {
                     if (allOf.getRequired() != null) {
