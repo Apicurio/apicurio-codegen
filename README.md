@@ -166,7 +166,7 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 ## 🔗 Links
 
 - **Website**: [https://www.apicur.io/](https://www.apicur.io/)
-- **Documentation**: [https://apicurio.github.io/apicurio-codegen](https://apicurio.github.io/apicurio-codegen)
+- **Documentation**: [https://www.apicur.io/codegen/docs/](https://www.apicur.io/codegen/docs/)
 - **Issues**: [GitHub Issues](https://github.com/apicurio/apicurio-codegen/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/apicurio/apicurio-codegen/discussions)
 
