@@ -229,7 +229,7 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     @Test
     public void testGenerateMultipartFormContent() throws IOException {
         doFullTest("OpenApi2JaxRsTest/mulitpart-form-content.json", UpdateOnly.no, Reactive.no,
-                   "_expected-multipart-form-content.generated-api", true);
+                   "_expected-multipart-form-content.generated-api", false);
     }
 
     /**
@@ -238,7 +238,7 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     @Test
     public void testGenerateMultipartComprehensive() throws IOException {
         doFullTest("OpenApi2JaxRsTest/multipart-comprehensive.json", UpdateOnly.no, Reactive.no,
-                   "_expected-multipart-comprehensive.generated-api", true);
+                   "_expected-multipart-comprehensive.generated-api", false);
     }
 
     /**

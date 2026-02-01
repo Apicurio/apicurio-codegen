@@ -33,11 +33,25 @@ import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
 
 /**
  * Utility class for processing multipart/form-data request bodies.
- * Extracts form field parameters from OpenAPI schema properties.
+ * Extracts form-field parameters from OpenAPI schema properties.
  *
  * @author <a href="https://github.com/lpieprzyk">lpieprzyk</a>
  */
 public class MultipartFormDataRequestBodyCreator {
+
+    private static final String JAVA_LANG_STRING = "java.lang.String";
+    private static final String JBOSS_FILE_UPLOAD = "org.jboss.resteasy.plugins.providers.multipart.FileUpload";
+    private static final String JAVA_TIME_LOCAL_DATE = "java.time.LocalDate";
+    private static final String JAVA_TIME_LOCAL_DATE_TIME = "java.time.LocalDateTime";
+    private static final String JAVA_LANG_LONG = "java.lang.Long";
+    private static final String JAVA_LANG_INTEGER = "java.lang.Integer";
+    private static final String JAVA_LANG_DOUBLE = "java.lang.Double";
+    private static final String JAVA_LANG_FLOAT = "java.lang.Float";
+    private static final String JAVA_MATH_BIG_DECIMAL = "java.math.BigDecimal";
+    private static final String JAVA_UTIL_LIST = "java.util.List";
+    private static final String JAVA_UTIL_MAP = "java.util.Map";
+    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
+    private static final String JAVA_LANG_BOOLEAN = "java.lang.Boolean";
 
     private MultipartFormDataRequestBodyCreator() {
         // Functional class
@@ -61,9 +75,7 @@ public class MultipartFormDataRequestBodyCreator {
             if (containsValue(schema.getType(), "object")) {
                 Map<String, Schema> properties = schema.getProperties();
                 if (properties != null) {
-                    // Add multipart/form-data to consumes
                     methodTemplate.getConsumes().add("MediaType.MULTIPART_FORM_DATA");
-                    // Create individual form field parameters
                     createIndividualFormFieldParams(methodTemplate, settings, document, properties, schema);
                 }
             }
@@ -142,104 +154,149 @@ public class MultipartFormDataRequestBodyCreator {
                                                     Schema fieldSchema,
                                                     JaxRsProjectSettings settings,
                                                     Document document) {
-        if (fieldSchema == null) {
-            argument.setType(Collections.singletonList("java.lang.String"));
-            return;
-        }
-        if (!(fieldSchema instanceof OpenApi31Schema)) {
-            argument.setType(Collections.singletonList("java.lang.String"));
+        if (!validateSchemaAndSetDefaults(argument, fieldSchema)) {
             return;
         }
         OpenApi31Schema oas31Schema = (OpenApi31Schema) fieldSchema;
-        // Handle schema references ($ref)
+        if (resolveSchemaReference(argument, oas31Schema, settings, document)) {
+            return;
+        }
+        if (handleArrayType(argument, oas31Schema, settings, document)) {
+            return;
+        }
+        mapSchemaTypeToJavaType(argument, oas31Schema);
+    }
+    
+    private static boolean validateSchemaAndSetDefaults(CodegenJavaArgument argument, Schema fieldSchema) {
+        if (fieldSchema == null) {
+            argument.setType(Collections.singletonList(JAVA_LANG_STRING));
+            return false;
+        }
+        if (!(fieldSchema instanceof OpenApi31Schema)) {
+            argument.setType(Collections.singletonList(JAVA_LANG_STRING));
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean resolveSchemaReference(CodegenJavaArgument argument, OpenApi31Schema oas31Schema, JaxRsProjectSettings settings, Document document) {
         String ref = oas31Schema.get$ref();
         if (ref != null) {
             String className = CodegenUtil.schemaRefToFQCN(settings, document, ref, settings.getJavaPackage() + ".beans");
             argument.setType(Collections.singletonList(className));
-            return;
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean mapStringType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
+        if (!containsValue(oas31Schema.getType(), "string")) {
+            return false;
+        }
+        String format = oas31Schema.getFormat();
+        if ("binary".equals(format)) {
+            argument.setType(Collections.singletonList(JBOSS_FILE_UPLOAD));
+            argument.setFormat("binary");
+        } else if ("date".equals(format)) {
+            argument.setType(Collections.singletonList(JAVA_TIME_LOCAL_DATE));
+            argument.setFormat("date");
+        } else if ("date-time".equals(format)) {
+            argument.setType(Collections.singletonList(JAVA_TIME_LOCAL_DATE_TIME));
+            argument.setFormat("date-time");
+        } else {
+            argument.setType(Collections.singletonList(JAVA_LANG_STRING));
+        }
+        return true;
+    }
+
+    private static boolean mapIntegerType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
+        if (!containsValue(oas31Schema.getType(), "integer")) {
+            return false;
+        }
+        String format = oas31Schema.getFormat();
+        if ("int64".equals(format) || "long".equals(format)) {
+            argument.setType(Collections.singletonList(JAVA_LANG_LONG));
+        } else {
+            argument.setType(Collections.singletonList(JAVA_LANG_INTEGER));
+        }
+        if (format != null) {
+            argument.setFormat(format);
+        }
+        return true;
+    }
+
+    private static boolean mapNumberType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
+        if (!containsValue(oas31Schema.getType(), "number")) {
+            return false;
         }
 
         String format = oas31Schema.getFormat();
-
-        // Handle array types
-        if (containsValue(oas31Schema.getType(), "array")) {
-            if (oas31Schema.getItems() != null) {
-                // Create a temporary argument to get the item type
-                CodegenJavaArgument itemArgument = new CodegenJavaArgument();
-                defineArgumentTypeForSchema(itemArgument, oas31Schema.getItems(), settings, document);
-
-                List<String> itemTypes = itemArgument.getType();
-                if (itemTypes != null && !itemTypes.isEmpty()) {
-                    String itemType = itemTypes.get(0);
-                    argument.setType(Collections.singletonList("java.util.List<" + getSimpleClassName(itemType) + ">"));
-                } else {
-                    argument.setType(Collections.singletonList("java.util.List<java.lang.String>"));
-                }
-            } else {
-                argument.setType(Collections.singletonList("java.util.List<java.lang.String>"));
-            }
-            return;
+        if ("double".equals(format)) {
+            argument.setType(Collections.singletonList(JAVA_LANG_DOUBLE));
+        } else if ("float".equals(format)) {
+            argument.setType(Collections.singletonList(JAVA_LANG_FLOAT));
+        } else {
+            argument.setType(Collections.singletonList(JAVA_MATH_BIG_DECIMAL));
         }
-
-        // Handle string types with formats
-        if (containsValue(oas31Schema.getType(), "string")) {
-            if ("binary".equals(format)) {
-                argument.setType(Collections.singletonList("org.jboss.resteasy.plugins.providers.multipart.FileUpload"));
-                argument.setFormat("binary");
-            } else if ("date".equals(format)) {
-                argument.setType(Collections.singletonList("java.time.LocalDate"));
-                argument.setFormat("date");
-            } else if ("date-time".equals(format)) {
-                argument.setType(Collections.singletonList("java.time.LocalDateTime"));
-                argument.setFormat("date-time");
-            } else {
-                argument.setType(Collections.singletonList("java.lang.String"));
-            }
-            return;
+        if (format != null) {
+            argument.setFormat(format);
         }
+        return true;
+    }
 
-        // Handle integer types
-        if (containsValue(oas31Schema.getType(), "integer")) {
-            if ("int64".equals(format) || "long".equals(format)) {
-                argument.setType(Collections.singletonList("java.lang.Long"));
-            } else {
-                argument.setType(Collections.singletonList("java.lang.Integer"));
-            }
-            if (format != null) {
-                argument.setFormat(format);
-            }
-            return;
+
+    private static boolean mapBooleanType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
+        if (!containsValue(oas31Schema.getType(), "boolean")) {
+            return false;
         }
+        argument.setType(Collections.singletonList(JAVA_LANG_BOOLEAN));
+        return true;
+    }
 
-        // Handle number types
-        if (containsValue(oas31Schema.getType(), "number")) {
-            if ("double".equals(format)) {
-                argument.setType(Collections.singletonList("java.lang.Double"));
-            } else if ("float".equals(format)) {
-                argument.setType(Collections.singletonList("java.lang.Float"));
-            } else {
-                argument.setType(Collections.singletonList("java.math.BigDecimal"));
-            }
-            if (format != null) {
-                argument.setFormat(format);
-            }
-            return;
-        }
-
-        // Handle boolean types
-        if (containsValue(oas31Schema.getType(), "boolean")) {
-            argument.setType(Collections.singletonList("java.lang.Boolean"));
-            return;
-        }
-
-        // Handle object types and fallback
+    private static void mapObjectOrFallbackType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
         if (containsValue(oas31Schema.getType(), "object") || oas31Schema.getType() == null) {
-            // For objects without properties, use a generic Map
-            argument.setType(Collections.singletonList("java.util.Map<java.lang.String, java.lang.Object>"));
+            argument.setType(Collections.singletonList(JAVA_UTIL_MAP + "<" + JAVA_LANG_STRING + ", " + JAVA_LANG_OBJECT + ">"));
         } else {
             // Fallback to String for unknown types
-            argument.setType(Collections.singletonList("java.lang.String"));
+            argument.setType(Collections.singletonList(JAVA_LANG_STRING));
         }
+    }
+
+    private static boolean handleArrayType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema, JaxRsProjectSettings settings, Document document) {
+        if (!containsValue(oas31Schema.getType(), "array")) {
+            return false;
+        }
+        if (oas31Schema.getItems() != null) {
+            CodegenJavaArgument itemArgument = new CodegenJavaArgument();
+            defineArgumentTypeForSchema(itemArgument, oas31Schema.getItems(), settings, document);
+
+            List<String> itemTypes = itemArgument.getType();
+            if (itemTypes != null && !itemTypes.isEmpty()) {
+                String itemType = itemTypes.get(0);
+                argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + getSimpleClassName(itemType) + ">"));
+            } else {
+                argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + JAVA_LANG_STRING + ">"));
+            }
+        } else {
+            argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + JAVA_LANG_STRING + ">"));
+        }
+        return true;
+    }
+
+    private static void mapSchemaTypeToJavaType(CodegenJavaArgument argument, OpenApi31Schema oas31Schema) {
+        if (mapStringType(argument, oas31Schema)) {
+            return;
+        }
+        if (mapIntegerType(argument, oas31Schema)) {
+            return;
+        }
+        if (mapNumberType(argument, oas31Schema)) {
+            return;
+        }
+        if (mapBooleanType(argument, oas31Schema)) {
+            return;
+        }
+        mapObjectOrFallbackType(argument, oas31Schema);
     }
 
     /**
