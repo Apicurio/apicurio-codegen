@@ -111,6 +111,7 @@ public class OpenApi2JaxRs {
 
     static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
     static final String OPENAPI_OPERATION_ANNOTATION = "org.eclipse.microprofile.openapi.annotations.Operation";
+    private static final String MEDIA_TYPE_CONSUME_STRING = "MediaType.";
 
     protected static ObjectMapper mapper = new ObjectMapper();
     protected static Charset utf8 = StandardCharsets.UTF_8;
@@ -603,9 +604,14 @@ public class OpenApi2JaxRs {
 
             Optional.ofNullable(methodInfo.getConsumes())
                 .filter(Predicate.not(Collection::isEmpty))
-                .map(OpenApi2JaxRs::toStringArrayLiteral)
-                .ifPresent(consumes ->
-                    operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumes));
+                .ifPresent(consumesSet -> {
+                    // Add MediaType import if any consumes value uses MediaType constants
+                    if (consumesSet.stream().anyMatch(consume -> consume.contains(MEDIA_TYPE_CONSUME_STRING))) {
+                        resourceInterface.addImport(String.format("%s.ws.rs.core.MediaType", topLevelPackage));
+                    }
+                    String consumesLiteral = toStringArrayLiteral(consumesSet);
+                    operationMethod.addAnnotation(String.format("%s.ws.rs.Consumes", topLevelPackage)).setLiteralValue(consumesLiteral);
+                });
 
             final boolean reactive;
 
@@ -638,6 +644,10 @@ public class OpenApi2JaxRs {
                     if (arg.getIn().equals("body")) {
                         // Swagger 2.0?
                         defaultParamType = InputStream.class.getName();
+                    } else if (arg.getIn().equals("form")
+                            && arg.getType() != null
+                            && !arg.getType().isEmpty()) {
+                        defaultParamType = arg.getType().get(0);
                     }
 
                     Type<?> paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
@@ -666,6 +676,11 @@ public class OpenApi2JaxRs {
                         case "cookie":
                             param.addAnnotation(String.format("%s.ws.rs.CookieParam", topLevelPackage))
                             .setStringValue(arg.getName());
+                            break;
+                        case "form":
+                            param.addAnnotation("org.jboss.resteasy.annotations.providers.multipart.RestForm")
+                            .setStringValue(arg.getName());
+                            resourceInterface.addImport("org.jboss.resteasy.annotations.providers.multipart.RestForm");
                             break;
                         default:
                             break;
@@ -876,9 +891,15 @@ public class OpenApi2JaxRs {
         StringBuilder builder = new StringBuilder();
 
         if (values.size() == 1) {
-            builder.append("\"");
-            builder.append(values.iterator().next().replace("\"", "\\\""));
-            builder.append("\"");
+            String value = values.iterator().next();
+            if (value.startsWith(MEDIA_TYPE_CONSUME_STRING)) {
+                // Don't quote MediaType constants
+                builder.append(value);
+            } else {
+                builder.append("\"");
+                builder.append(value.replace("\"", "\\\""));
+                builder.append("\"");
+            }
         } else {
             builder.append("{");
             boolean first = true;
@@ -886,9 +907,14 @@ public class OpenApi2JaxRs {
                 if (!first) {
                     builder.append(", ");
                 }
-                builder.append("\"");
-                builder.append(value.replace("\"", "\\\""));
-                builder.append("\"");
+                if (value.startsWith(MEDIA_TYPE_CONSUME_STRING)) {
+                    // Don't quote MediaType constants
+                    builder.append(value);
+                } else {
+                    builder.append("\"");
+                    builder.append(value.replace("\"", "\\\""));
+                    builder.append("\"");
+                }
                 first = false;
             }
             builder.append("}");

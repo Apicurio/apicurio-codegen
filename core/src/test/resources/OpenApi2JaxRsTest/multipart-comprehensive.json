@@ -1,0 +1,182 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Comprehensive Multipart API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/upload/comprehensive": {
+      "post": {
+        "summary": "Upload with comprehensive field types",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["requiredFile", "requiredText", "requiredNumber"],
+                "properties": {
+                  "requiredFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Required binary file"
+                  },
+                  "requiredText": {
+                    "type": "string",
+                    "description": "Required text field"
+                  },
+                  "requiredNumber": {
+                    "type": "integer",
+                    "description": "Required integer field"
+                  },
+                  "optionalFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional binary file"
+                  },
+                  "optionalText": {
+                    "type": "string",
+                    "description": "Optional text field"
+                  },
+                  "longNumber": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Long integer"
+                  },
+                  "floatNumber": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Float number"
+                  },
+                  "doubleNumber": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "Double number"
+                  },
+                  "bigDecimalNumber": {
+                    "type": "number",
+                    "description": "BigDecimal number (no format)"
+                  },
+                  "booleanFlag": {
+                    "type": "boolean",
+                    "description": "Boolean field"
+                  },
+                  "dateField": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date field"
+                  },
+                  "dateTimeField": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "DateTime field"
+                  },
+                  "stringArray": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of strings"
+                  },
+                  "integerArray": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Array of integers"
+                  },
+                  "objectReference": {
+                    "$ref": "#/components/schemas/TestObject",
+                    "description": "Object reference"
+                  },
+                  "objectArrayReference": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/TestObject"
+                    },
+                    "description": "Array of object references"
+                  },
+                  "genericObject": {
+                    "type": "object",
+                    "description": "Generic object without properties"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload/edge-cases": {
+      "post": {
+        "summary": "Edge cases for multipart processing",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unknownType": {
+                    "type": "unknown",
+                    "description": "Unknown type should fallback to String"
+                  },
+                  "noTypeField": {
+                    "description": "Field without type specification"
+                  },
+                  "emptyArrayItems": {
+                    "type": "array",
+                    "description": "Array without items specification"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestObject": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "integer"
+          }
+        }
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

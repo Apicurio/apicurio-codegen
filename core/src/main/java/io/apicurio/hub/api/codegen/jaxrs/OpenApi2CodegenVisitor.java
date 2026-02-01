@@ -16,45 +16,11 @@
 
 package io.apicurio.hub.api.codegen.jaxrs;
 
-import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
-import static io.apicurio.hub.api.codegen.util.CodegenUtil.toStringList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.Document;
-import io.apicurio.datamodels.models.Extensible;
-import io.apicurio.datamodels.models.Info;
-import io.apicurio.datamodels.models.Node;
-import io.apicurio.datamodels.models.Operation;
-import io.apicurio.datamodels.models.Parameter;
-import io.apicurio.datamodels.models.Schema;
-import io.apicurio.datamodels.models.openapi.OpenApiMediaType;
-import io.apicurio.datamodels.models.openapi.OpenApiOperation;
-import io.apicurio.datamodels.models.openapi.OpenApiParameter;
-import io.apicurio.datamodels.models.openapi.OpenApiParametersParent;
-import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
-import io.apicurio.datamodels.models.openapi.OpenApiRequestBody;
-import io.apicurio.datamodels.models.openapi.OpenApiResponse;
-import io.apicurio.datamodels.models.openapi.OpenApiSchema;
+import io.apicurio.datamodels.models.*;
+import io.apicurio.datamodels.models.openapi.*;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31MediaType;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Parameter;
 import io.apicurio.datamodels.models.openapi.v31.OpenApi31Response;
@@ -62,16 +28,21 @@ import io.apicurio.datamodels.models.openapi.v31.OpenApi31Schema;
 import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
-import io.apicurio.hub.api.codegen.beans.CodegenBeanAnnotationDirective;
-import io.apicurio.hub.api.codegen.beans.CodegenInfo;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaArgument;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaBean;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaInterface;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaMethod;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaReturn;
-import io.apicurio.hub.api.codegen.beans.CodegenJavaSchema;
+import io.apicurio.hub.api.codegen.beans.*;
+import io.apicurio.hub.api.codegen.jaxrs.MultipartFormDataRequestBodyCreator;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 import io.apicurio.hub.api.codegen.util.SchemaSigner;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
+import static io.apicurio.hub.api.codegen.util.CodegenUtil.toStringList;
 
 /**
  * Visitor used to create a Codegen Info object from a OpenAPI document.
@@ -277,11 +248,24 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             content = new HashMap<>();
         }
 
+        // Check for multipart/form-data first and handle it specially
+        for (Map.Entry<String, OpenApiMediaType> entry : content.entrySet()) {
+            String name = entry.getKey();
+            OpenApiMediaType mediaType = entry.getValue();
+
+            if ("multipart/form-data".equals(name)) {
+                // Handle multipart form data specially
+                MultipartFormDataRequestBodyCreator.processMultipartFormData(mediaType, this._currentMethods.get(0), this.settings, (Document) mediaType.getSchema().root());
+                return; // Skip generic body parameter creation
+            }
+        }
+
         Map<CodegenJavaReturn, Set<String>> allReturnTypes = new LinkedHashMap<>();
         if (!content.isEmpty()) {
             content.entrySet().forEach(entry -> {
                 String name = entry.getKey();
                 OpenApiMediaType mediaType = entry.getValue();
+
                 CodegenJavaReturn cgReturn = new CodegenJavaReturn();
                 if (mediaType.getSchema() != null) {
                     setSchemaProperties(cgReturn, (OpenApi31Schema) mediaType.getSchema());
@@ -504,6 +488,20 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             String cname = builder.toString();
             if (cname.trim().length() > 0) {
                 return decapitalize(builder.toString());
+            }
+        }
+        // Try to extract method name from path segment
+        if (currentPath != null && currentPath.length() > 0) {
+            String[] pathSegments = currentPath.split("/");
+            if (pathSegments.length > 0) {
+                String lastSegment = pathSegments[pathSegments.length - 1];
+                if (lastSegment != null && lastSegment.trim().length() > 0) {
+                    // Remove path parameters (e.g., {id}) and sanitize
+                    String sanitized = lastSegment.replaceAll("\\{[^}]*\\}", "").replaceAll("\\W", "");
+                    if (sanitized.length() > 0) {
+                        return sanitized;
+                    }
+                }
             }
         }
         return "generatedMethod" + this._methodCounter++;
