@@ -37,7 +37,7 @@ import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
  *
  * @author <a href="https://github.com/lpieprzyk">lpieprzyk</a>
  */
-public class MultipartFormDataRequestBodyCreator {
+public class MultipartFormDataRequestBodyProcessor {
 
     private static final String JAVA_LANG_STRING = "java.lang.String";
     private static final String JBOSS_FILE_UPLOAD = "org.jboss.resteasy.plugins.providers.multipart.FileUpload";
@@ -53,7 +53,7 @@ public class MultipartFormDataRequestBodyCreator {
     private static final String JAVA_LANG_OBJECT = "java.lang.Object";
     private static final String JAVA_LANG_BOOLEAN = "java.lang.Boolean";
 
-    private MultipartFormDataRequestBodyCreator() {
+    private MultipartFormDataRequestBodyProcessor() {
         // Functional class
     }
 

@@ -29,7 +29,6 @@ import io.apicurio.datamodels.util.NodeUtil;
 import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.JaxRsProjectSettings;
 import io.apicurio.hub.api.codegen.beans.*;
-import io.apicurio.hub.api.codegen.jaxrs.MultipartFormDataRequestBodyCreator;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 import io.apicurio.hub.api.codegen.util.SchemaSigner;
 
@@ -255,7 +254,7 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
 
             if ("multipart/form-data".equals(name)) {
                 // Handle multipart form data specially
-                MultipartFormDataRequestBodyCreator.processMultipartFormData(mediaType, this._currentMethods.get(0), this.settings, (Document) mediaType.getSchema().root());
+                MultipartFormDataRequestBodyProcessor.processMultipartFormData(mediaType, this._currentMethods.get(0), this.settings, (Document) mediaType.getSchema().root());
                 return; // Skip generic body parameter creation
             }
         }
