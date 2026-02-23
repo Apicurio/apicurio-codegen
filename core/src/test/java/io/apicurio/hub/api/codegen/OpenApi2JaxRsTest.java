@@ -224,6 +224,24 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     }
 
     /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testGenerateMultipartFormContent() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/mulitpart-form-content.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-form-content.generated-api", false);
+    }
+
+    /**
+     * Test method for comprehensive multipart form data type support.
+     */
+    @Test
+    public void testGenerateMultipartComprehensive() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-comprehensive.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-comprehensive.generated-api", false);
+    }
+
+    /**
      * Shared test method.
      * @param apiDef
      * @param updateOnly

@@ -18,5 +18,5 @@ public interface TestResource {
   @Operation(description = "\u6D4B\u8BD5\u4E2D\u6587\u5B57\u7B26", summary = "\u6D4B\u8BD5\u4E2D\u6587\u5B57\u7B26")
   @Path("/chinese/character")
   @GET
-  void generatedMethod1();
+  void character();
 }
