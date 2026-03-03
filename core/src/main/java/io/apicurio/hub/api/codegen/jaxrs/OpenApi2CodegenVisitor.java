@@ -16,6 +16,7 @@
 
 package io.apicurio.hub.api.codegen.jaxrs;
 
+
 import static io.apicurio.hub.api.codegen.util.CodegenUtil.containsValue;
 import static io.apicurio.hub.api.codegen.util.CodegenUtil.toStringList;
 
@@ -35,10 +36,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.Extensible;
@@ -202,6 +201,8 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
         }
         method.setAsync(async);
 
+        checkForDuplicateMethodNames(method);
+
         this._currentMethods = new ArrayList<>();
         this._currentMethods.add(method);
         this._currentInterface.getMethods().add(method);
@@ -215,6 +216,30 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             }
         }
         this._processPathItemParams = false;
+    }
+
+    /**
+     * Checks for duplicate method names within the current interface and throws a
+     * {@link IllegalStateException} if a conflict is detected. This can occur when multiple
+     * operations resolve to the same method name, typically due to missing or identical
+     * {@code operationId} values in the OpenAPI specification.
+     *
+     * @param method the new method to check against existing methods in the current interface
+     * @throws IllegalStateException if a method with the same name already exists in the interface
+     */
+    private void checkForDuplicateMethodNames(CodegenJavaMethod method) {
+        String newMethodName = method.getName();
+        for (CodegenJavaMethod existingMethod : this._currentInterface.getMethods()) {
+            if (existingMethod.getName().equals(newMethodName)) {
+                throw new IllegalStateException(
+                    "Duplicate method name '" + newMethodName + "' detected in interface '"
+                    + this._currentInterface.getName() + "'. "
+                    + "Operation at path '" + currentPath + "' (HTTP " + method.getMethod()
+                    + ") resolves to the same method name as an existing operation. "
+                    + "Consider adding a unique 'operationId' to one of the conflicting operations."
+                );
+            }
+        }
     }
 
     /**
@@ -277,11 +302,24 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             content = new HashMap<>();
         }
 
+        // Check for multipart/form-data first and handle it specially
+        for (Map.Entry<String, OpenApiMediaType> entry : content.entrySet()) {
+            String name = entry.getKey();
+            OpenApiMediaType mediaType = entry.getValue();
+
+            if ("multipart/form-data".equals(name)) {
+                // Handle multipart form data specially
+                MultipartFormDataRequestBodyProcessor.processMultipartFormData(mediaType, this._currentMethods.get(0), this.settings, (Document) mediaType.getSchema().root());
+                return; // Skip generic body parameter creation
+            }
+        }
+
         Map<CodegenJavaReturn, Set<String>> allReturnTypes = new LinkedHashMap<>();
         if (!content.isEmpty()) {
             content.entrySet().forEach(entry -> {
                 String name = entry.getKey();
                 OpenApiMediaType mediaType = entry.getValue();
+
                 CodegenJavaReturn cgReturn = new CodegenJavaReturn();
                 if (mediaType.getSchema() != null) {
                     setSchemaProperties(cgReturn, (OpenApi31Schema) mediaType.getSchema());
@@ -504,6 +542,20 @@ public class OpenApi2CodegenVisitor extends TraversingOpenApi31VisitorAdapter {
             String cname = builder.toString();
             if (cname.trim().length() > 0) {
                 return decapitalize(builder.toString());
+            }
+        }
+        // Try to extract the method name from the path segment
+        if (currentPath != null && currentPath.length() > 0) {
+            String[] pathSegments = currentPath.split("/");
+            if (pathSegments.length > 0) {
+                String lastSegment = pathSegments[pathSegments.length - 1];
+                if (lastSegment != null && lastSegment.trim().length() > 0) {
+                    // Remove path parameters (e.g., {id}) and sanitize
+                    String sanitized = lastSegment.replaceAll("\\{[^}]*\\}", "").replaceAll("\\W", "");
+                    if (sanitized.length() > 0) {
+                        return sanitized;
+                    }
+                }
             }
         }
         return "generatedMethod" + this._methodCounter++;

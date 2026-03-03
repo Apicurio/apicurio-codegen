@@ -1,0 +1,31 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Duplicate Method Name Test API",
+    "description": "API spec that triggers a duplicate method name collision.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/products": {
+      "get": {
+        "operationId": "items",
+        "summary": "List products",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/products/items": {
+      "get": {
+        "summary": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

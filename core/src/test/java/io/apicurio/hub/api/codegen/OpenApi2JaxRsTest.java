@@ -16,8 +16,15 @@
 
 package io.apicurio.hub.api.codegen;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -221,6 +228,81 @@ public class OpenApi2JaxRsTest extends OpenApi2TestBase {
     @Test
     public void testEnumWithSpecialChars() throws IOException {
         doFullTest("OpenApi2JaxRsTest/enum-with-special-chars.json", UpdateOnly.no, Reactive.no, "_expected-enum-with-special-chars/generated-api", false);
+    }
+
+    /**
+     * Test method for {@link io.apicurio.hub.api.codegen.OpenApi2JaxRs#generate()}.
+     */
+    @Test
+    public void testGenerateMultipartFormContent() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-form-content.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-form-content.generated-api", false);
+    }
+
+    /**
+     * Test method for comprehensive multipart form data type support.
+     */
+    @Test
+    public void testGenerateMultipartComprehensive() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-comprehensive.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-comprehensive.generated-api", false);
+    }
+
+    @Test
+    public void testMultipartArrayOnlyRef() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-array-only-ref.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-array-only-ref/generated-api", false);
+    }
+
+    @Test
+    public void testMultipartOpenapiV300() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-openapi-v-3-0-0.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-openapi-v-3-0-0/generated-api", false);
+    }
+
+    @Test
+    public void testMultipartEdgeCases() throws IOException {
+        doFullTest("OpenApi2JaxRsTest/multipart-edge-cases.json", UpdateOnly.no, Reactive.no,
+                   "_expected-multipart-edge-cases/generated-api", false);
+    }
+
+    /**
+     * Test that the generator detects and reports duplicate method names with a error.
+     * Two operations on the same interface resolve to method name "items":
+     *   - GET /products (operationId: "items")
+     *   - GET /products/items (no operationId, falls back to last path segment "items")
+     */
+    @Test
+    public void testDuplicateMethodNameDetection() throws IOException {
+        JaxRsProjectSettings settings = new JaxRsProjectSettings();
+        settings.codeOnly = false;
+        settings.reactive = false;
+        settings.artifactId = "generated-api";
+        settings.groupId = "org.example.api";
+        settings.javaPackage = "org.example.api";
+
+        OpenApi2JaxRs generator = new OpenApi2JaxRs();
+        generator.setSettings(settings);
+        generator.setUpdateOnly(false);
+        generator.setOpenApiDocument(getClass().getClassLoader().getResource(
+                "OpenApi2JaxRsTest/duplicate-method-name.json"));
+
+        ByteArrayOutputStream outputStream = generator.generate();
+
+        String errorContent = null;
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if ("PROJECT_GENERATION_FAILED.txt".equals(entry.getName())) {
+                    errorContent = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                    break;
+                }
+            }
+        }
+        Assert.assertNotNull( errorContent);
+        Assert.assertTrue(errorContent.contains("Duplicate method name"));
+        Assert.assertTrue(errorContent.contains("items"));
+        Assert.assertTrue( errorContent.contains("ProductsResource"));
     }
 
     /**
