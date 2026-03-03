@@ -111,7 +111,7 @@ public class OpenApi2JaxRs {
 
     static final Map<String, Type<?>> TYPE_CACHE = new HashMap<>();
     static final String OPENAPI_OPERATION_ANNOTATION = "org.eclipse.microprofile.openapi.annotations.Operation";
-    private static final String MEDIA_TYPE_CONSUME_STRING = "MediaType.";
+    private static final String MEDIA_TYPE_CONSTANT_PREFIX = "MediaType.";
 
     protected static ObjectMapper mapper = new ObjectMapper();
     protected static Charset utf8 = StandardCharsets.UTF_8;
@@ -606,7 +606,7 @@ public class OpenApi2JaxRs {
                 .filter(Predicate.not(Collection::isEmpty))
                 .ifPresent(consumesSet -> {
                     // Add MediaType import if any consumes value uses MediaType constants
-                    if (consumesSet.stream().anyMatch(consume -> consume.contains(MEDIA_TYPE_CONSUME_STRING))) {
+                    if (consumesSet.stream().anyMatch(consume -> consume.contains(MEDIA_TYPE_CONSTANT_PREFIX))) {
                         resourceInterface.addImport(String.format("%s.ws.rs.core.MediaType", topLevelPackage));
                     }
                     String consumesLiteral = toStringArrayLiteral(consumesSet);
@@ -892,7 +892,7 @@ public class OpenApi2JaxRs {
 
         if (values.size() == 1) {
             String value = values.iterator().next();
-            if (value.startsWith(MEDIA_TYPE_CONSUME_STRING)) {
+            if (value.startsWith(MEDIA_TYPE_CONSTANT_PREFIX)) {
                 // Don't quote MediaType constants
                 builder.append(value);
             } else {
@@ -907,7 +907,7 @@ public class OpenApi2JaxRs {
                 if (!first) {
                     builder.append(", ");
                 }
-                if (value.startsWith(MEDIA_TYPE_CONSUME_STRING)) {
+                if (value.startsWith(MEDIA_TYPE_CONSTANT_PREFIX)) {
                     // Don't quote MediaType constants
                     builder.append(value);
                 } else {

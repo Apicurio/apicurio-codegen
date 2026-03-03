@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 Red Hat
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.apicurio.hub.api.codegen.jaxrs;
 
 import java.util.Collections;
@@ -273,7 +257,7 @@ public class MultipartFormDataRequestBodyProcessor {
             List<String> itemTypes = itemArgument.getType();
             if (itemTypes != null && !itemTypes.isEmpty()) {
                 String itemType = itemTypes.get(0);
-                argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + getSimpleClassName(itemType) + ">"));
+                argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + itemType + ">"));
             } else {
                 argument.setType(Collections.singletonList(JAVA_UTIL_LIST + "<" + JAVA_LANG_STRING + ">"));
             }
@@ -299,17 +283,4 @@ public class MultipartFormDataRequestBodyProcessor {
         mapObjectOrFallbackType(argument, oas31Schema);
     }
 
-    /**
-     * Extracts the simple class name from a fully qualified class name for use in generics.
-     *
-     * @param className the fully qualified class name
-     * @return the simple class name
-     */
-    private static String getSimpleClassName(String className) {
-        if (className == null) {
-            return "Object";
-        }
-        int lastDot = className.lastIndexOf('.');
-        return lastDot >= 0 ? className.substring(lastDot + 1) : className;
-    }
 }

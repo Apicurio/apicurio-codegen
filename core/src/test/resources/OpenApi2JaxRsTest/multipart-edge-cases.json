@@ -1,0 +1,182 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Multipart Edge Cases API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/edge/invalid-string-schema": {
+      "post": {
+        "operationId": "invalidStringSchema",
+        "summary": "Multipart with top-level string schema (not object) - should generate no params",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/edge/invalid-array-schema": {
+      "post": {
+        "operationId": "invalidArraySchema",
+        "summary": "Multipart with top-level array schema (not object) - should generate no params",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/edge/null-field-schemas": {
+      "post": {
+        "operationId": "nullFieldSchemas",
+        "summary": "Multipart with a property having an empty schema {} - maps to Map<String, Object>",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emptySchema": {},
+                  "normalField": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/edge/required-fields": {
+      "post": {
+        "operationId": "requiredFields",
+        "summary": "Multipart with required list containing a ghost field not in properties",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["existingRequired", "ghostField"],
+                "properties": {
+                  "existingRequired": {
+                    "type": "string"
+                  },
+                  "optionalField": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/edge/json-only": {
+      "post": {
+        "operationId": "jsonOnly",
+        "summary": "Non-multipart JSON content - should generate a normal body param",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/edge/mixed-multipart-json": {
+      "post": {
+        "operationId": "mixedMultipartJson",
+        "summary": "Mixed content types - multipart takes priority, JSON body is skipped",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "JsonPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
