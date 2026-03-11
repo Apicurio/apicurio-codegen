@@ -52,7 +52,7 @@ public class JavaBeanPostProcessor {
             modified = true;
         }
 
-        boolean isEnum = content.contains("public enum");
+        boolean isEnum = content.contains("public enum") && !content.contains("public class");
 
         // TODO add the annotations as imports first, then use local names rather than FQN
         if (annotations != null && !annotations.isEmpty()) {
@@ -69,8 +69,11 @@ public class JavaBeanPostProcessor {
                 }
             }
             if (annotationCount > 0) {
-                content = content.replace("public class ", builder.toString() + "public class ");
-                content = content.replace("public enum ", builder.toString() + "public enum ");
+                if (isEnum) {
+                    content = content.replace("public enum ", builder.toString() + "public enum ");
+                } else {
+                    content = content.replace("public class ", builder.toString() + "public class ");
+                }
                 modified = true;
             }
         }
