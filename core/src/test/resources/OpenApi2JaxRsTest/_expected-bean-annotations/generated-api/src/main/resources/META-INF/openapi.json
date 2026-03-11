@@ -40,6 +40,18 @@
             	},
             	"x-codegen-annotations": ["io.quarkus.runtime.annotations.RegisterForReflection"]
             },
+            "BeanWithInlineEnum": {
+            	"type": "object",
+            	"properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["ACTIVE", "INACTIVE"]
+                    }
+            	}
+            },
             "SampleDataType": {
                 "description": "",
                 "type": "object",
