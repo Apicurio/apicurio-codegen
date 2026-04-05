@@ -9,7 +9,7 @@ Apicurio Codegen is a powerful tool that automatically generates high-quality co
 - **OpenAPI 3.x Support** - Full support for modern OpenAPI specifications
 - **Quarkus Native** - Optimized for Quarkus applications with native compilation support
 - **JAX-RS Generation** - Generate server stubs and client libraries
-- **Multiple Integration Options** - Maven plugin, CLI tool, or programmatic API
+- **Multiple Integration Options** - Maven plugin or programmatic API
 - **Highly Configurable** - Extensive customization options for generated code
 - **Production Ready** - Battle-tested in enterprise environments
 
@@ -18,8 +18,6 @@ Apicurio Codegen is a powerful tool that automatically generates high-quality co
 - **`core/`** - Core code generation engine
 - **`maven-plugin/`** - Maven plugin for build integration
 - **`maven-plugin-tests/`** - Integration tests for the Maven plugin
-- **`cli/`** - Command-line interface
-- **`quarkus-extension/`** - Quarkus extension for seamless integration
 
 ## 🔧 Building the Project
 
@@ -71,7 +69,7 @@ Comprehensive documentation is available at: [docs/](docs/)
 
 - **[Project Overview](docs/index.md)** - Introduction and key concepts
 - **[Getting Started](docs/getting-started.md)** - Hello World tutorial
-- **[User Guide](docs/user-guide/)** - Detailed feature documentation
+- **[User Guide](docs/user-guide/)** - Additional documentation
 
 ### Contributing to Documentation
 
@@ -87,9 +85,6 @@ pip install mkdocs mkdocs-material mkdocstrings
 #### Working with Documentation
 
 ```bash
-# Navigate to docs directory
-cd docs
-
 # Preview documentation locally (auto-reload on changes)
 mkdocs serve
 # Visit http://127.0.0.1:8000 in your browser
@@ -105,7 +100,7 @@ mkdocs gh-deploy
 
 - All documentation files are in `docs/` directory
 - Written in Markdown format
-- Configuration in `docs/mkdocs.yml`
+- Configuration in `mkdocs.yml` (repo root)
 - Supports code syntax highlighting, admonitions, and more
 
 #### Contributing Documentation
@@ -113,7 +108,7 @@ mkdocs gh-deploy
 1. Fork the repository
 2. Create a new branch: `git checkout -b docs/your-feature`
 3. Make your changes in the `docs/` directory
-4. Preview locally with `mkdocs serve`
+4. Preview locally with `mkdocs serve` from the repo root
 5. Submit a pull request
 
 ## 🛠️ Usage
@@ -126,28 +121,22 @@ Add to your `pom.xml`:
 <plugin>
     <groupId>io.apicurio</groupId>
     <artifactId>apicurio-codegen-maven-plugin</artifactId>
-    <version>1.2.6.Final</version>
+    <version>1.2.11.Final</version>
     <executions>
         <execution>
+            <phase>generate-sources</phase>
             <goals>
                 <goal>generate</goal>
             </goals>
             <configuration>
-                <inputSpec>src/main/resources/openapi.yaml</inputSpec>
-                <output>target/generated-sources/apicurio</output>
+                <projectSettings>
+                    <javaPackage>org.example.api</javaPackage>
+                </projectSettings>
+                <inputSpec>src/main/resources/openapi.json</inputSpec>
             </configuration>
         </execution>
     </executions>
 </plugin>
-```
-
-### CLI Usage
-
-```bash
-# Download and run the CLI
-java -jar apicurio-codegen-cli.jar generate \
-  --input-spec openapi.yaml \
-  --output ./generated-code
 ```
 
 ## 🤝 Contributing
