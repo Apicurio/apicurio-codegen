@@ -123,6 +123,7 @@ public class OpenApi2JaxRs {
     protected transient Document document;
     protected JaxRsProjectSettings settings;
     protected boolean updateOnly;
+    private Map<String, String> requestBodyTypesByOperationId = Map.of();
 
     private GenerationConfig config;
 
@@ -381,6 +382,7 @@ public class OpenApi2JaxRs {
         document = Library.transformDocument(document, ModelType.OPENAPI31);
 
         // Pre-process the document
+        requestBodyTypesByOperationId = computeRequestBodyTypes(document);
         document = preProcess(document);
 
         // Figure out the breakdown of the interfaces.
@@ -535,6 +537,10 @@ public class OpenApi2JaxRs {
      * @param interfaceInfo
      */
     protected String generateJavaInterface(CodegenInfo info, CodegenJavaInterface interfaceInfo, String topLevelPackage) {
+        return generateJavaInterfaceSource(info, interfaceInfo, topLevelPackage);
+    }
+
+    protected String generateJavaInterfaceSource(CodegenInfo info, CodegenJavaInterface interfaceInfo, String topLevelPackage) {
         String jaxRsPath = info.getContextRoot() + interfaceInfo.getPath();
         final Parser markdownParser = Parser.builder().build();
         final HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
@@ -639,18 +645,26 @@ public class OpenApi2JaxRs {
                 .orElseGet(Stream::empty)
                 .forEach(arg -> {
                     String methodArgName = paramNameToJavaArgName(arg.getName());
-                    String defaultParamType = Object.class.getName();
+                    Type<?> paramType = null;
 
                     if (arg.getIn().equals("body")) {
                         // Swagger 2.0?
-                        defaultParamType = InputStream.class.getName();
+                        String replacementType = requestBodyTypesByOperationId.get(methodInfo.getOperationId());
+                        if (replacementType != null) {
+                            paramType = parseType(replacementType);
+                        }
                     } else if (arg.getIn().equals("form")
                             && arg.getType() != null
                             && !arg.getType().isEmpty()) {
-                        defaultParamType = arg.getType().get(0);
+                        paramType = generateTypeName(arg, arg.getRequired(), arg.getType().get(0));
                     }
 
-                    Type<?> paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
+                    if (paramType == null) {
+                        String defaultParamType = arg.getIn().equals("body")
+                                ? InputStream.class.getName()
+                                : Object.class.getName();
+                        paramType = generateTypeName(arg, arg.getRequired(), defaultParamType);
+                    }
 
                     if (arg.getTypeSignature() != null) {
                         // TODO try to find a re-usable data type that matches the type signature
@@ -714,6 +728,129 @@ public class OpenApi2JaxRs {
         return generateJavaInterface(info, interfaceInfo, "jakarta");
     }
 
+    private Map<String, String> computeRequestBodyTypes(Document document) throws IOException {
+        JsonNode json = mapper.readTree(Library.writeDocumentToJSONString(document));
+        Map<String, String> arrayMapTypes = computeArrayMapTypes(json);
+        Map<String, String> requestBodyTypes = new HashMap<>();
+
+        JsonNode paths = json.path("paths");
+        if (!paths.isObject()) {
+            return requestBodyTypes;
+        }
+
+        paths.fields().forEachRemaining(pathEntry -> {
+            JsonNode pathItem = pathEntry.getValue();
+            pathItem.fields().forEachRemaining(methodEntry -> {
+                if (!Set.of("get", "put", "post", "delete", "options", "head", "patch", "trace")
+                        .contains(methodEntry.getKey())) {
+                    return;
+                }
+
+                JsonNode operation = methodEntry.getValue();
+                String operationId = textValue(operation, "operationId");
+                if (operationId == null) {
+                    return;
+                }
+
+                JsonNode requestBody = operation.path("requestBody");
+                String requestType = resolveBodyType(requestBody, arrayMapTypes);
+                if (requestType != null) {
+                    requestBodyTypes.put(operationId, requestType);
+                }
+            });
+        });
+
+        return requestBodyTypes;
+    }
+
+    private Map<String, String> computeArrayMapTypes(JsonNode json) {
+        Map<String, String> arrayMapTypes = new HashMap<>();
+        JsonNode schemas = json.path("components").path("schemas");
+        if (!schemas.isObject()) {
+            return arrayMapTypes;
+        }
+
+        schemas.fields().forEachRemaining(entry -> {
+            JsonNode schema = entry.getValue();
+            JsonNode typeNode = schema.path("x-codegen-type");
+            if (!typeNode.isTextual() || !"ArrayMap".equals(typeNode.asText())) {
+                return;
+            }
+
+            JsonNode additionalProperties = schema.path("additionalProperties");
+            if (!additionalProperties.isObject()) {
+                return;
+            }
+
+            String valueType = resolveSchemaType(additionalProperties, arrayMapTypes);
+            arrayMapTypes.put(entry.getKey(), "java.util.Map<String, " + valueType + ">");
+        });
+
+        return arrayMapTypes;
+    }
+
+    private String resolveBodyType(JsonNode requestBody, Map<String, String> arrayMapTypes) {
+        JsonNode content = requestBody.path("content");
+        if (!content.isObject() || content.size() == 0) {
+            return null;
+        }
+
+        JsonNode mediaType = content.elements().next();
+        JsonNode schema = mediaType.path("schema");
+        if (!schema.isObject()) {
+            return null;
+        }
+
+        return resolveSchemaType(schema, arrayMapTypes);
+    }
+
+    private String resolveSchemaType(JsonNode schema, Map<String, String> arrayMapTypes) {
+        JsonNode ref = schema.get("$ref");
+        if (ref != null && ref.isTextual()) {
+            String refName = ref.asText();
+            String refKey = refName.substring(refName.lastIndexOf('/') + 1);
+            String arrayMapType = arrayMapTypes.get(refKey);
+            if (arrayMapType != null) {
+                return arrayMapType;
+            }
+            return CodegenUtil.schemaRefToFQCN(settings, document, refName, this.settings.javaPackage + ".beans");
+        }
+
+        JsonNode type = schema.get("type");
+        if (type != null && type.isTextual()) {
+            switch (type.asText()) {
+                case "array":
+                    JsonNode items = schema.get("items");
+                    String itemType = items != null ? resolveSchemaType(items, arrayMapTypes) : "java.lang.Object";
+                    return "java.util.List<" + itemType + ">";
+                case "string":
+                    return "java.lang.String";
+                case "integer":
+                    return "java.lang.Integer";
+                case "number":
+                    return "java.lang.Double";
+                case "boolean":
+                    return "java.lang.Boolean";
+                case "object":
+                    JsonNode additionalProperties = schema.get("additionalProperties");
+                    if (additionalProperties != null && additionalProperties.isObject()) {
+                        String valueType = resolveSchemaType(additionalProperties, arrayMapTypes);
+                        return "java.util.Map<String, " + valueType + ">";
+                    }
+                    return "java.lang.Object";
+                default:
+                    return "java.lang.Object";
+            }
+        }
+
+        return "java.lang.Object";
+    }
+
+    private String textValue(JsonNode node, String field) {
+        JsonNode value = node.get(field);
+        return value != null && value.isTextual() ? value.asText() : null;
+    }
+
     public static Properties getFormatterProperties() {
         Properties formattingProperties = new Properties();
         formattingProperties.setProperty("org.eclipse.jdt.core.formatter.indentation.size", "2");
@@ -755,6 +892,14 @@ public class OpenApi2JaxRs {
     protected Type<?> generateTypeName(CodegenJavaSchema schema, Boolean required, String defaultType) {
         if (required == null) {
             required = Boolean.FALSE;
+        }
+
+        String existingJavaType = schema.getExistingJavaType();
+        if (existingJavaType != null && !existingJavaType.isBlank()) {
+            if ("APICURIO_CODEGEN_BYTE_ARRAY_REPRESENTATION".equals(existingJavaType)) {
+                return parseType("byte[]");
+            }
+            return parseType(existingJavaType);
         }
 
         String collection = schema.getCollection();

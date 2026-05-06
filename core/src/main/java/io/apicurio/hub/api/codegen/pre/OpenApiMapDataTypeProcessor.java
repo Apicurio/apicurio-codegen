@@ -16,6 +16,8 @@
 
 package io.apicurio.hub.api.codegen.pre;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.apicurio.datamodels.models.Schema;
@@ -25,19 +27,12 @@ import io.apicurio.hub.api.codegen.CodegenExtensions;
 import io.apicurio.hub.api.codegen.jaxrs.TraversingOpenApi31VisitorAdapter;
 import io.apicurio.hub.api.codegen.util.CodegenUtil;
 
-import java.util.Map;
-
 /**
  * @author eric.wittmann@gmail.com
  */
 public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapter {
 
-    private static final Map<String, String> EXTENSION_NAMES = Map.of(
-            "StringMap",
-            "java.util.Map<String,String>",
-            "StringObjectMap",
-            "java.util.Map<String,Object>"
-    );
+    private static final Set<String> EXTENSION_NAMES = Set.of("StringMap", "StringObjectMap", "ArrayMap");
 
     /**
      * @see io.apicurio.datamodels.models.openapi.v31.visitors.OpenApi31VisitorAdapter#visitSchema(io.apicurio.datamodels.models.Schema)
@@ -46,20 +41,85 @@ public class OpenApiMapDataTypeProcessor extends TraversingOpenApi31VisitorAdapt
     public void visitSchema(Schema node) {
         if (NodeUtil.isDefinition(node)) {
             OpenApi31Schema schema = (OpenApi31Schema) node;
-            if (isMapType(schema)) {
-                schema.setAdditionalProperties(null);
-                String javaType = EXTENSION_NAMES.get(CodegenUtil.getExtension(schema, CodegenExtensions.TYPE).asText());
-                schema.addExtraProperty("existingJavaType", factory.textNode(javaType));
+            JsonNode typeExtension = CodegenUtil.getExtension(schema, CodegenExtensions.TYPE);
+            if (typeExtension == null || !typeExtension.isTextual() || !EXTENSION_NAMES.contains(typeExtension.asText())) {
+                return;
             }
+
+            OpenApi31Schema additionalProperties = schema.getAdditionalProperties() != null
+                    && schema.getAdditionalProperties().isSchema()
+                            ? (OpenApi31Schema) schema.getAdditionalProperties().asSchema()
+                            : null;
+
+            schema.setAdditionalProperties(null);
+            schema.addExtraProperty("existingJavaType", factory.textNode(buildJavaType(typeExtension.asText(), additionalProperties)));
         }
     }
 
-    private boolean isMapType(OpenApi31Schema schema) {
-        JsonNode extension = CodegenUtil.getExtension(schema, CodegenExtensions.TYPE);
-        if (extension == null || !extension.isTextual()) {
-            return false;
+    private String buildJavaType(String alias, OpenApi31Schema additionalProperties) {
+        if ("StringMap".equals(alias)) {
+            return "java.util.Map<String,String>";
         }
-        return EXTENSION_NAMES.get(extension.asText()) != null;
+
+        if ("StringObjectMap".equals(alias)) {
+            return "java.util.Map<String,Object>";
+        }
+
+        if ("ArrayMap".equals(alias)) {
+            String valueType = "java.lang.Object";
+            if (additionalProperties != null) {
+                valueType = resolveJavaType(additionalProperties);
+            }
+            return "java.util.Map<String," + valueType + ">";
+        }
+
+        return "java.util.Map<String,Object>";
+    }
+
+    private String resolveJavaType(OpenApi31Schema schema) {
+        if (schema == null) {
+            return "java.lang.Object";
+        }
+
+        if (schema.get$ref() != null && !schema.get$ref().isBlank()) {
+            return refToSimpleType(schema.get$ref());
+        }
+
+        if (schema.getType() != null) {
+            if (CodegenUtil.containsValue(schema.getType(), "array")) {
+                String itemType = "java.lang.Object";
+                if (schema.getItems() != null) {
+                    itemType = resolveJavaType((OpenApi31Schema) schema.getItems());
+                }
+                return "java.util.List<" + itemType + ">";
+            }
+            if (CodegenUtil.containsValue(schema.getType(), "string")) {
+                return "java.lang.String";
+            }
+            if (CodegenUtil.containsValue(schema.getType(), "integer")) {
+                return "java.lang.Integer";
+            }
+            if (CodegenUtil.containsValue(schema.getType(), "number")) {
+                return "java.lang.Double";
+            }
+            if (CodegenUtil.containsValue(schema.getType(), "boolean")) {
+                return "java.lang.Boolean";
+            }
+        }
+
+        return "java.lang.Object";
+    }
+
+    private String refToSimpleType(String ref) {
+        int lastSlash = ref.lastIndexOf('/');
+        if (lastSlash >= 0 && lastSlash < ref.length() - 1) {
+            return ref.substring(lastSlash + 1);
+        }
+        int lastHash = ref.lastIndexOf('#');
+        if (lastHash >= 0 && lastHash < ref.length() - 1) {
+            return ref.substring(lastHash + 1);
+        }
+        return ref;
     }
 
 }
