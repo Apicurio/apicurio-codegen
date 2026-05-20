@@ -3201,13 +3201,13 @@
         ],
         "type": "string",
         "example": "VALIDITY",
-        "x-codegen-package": "io.apicurio.registry.types"
+        "x-codegen-package": "io.apitomy.registry.types"
       },
       "ArtifactType": {
         "description": "",
         "type": "string",
         "example": "AVRO",
-        "x-codegen-package": "io.apicurio.registry.types"
+        "x-codegen-package": "io.apitomy.registry.types"
       },
       "ArtifactTypeInfo": {
         "description": "",
@@ -3245,7 +3245,7 @@
           "DEPRECATED"
         ],
         "type": "string",
-        "x-codegen-package": "io.apicurio.registry.types"
+        "x-codegen-package": "io.apitomy.registry.types"
       },
       "ArtifactSearchResults": {
         "description": "Describes the response received when searching for artifacts.",
@@ -3422,7 +3422,7 @@
           "ADMIN"
         ],
         "type": "string",
-        "x-codegen-package": "io.apicurio.registry.types"
+        "x-codegen-package": "io.apitomy.registry.types"
       },
       "UpdateRole": {
         "title": "Root Type for UpdateRole",
@@ -3933,7 +3933,7 @@
             }
           ]
         },
-        "x-codegen-extendsClass": "io.apicurio.registry.rest.v2.beans.Error"
+        "x-codegen-extendsClass": "io.apitomy.registry.rest.v2.beans.Error"
       },
       "ArtifactReference": {
         "title": "Root Type for ArtifactReference",
@@ -4285,7 +4285,7 @@
         ],
         "type": "string",
         "example": "\"INBOUND\"",
-        "x-codegen-package": "io.apicurio.registry.types"
+        "x-codegen-package": "io.apitomy.registry.types"
       },
       "NewComment": {
         "title": "Root Type for NewComment",

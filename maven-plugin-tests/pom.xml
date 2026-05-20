@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-codegen-parent</artifactId>
+        <groupId>io.apitomy</groupId>
+        <artifactId>apitomy-codegen-parent</artifactId>
         <version>1.2.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>apicurio-codegen-maven-plugin-tests</artifactId>
-    <name>apicurio-codegen-maven-plugin-tests</name>
+    <artifactId>apitomy-codegen-maven-plugin-tests</artifactId>
+    <name>apitomy-codegen-maven-plugin-tests</name>
     <packaging>pom</packaging>
 
     <build>

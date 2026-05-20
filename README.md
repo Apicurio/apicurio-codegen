@@ -1,8 +1,8 @@
-# Apicurio Codegen
+# Apitomy Codegen
 
 **Open Source API Design Code Generator**
 
-Apicurio Codegen is a powerful tool that automatically generates high-quality code from OpenAPI specifications. It specializes in generating JAX-RS server stubs, Quarkus-optimized applications, data models, and client libraries, helping developers quickly scaffold robust API implementations.
+Apitomy Codegen is a powerful tool that automatically generates high-quality code from OpenAPI specifications. It specializes in generating JAX-RS server stubs, Quarkus-optimized applications, data models, and client libraries, helping developers quickly scaffold robust API implementations.
 
 ## 🚀 Features
 
@@ -30,8 +30,8 @@ Apicurio Codegen is a powerful tool that automatically generates high-quality co
 
 ```bash
 # Clone the repository
-git clone https://github.com/apicurio/apicurio-codegen.git
-cd apicurio-codegen
+git clone https://github.com/Apitomy/apitomy-codegen.git
+cd apitomy-codegen
 
 # Build all modules
 ./mvnw clean install
@@ -119,8 +119,8 @@ Add to your `pom.xml`:
 
 ```xml
 <plugin>
-    <groupId>io.apicurio</groupId>
-    <artifactId>apicurio-codegen-maven-plugin</artifactId>
+    <groupId>io.apitomy</groupId>
+    <artifactId>apitomy-codegen-maven-plugin</artifactId>
     <version>1.2.11.Final</version>
     <executions>
         <execution>
@@ -154,10 +154,10 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## 🔗 Links
 
-- **Website**: [https://www.apicur.io/](https://www.apicur.io/)
-- **Documentation**: [https://www.apicur.io/codegen/docs/](https://www.apicur.io/codegen/docs/)
-- **Issues**: [GitHub Issues](https://github.com/apicurio/apicurio-codegen/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/apicurio/apicurio-codegen/discussions)
+- **Website**: [https://www.apitomy.io/](https://www.apitomy.io/)
+- **Documentation**: [https://www.apitomy.io/codegen/docs/](https://www.apitomy.io/codegen/docs/)
+- **Issues**: [GitHub Issues](https://github.com/Apitomy/apitomy-codegen/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Apitomy/apitomy-codegen/discussions)
 
 ## 👥 Maintainers
 
@@ -167,4 +167,4 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
-*Developed by Red Hat as part of the Apicurio project.*
+*Developed by Red Hat as part of the Apitomy project.*

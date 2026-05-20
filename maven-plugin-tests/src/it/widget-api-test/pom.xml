@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>widget-api-test</artifactId>
-    <groupId>io.apicurio</groupId>
+    <groupId>io.apitomy</groupId>
     <version>0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -76,8 +76,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>io.apicurio</groupId>
-                <artifactId>apicurio-codegen-maven-plugin</artifactId>
+                <groupId>io.apitomy</groupId>
+                <artifactId>apitomy-codegen-maven-plugin</artifactId>
                 <version>@project.version@</version>
                 <executions>
                     <execution>
@@ -87,7 +87,7 @@
                         </goals>
                         <configuration>
                             <projectSettings>
-                                <javaPackage>io.apicurio.codegen.tests.widget.api</javaPackage>
+                                <javaPackage>io.apitomy.codegen.tests.widget.api</javaPackage>
                             </projectSettings>
                             <inputSpec>openapi.json</inputSpec>
                         </configuration>

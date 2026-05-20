@@ -1,11 +1,11 @@
 # User Guide
 
-Welcome to the comprehensive user guide for Apicurio Codegen. This section provides detailed documentation for all features and capabilities.
+Welcome to the comprehensive user guide for Apitomy Codegen. This section provides detailed documentation for all features and capabilities.
 
 ## Table of Contents
 
 ### Basic Usage
-- **Installation & Setup** - Different ways to install and configure Apicurio Codegen
+- **Installation & Setup** - Different ways to install and configure Apitomy Codegen
 - **Maven Plugin** - Detailed Maven plugin configuration and usage
 - **CLI Usage** - Command-line interface documentation
 - **Configuration Reference** - Complete configuration options
@@ -19,7 +19,7 @@ Welcome to the comprehensive user guide for Apicurio Codegen. This section provi
 ### Integration
 - **Quarkus Integration** - Deep integration with Quarkus applications
 - **Build Integration** - Integrating with various build systems
-- **CI/CD Pipelines** - Using Apicurio Codegen in automated workflows
+- **CI/CD Pipelines** - Using Apitomy Codegen in automated workflows
 
 ### Advanced Topics
 - **Performance Tuning** - Optimizing code generation for large APIs
@@ -34,11 +34,11 @@ Welcome to the comprehensive user guide for Apicurio Codegen. This section provi
 
 - [← Back to Getting Started](../getting-started.md)
 - [← Back to Home](../index.md)
-- [View on GitHub →](https://github.com/apicurio/apicurio-codegen)
+- [View on GitHub →](https://github.com/Apitomy/apitomy-codegen)
 
-## Apicurio Codegen OpenAPI Extensions
+## Apitomy Codegen OpenAPI Extensions
 
-Apicurio Codegen uses [OpenAPI specification extensions](https://spec.openapis.org/oas/v3.0.3.html#specification-extensions) to allow customization of the generated source code based on your API contract.
+Apitomy Codegen uses [OpenAPI specification extensions](https://spec.openapis.org/oas/v3.0.3.html#specification-extensions) to allow customization of the generated source code based on your API contract.
 
 ### `x-codegen`
 
@@ -100,7 +100,7 @@ public class UserResource {}
 
 ### `x-codegen.suppress-date-time-formatting`
 
-By default, Apicurio Codegen generates properties of type `string` with the format `date-time` as shown below:
+By default, Apitomy Codegen generates properties of type `string` with the format `date-time` as shown below:
 
 ```java
 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")

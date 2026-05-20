@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout apicurio-codegen
+      - name: Checkout apitomy-codegen
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout website repository
         uses: actions/checkout@v4
         with:
-          repository: Apicurio/apicurio.github.io
+          repository: Apitomy/apitomy.github.io
           token: ${{ secrets.ACCESS_TOKEN }}
           path: website
 

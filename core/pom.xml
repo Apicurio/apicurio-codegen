@@ -3,18 +3,18 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apicurio-codegen</artifactId>
-    <name>apicurio-codegen</name>
+    <artifactId>apitomy-codegen</artifactId>
+    <name>apitomy-codegen</name>
 
     <parent>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-codegen-parent</artifactId>
+        <groupId>io.apitomy</groupId>
+        <artifactId>apitomy-codegen-parent</artifactId>
         <version>1.2.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
-        <io.apicurio.codegen.dumptest>false</io.apicurio.codegen.dumptest>
+        <io.apitomy.codegen.dumptest>false</io.apitomy.codegen.dumptest>
     </properties>
 
     <dependencies>
@@ -169,7 +169,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <file>
-                    <missing>target/classes/io/apicurio/hub/api/codegen/quarkus/pom.xml</missing>
+                    <missing>target/classes/io/apitomy/hub/api/codegen/quarkus/pom.xml</missing>
                 </file>
             </activation>
             <build>
@@ -197,7 +197,7 @@
                             <projectVersion>__VERSION__</projectVersion>
                             <projectName>__NAME__</projectName>
                             <projectDescription>__DESCRIPTION__</projectDescription>
-                            <outputDirectory>${project.build.outputDirectory}/io/apicurio/hub/api/codegen</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/io/apitomy/hub/api/codegen</outputDirectory>
                             <noCode>true</noCode>
                             <extensions>
                                 <extension>resteasy-reactive</extension>
@@ -213,7 +213,7 @@
     </profiles>
 
     <build>
-        <finalName>apicurio-codegen</finalName>
+        <finalName>apitomy-codegen</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -238,7 +238,7 @@
                 <version>${version.maven-surefire-plugin}</version>
                 <configuration>
                     <systemProperties>
-                        <io.apicurio.codegen.dumptest>${io.apicurio.codegen.dumptest}</io.apicurio.codegen.dumptest>
+                        <io.apitomy.codegen.dumptest>${io.apitomy.codegen.dumptest}</io.apitomy.codegen.dumptest>
                     </systemProperties>
                 </configuration>
                 <dependencies>

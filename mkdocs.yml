@@ -1,10 +1,10 @@
-site_name: Apicurio Codegen
+site_name: Apitomy Codegen
 site_description: Open Source API Design Code Generator
 site_author: Red Hat
-site_url: https://www.apicur.io/codegen/docs/
+site_url: https://www.apitomy.io/codegen/docs/
 
-repo_name: apicurio/apicurio-codegen
-repo_url: https://github.com/apicurio/apicurio-codegen
+repo_name: Apitomy/apitomy-codegen
+repo_url: https://github.com/Apitomy/apitomy-codegen
 use_directory_urls: false
 
 theme:
@@ -23,8 +23,8 @@ theme:
     - search.share
     - search.suggest
     - content.code.copy
-  logo: https://www.apicur.io/images/subprojects/apicurio_codegen_logo_reverse.svg
-  favicon: https://www.apicur.io/images/apicurio_icon.png
+  logo: https://www.apitomy.io/images/subprojects/apitomy_codegen_logo_reverse.svg
+  favicon: https://www.apitomy.io/images/apitomy_icon.png
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -57,9 +57,9 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/apicurio/apicurio-codegen
+      link: https://github.com/Apitomy/apitomy-codegen
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/apicurio
+      link: https://twitter.com/apitomy
 
 extra_css:
-  - theme/css/apicurio-custom.css
+  - theme/css/apitomy-custom.css

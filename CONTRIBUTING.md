@@ -21,7 +21,7 @@ But first, read this page (including the small print at the end).
 
 ## Legal
 
-All original contributions to Apicurio projects are licensed under the
+All original contributions to Apitomy projects are licensed under the
 [ASL - Apache License](https://www.apache.org/licenses/LICENSE-2.0),
 version 2.0 or later, or, if another license is specified as governing the file or directory being
 modified, such other license.
@@ -34,7 +34,7 @@ The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the roo
 This project uses GitHub issues to manage the issues. Open an issue directly in GitHub.
 
 If you believe you found a bug, and it's likely possible, please indicate a way to reproduce it, what you are seeing and what you would expect to see.
-Don't forget to indicate your Apicurio Codegen, Java, and Maven versions.
+Don't forget to indicate your Apitomy Codegen, Java, and Maven versions.
 
 ## Before you contribute
 
@@ -69,11 +69,11 @@ Consult [GitHub Help](https://help.github.com/articles/about-pull-requests/) for
 
 ### Continuous Integration
 
-Because we are all humans, and to ensure Apicurio Codegen is stable for everyone, all changes must go through Apicurio Codegen continuous integration.
-Apicurio Codegen CI is based on GitHub Actions, which means that everyone has the ability to automatically execute CI in their forks as part of the process of making changes.
+Because we are all humans, and to ensure Apitomy Codegen is stable for everyone, all changes must go through Apitomy Codegen continuous integration.
+Apitomy Codegen CI is based on GitHub Actions, which means that everyone has the ability to automatically execute CI in their forks as part of the process of making changes.
 We ask that all non-trivial changes go through this process, so that the contributor gets immediate feedback, while at the same time keeping our CI fast and healthy for everyone.
 
-The process requires only that you maintain a fork of the Apicurio Codegen repository and sync it occasionally with the upstream repository.
+The process requires only that you maintain a fork of the Apitomy Codegen repository and sync it occasionally with the upstream repository.
 
 ### Tests and documentation are not optional
 
@@ -95,8 +95,8 @@ We even accept pull requests that only fix typos in documentation!
 Clone the repository and build:
 
 ```bash
-git clone https://github.com/apicurio/apicurio-codegen.git
-cd apicurio-codegen
+git clone https://github.com/Apitomy/apitomy-codegen.git
+cd apitomy-codegen
 
 # Build all modules
 ./mvnw clean install
@@ -155,7 +155,7 @@ We welcome contributions in many forms:
 - **Feature requests** - Suggest new capabilities
 - **Code contributions** - Fix bugs or add new features
 - **Documentation** - Improve or add to our docs
-- **Examples** - Show how to use Apicurio Codegen
+- **Examples** - Show how to use Apitomy Codegen
 - **Testing** - Help us test on different platforms
 
 Remember that this is a volunteer-driven project. Be patient, be kind, and let's build something great together!
@@ -165,4 +165,4 @@ For questions about contributing, feel free to:
 - Start a discussion in GitHub Discussions
 - Reach out to the maintainers
 
-**Thank you for contributing to Apicurio Codegen!**
+**Thank you for contributing to Apitomy Codegen!**

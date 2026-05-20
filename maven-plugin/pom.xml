@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-codegen-parent</artifactId>
+        <groupId>io.apitomy</groupId>
+        <artifactId>apitomy-codegen-parent</artifactId>
         <version>1.2.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>apicurio-codegen-maven-plugin</artifactId>
+    <artifactId>apitomy-codegen-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>apicurio-codegen-cli</name>
+    <name>apitomy-codegen-cli</name>
     
     <properties>
     	<maven.version>3.9.15</maven.version>
@@ -20,10 +20,10 @@
     </properties>
 
     <dependencies>
-        <!-- Apicurio Codegen -->
+        <!-- Apitomy Codegen -->
         <dependency>
-            <groupId>io.apicurio</groupId>
-            <artifactId>apicurio-codegen</artifactId>
+            <groupId>io.apitomy</groupId>
+            <artifactId>apitomy-codegen</artifactId>
             <version>${project.version}</version>
         </dependency>
 

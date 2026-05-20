@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide will help you get up and running with Apicurio Codegen in just a few minutes.
+This guide will help you get up and running with Apitomy Codegen in just a few minutes.
 
 ## Prerequisites
 
@@ -82,7 +82,7 @@ Create a new Maven project with the following `pom.xml`:
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <quarkus.platform.version>3.2.8.Final</quarkus.platform.version>
-        <apicurio-codegen.version>1.2.6.Final</apicurio-codegen.version>
+        <apitomy-codegen.version>1.2.6.Final</apitomy-codegen.version>
     </properties>
 
     <dependencyManagement>
@@ -107,9 +107,9 @@ Create a new Maven project with the following `pom.xml`:
     <build>
         <plugins>
             <plugin>
-                <groupId>io.apicurio</groupId>
-                <artifactId>apicurio-codegen-maven-plugin</artifactId>
-                <version>${apicurio-codegen.version}</version>
+                <groupId>io.apitomy</groupId>
+                <artifactId>apitomy-codegen-maven-plugin</artifactId>
+                <version>${apitomy-codegen.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -117,7 +117,7 @@ Create a new Maven project with the following `pom.xml`:
                         </goals>
                         <configuration>
                             <inputSpec>hello-api.yaml</inputSpec>
-                            <output>target/generated-sources/apicurio</output>
+                            <output>target/generated-sources/apitomy</output>
                             <projectSettings>
                                 <javaPackage>com.example.hello</javaPackage>
                             </projectSettings>
@@ -140,7 +140,7 @@ mvn clean generate-sources
 
 This will generate:
 
-- **JAX-RS resource interfaces** in `target/generated-sources/apicurio/`
+- **JAX-RS resource interfaces** in `target/generated-sources/apitomy/`
 - **Data model classes** (`Greeting.java`)
 - **API interfaces** ready for implementation
 

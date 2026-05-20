@@ -1,7 +1,7 @@
 package my.other.pkg;
 
-import io.apicurio.registry.types.ReferenceType;
-import io.apicurio.registry.types.RuleType;
+import io.apitomy.registry.types.ReferenceType;
+import io.apitomy.registry.types.RuleType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;

@@ -3,10 +3,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.apicurio</groupId>
-    <artifactId>apicurio-codegen-parent</artifactId>
+    <groupId>io.apitomy</groupId>
+    <artifactId>apitomy-codegen-parent</artifactId>
     <version>1.2.12-SNAPSHOT</version>
-    <name>apicurio-codegen-parent</name>
+    <name>apitomy-codegen-parent</name>
     <packaging>pom</packaging>
 
     <url>https://www.apicur.io/</url>
@@ -27,15 +27,15 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/apicurio/apicurio-codegen/issues</url>
+        <url>https://github.com/Apitomy/apitomy-codegen/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:apicurio/apicurio-codegen.git
+        <connection>scm:git:git@github.com:Apitomy/apitomy-codegen.git
         </connection>
-        <developerConnection>scm:git:git@github.com:apicurio/apicurio-codegen.git
+        <developerConnection>scm:git:git@github.com:Apitomy/apitomy-codegen.git
         </developerConnection>
-        <url>scm:git:git@github.com:apicurio/apicurio-codegen.git</url>
+        <url>scm:git:git@github.com:Apitomy/apitomy-codegen.git</url>
     </scm>
 
     <developers>

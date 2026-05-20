@@ -1,6 +1,6 @@
 package my.other.pkg;
 
-import io.apicurio.registry.types.ReferenceType;
+import io.apitomy.registry.types.ReferenceType;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

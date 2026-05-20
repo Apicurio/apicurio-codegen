@@ -1,10 +1,10 @@
-# Apicurio Codegen
+# Apitomy Codegen
 
-Welcome to **Apicurio Codegen** - an open source API design code generator that helps you generate high-quality code from OpenAPI specifications.
+Welcome to **Apitomy Codegen** - an open source API design code generator that helps you generate high-quality code from OpenAPI specifications.
 
-## What is Apicurio Codegen?
+## What is Apitomy Codegen?
 
-Apicurio Codegen is a powerful tool that automatically generates code from OpenAPI (formerly Swagger) specifications. It specializes in generating:
+Apitomy Codegen is a powerful tool that automatically generates code from OpenAPI (formerly Swagger) specifications. It specializes in generating:
 
 - **JAX-RS server stubs** for Java applications
 - **Quarkus-optimized code** with reactive and blocking variants
@@ -32,19 +32,19 @@ This project consists of several modules:
 
 - [Getting Started](getting-started.md) - Jump right in with a simple example
 - [User Guide](user-guide/) - Comprehensive documentation
-- [GitHub Repository](https://github.com/apicurio/apicurio-codegen) - Source code and issues
-- [Apicurio Project](https://www.apicur.io/) - Main project website
+- [GitHub Repository](https://github.com/Apitomy/apitomy-codegen) - Source code and issues
+- [Apitomy Project](https://www.apitomy.io/) - Main project website
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the [LICENSE](https://github.com/apicurio/apicurio-codegen/blob/main/LICENSE) file for details.
+This project is licensed under the Apache License 2.0. See the [LICENSE](https://github.com/Apitomy/apitomy-codegen/blob/main/LICENSE) file for details.
 
 ## Community
 
-- **Issues**: Report bugs and request features on [GitHub Issues](https://github.com/apicurio/apicurio-codegen/issues)
+- **Issues**: Report bugs and request features on [GitHub Issues](https://github.com/Apitomy/apitomy-codegen/issues)
 - **Discussions**: Join the conversation in our community forums
 - **Contributing**: We welcome contributions! Check out our contribution guidelines
 
 ---
 
-*Developed by Red Hat as part of the Apicurio project.*
+*Developed by Red Hat as part of the Apitomy project.*

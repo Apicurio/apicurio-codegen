@@ -2214,7 +2214,7 @@
                 ],
                 "type": "string",
                 "example": "VALIDITY",
-                "x-codegen-package": "io.apicurio.registry.types"
+                "x-codegen-package": "io.apitomy.registry.types"
             },
             "ArtifactType": {
                 "description": "",
@@ -2233,7 +2233,7 @@
                 ],
                 "type": "string",
                 "example": "AVRO",
-                "x-codegen-package": "io.apicurio.registry.types"
+                "x-codegen-package": "io.apitomy.registry.types"
             },
             "UpdateState": {
                 "title": "Root Type for UpdateState",
@@ -2259,7 +2259,7 @@
                     "DEPRECATED"
                 ],
                 "type": "string",
-                "x-codegen-package": "io.apicurio.registry.types"
+                "x-codegen-package": "io.apitomy.registry.types"
             },
             "ArtifactSearchResults": {
                 "description": "Describes the response received when searching for artifacts.",

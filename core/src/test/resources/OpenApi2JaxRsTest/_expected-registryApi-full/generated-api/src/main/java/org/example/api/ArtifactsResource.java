@@ -1,7 +1,7 @@
 package org.example.api;
 
-import io.apicurio.registry.types.ArtifactType;
-import io.apicurio.registry.types.RuleType;
+import io.apitomy.registry.types.ArtifactType;
+import io.apitomy.registry.types.RuleType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;

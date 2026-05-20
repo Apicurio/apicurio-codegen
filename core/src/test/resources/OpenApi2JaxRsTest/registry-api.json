@@ -1119,7 +1119,7 @@
                     "COMPATIBILITY"
                 ],
                 "type": "string",
-                "x-codegen-package": "io.apicurio.registry.types"
+                "x-codegen-package": "io.apitomy.registry.types"
             },
             "ArtifactType": {
                 "description": "Artifact type enum.",
@@ -1131,7 +1131,7 @@
                     "ASYNCAPI"
                 ],
                 "type": "string",
-                "x-codegen-package": "io.apicurio.registry.types"
+                "x-codegen-package": "io.apitomy.registry.types"
             }
         },
         "responses": {

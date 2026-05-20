@@ -95,7 +95,7 @@
       ]
     },
     {
-      "groupName": "Dependencies: Apicurio Data Models",
+      "groupName": "Dependencies: Apicurio Data Models (external)",
       "matchFileNames": [
         "**/pom.xml"
       ],

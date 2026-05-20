@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-    if: github.repository_owner == 'Apicurio'
+    if: github.repository_owner == 'Apitomy'
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
 
       - name: Log Metadata
         run: |
-          echo "Releasing Apicurio Codegen version ${{ github.event.inputs.release-version }} from branch ${{ github.event.inputs.branch }}"
+          echo "Releasing Apitomy Codegen version ${{ github.event.inputs.release-version }} from branch ${{ github.event.inputs.branch }}"
           echo "Next Snapshot version will be ${{ github.event.inputs.snapshot-version }}"
 
 
@@ -46,8 +46,8 @@ jobs:
       - name: Configure Git
         run: |
           git init
-          git config --global user.name "apicurio-ci"
-          git config --global user.email "apicurio.ci@gmail.com"
+          git config --global user.name "apitomy-ci"
+          git config --global user.email "apitomy.ci@gmail.com"
           git branch --set-upstream-to=origin/${{ github.event.inputs.branch}}
           git pull
           echo "#### Listing files ####"
@@ -131,8 +131,8 @@ jobs:
       - name: Configure Git
         run: |
           git init
-          git config --global user.name "apicurio-ci"
-          git config --global user.email "apicurio.ci@gmail.com"
+          git config --global user.name "apitomy-ci"
+          git config --global user.email "apitomy.ci@gmail.com"
           git branch --set-upstream-to=origin/${{ github.event.inputs.branch}}
           git pull
           echo "#### Listing files ####"
