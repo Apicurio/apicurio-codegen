@@ -38,12 +38,13 @@ jobs:
       - name: Build Project
         run: ./mvnw clean install
 
-  # Slack: a failed push goes to the general channel. Success and PR runs
-  # say nothing.
+  # Slack: a failed push goes to the general channel. Success, PR runs and a
+  # run cancelled by hand say nothing (failure() stays true when a run that
+  # already failed is cancelled).
   notify:
     name: Notify
     needs: [build-verify]
-    if: failure() && github.event_name == 'push'
+    if: failure() && !cancelled() && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
